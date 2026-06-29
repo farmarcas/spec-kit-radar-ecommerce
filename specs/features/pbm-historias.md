@@ -143,3 +143,79 @@ Quando o Consumidor PBM está logado e acessa um produto elegível, o app aciona
 - `[APP]` Implementar tratamento de `flowDeviation = DESVIOURL`: abrir WebView/browser com `informativeLink` e reenviar requisição ao retornar
 - `[APP]` Implementar campo de cupom/cartão para produtos com `requestCoupon = M`
 - `QA` Testar desconto PBM > desconto loja; desconto loja > desconto PBM; desvio LGPD; desvio adesão; produto com cupom obrigatório; co-pagamento; consumidor sem adesão; consumidor com adesão
+
+---
+
+## GPEEDS-XX · [BE] Carrinho PBM — Envio de produtos ao HUB Interplayers
+**Épico:** Integração PBM — Interplayers  
+**Tipo:** Tarefa | **Story Points:** 3 | **Prioridade:** Highest
+
+**O que?**  
+Implementar integração com o serviço Carrinho (`POST /api/transaction/carrinho`) da Interplayers, enviando os produtos do pedido com preços brutos e líquidos do Lojista e recebendo os melhores descontos calculados pelo HUB para cada item.
+
+**Por que?**  
+O serviço Carrinho consolida em uma única chamada o desconto final de todos os produtos elegíveis a PBM, considerando combos, kits e regras de programa. É a etapa que precede a Efetivação e que fornece o `transactionCode` necessário para continuidade do fluxo. Sem ela, não é possível apresentar o resumo de pedido com desconto PBM correto nem prosseguir para a autorização.
+
+**Como?**
+- Chamar `POST /api/transaction/carrinho` com: `transactionCode` (zeros no primeiro envio; reutilizar o valor retornado pelo HUB em chamadas subsequentes para o mesmo atendimento), `consumer[].holderId` (CPF), e para cada produto: `EAN`, `requestedQuantity`, `listPrice` (preço bruto do Lojista), `netPrice` (preço líquido do Lojista), `discountType` (`B` — padrão bruto)
+- Armazenar o `transactionCode` retornado pelo HUB para uso obrigatório na Efetivação
+- Calcular preço final por produto: subtrair `discountValue` do `netPrice` quando `discountValue > 0`; quando `discountValue = 0`, manter o preço líquido do Lojista (desconto da rede é superior — a venda segue por dentro do programa para ressarcimento)
+- Sempre enviar `listPrice` e `netPrice` do Lojista para que o HUB calcule corretamente o desconto adicional
+- Em caso de erro da API (4xx/5xx), registrar em log estruturado sem expor detalhes ao consumidor; não bloquear o checkout — prosseguir sem desconto PBM
+
+**Subtarefas sugeridas:**
+- `[BE]` Implementar endpoint proxy para `/api/transaction/carrinho` com mapeamento de request/response
+- `[BE]` Persistir `transactionCode` retornado associado ao pedido em andamento
+- `QA` Testar: desconto indústria > desconto rede; desconto rede > desconto indústria (`discountValue = 0`); múltiplos produtos; erro da API; primeiro envio (transactionCode zero) vs continuidade do atendimento
+
+---
+
+## GPEEDS-XX · [BE] Efetivação da transação PBM no checkout — Efetiva
+**Épico:** Integração PBM — Interplayers  
+**Tipo:** Tarefa | **Story Points:** 5 | **Prioridade:** Highest
+
+**O que?**  
+Implementar a integração com o serviço Efetiva (`POST /api/transaction/efetiva`) da Interplayers no momento do pagamento no checkout, autorizando a transação PBM para todos os produtos elegíveis em uma única chamada no modelo Varejo 4.0.
+
+**Por que?**  
+A Efetivação é o momento em que o HUB reserva o saldo do consumidor e recalcula os descontos considerando toda a lista de produtos (combos, kits, subsídios). A transação fica com status **PENDENTE** no HUB após a Efetivação — sem o Confirma posterior, o Lojista não recebe o ressarcimento da indústria. Sem a Efetivação, toda a integração PBM não gera valor financeiro real para a rede.
+
+**Como?**
+- Chamar `POST /api/transaction/efetiva` com o `transactionCode` obtido no Carrinho, CPF do consumidor e lista completa de produtos do pedido (todos os produtos devem ser enviados quando houver NSU)
+- Usar `discountAdditionalMultiplied` retornado (já multiplicado pela quantidade autorizada) para calcular o preço final de cada produto
+- Armazenar o `transactionCode` retornado — é o NSU Central necessário para o Confirma/Anula
+- Verificar `authorizedQuantity` vs `requestedQuantity`: se a quantidade autorizada for inferior à solicitada, sinalizar internamente (não bloquear o checkout)
+- Em caso de falha da API de Efetivação: registrar em log estruturado; prosseguir sem desconto PBM e marcar o pedido como sem NSU PBM (para não enviar Confirma/Anula sem NSU válido)
+- Não expor mensagem de erro PBM ao consumidor; o checkout deve prosseguir normalmente
+- Quando `discountAdditionalMultiplied = 0`, o preço líquido do Lojista é o melhor — a venda ocorre por dentro do programa para fins de ressarcimento da indústria
+
+**Subtarefas sugeridas:**
+- `[BE]` Implementar endpoint proxy para `/api/transaction/efetiva` com mapeamento completo de request/response
+- `[BE]` Persistir o `transactionCode` (NSU Central) retornado associado ao pedido para uso no Confirma/Anula
+- `[BE]` Implementar lógica de fallback: quando a Efetivação falhar, sinalizar que não há NSU PBM para não disparar Confirma/Anula indevido
+- `QA` Testar: desconto indústria > desconto rede; desconto rede > desconto indústria; quantidade autorizada < solicitada; falha da API; pedido com múltiplos produtos PBM
+
+---
+
+## GPEEDS-XX · [BE] Finalização da transação PBM — Confirma e Anula
+**Épico:** Integração PBM — Interplayers  
+**Tipo:** Tarefa | **Story Points:** 3 | **Prioridade:** Highest
+
+**O que?**  
+Implementar os serviços de finalização da transação PBM: **Confirma** (`POST /api/transaction/confirma`) — enviado após confirmação do pedido no OMS — e **Anula** (`POST /api/transaction/anula`) — enviado em caso de cancelamento ou desistência de compra.
+
+**Por que?**  
+Toda transação efetivada fica com status PENDENTE no HUB. O **Confirma** é obrigatório para que o Lojista tenha direito ao ressarcimento da indústria. O **Anula** é obrigatório em cancelamentos: sem ele, o histórico de compras do consumidor acumula quantidade adquirida, podendo reduzir ou eliminar descontos PBM em compras futuras por excesso de limite do programa. Transações pendentes sem finalização são anuladas automaticamente pelo HUB após o período do autorizador, mas essa anulação automática não protege o histórico do consumidor de forma confiável nem garante o ressarcimento.
+
+**Como?**
+- **Confirma:** após confirmação do pedido no OMS, chamar `POST /api/transaction/confirma` com `transactionCode` (NSU Central), `consumer[].holderId` (CPF) e `product[].EAN` dos itens da transação; informar `operationId` (número do pedido) e `taxCouponType` (mandatório)
+- **Anula:** após cancelamento do pedido, chamar `POST /api/transaction/anula` com `transactionCode` e `holderId`; enviar apenas os EANs dos produtos que faziam parte da transação efetivada
+- Implementar fila de retry com backoff exponencial para garantir que Confirma/Anula seja enviado mesmo em falhas temporárias da API da Interplayers
+- Registrar em log estruturado o resultado de cada chamada (sucesso, erro, `returnCode`) para auditoria e suporte
+- Se não houver `transactionCode` armazenado (Efetivação falhou), não enviar Confirma/Anula — não há transação pendente no HUB
+
+**Subtarefas sugeridas:**
+- `[BE]` Implementar integração com `/api/transaction/confirma` com retry, log estruturado e validação de NSU
+- `[BE]` Implementar integração com `/api/transaction/anula` com retry, log estruturado e validação de NSU
+- `[BE]` Criar listener/hook no OMS: disparar Confirma ao confirmar pedido e Anula ao cancelar
+- `QA` Testar: Confirma após pedido concluído (gera ressarcimento); Anula após cancelamento; retry em falha temporária; ausência de NSU (Efetivação falhou); timeout do autorizador (transação auto-anulada pelo HUB)
