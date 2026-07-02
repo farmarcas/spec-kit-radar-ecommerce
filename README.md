@@ -23,15 +23,6 @@ Mas o `TODO.md` deste repositório aponta para algo mais radical do que "gerar h
 
 O salto real não é técnico, é de papel: hoje uma pessoa lê a spec e escreve a história. Amanhã, o agente lê a spec e escreve a história — e a pessoa audita. Depois disso, com sprint status, roadmap e KPIs também versionados aqui, a pergunta natural é: por que não deixar o agente **propor** a próxima spec a partir dos dados (conversão caindo, PBM não integrado, NMT abaixo da meta) e o time humano decidir se aprova? Esse é o horizonte para o qual este repositório está desenhado, mesmo que ainda não exista.
 
-## Isso só funciona se o contexto for verdade
-
-Uma fonte da verdade pela metade é pior do que nenhuma, porque projeta confiança que não existe. Hoje isso ainda não é 100% verdade aqui:
-
-- `context/architecture.md` está **vazio** — qualquer agente que precise de stack técnica vai perguntar, porque não tem de onde tirar.
-- `decisions/` está **vazia** — nenhum ADR registrado ainda, então "respeite decisões passadas" não tem o que respeitar.
-
-Isso não invalida a aposta — mas é o gargalo real. O valor deste repositório cresce exatamente na proporção em que essas lacunas fecham.
-
 ## Estrutura
 
 ```
@@ -56,3 +47,17 @@ spec-kit-radar-ecommerce/
 - **Para saber o que está em andamento:** [`sprints/status-atual.md`](sprints/status-atual.md).
 
 As regras de comportamento para agentes de IA — o que ler antes de cada tarefa, terminologia obrigatória, formato de história — estão centralizadas em [`CLAUDE.md`](CLAUDE.md). Se você é um agente lendo isto: comece por lá.
+
+## TODO — oportunidades para fortalecer a fonte da verdade
+
+Uma fonte da verdade pela metade é pior do que nenhuma: ela projeta confiança que não existe, e um agente não avisa quando está preenchendo lacunas com suposição. Estas são as lacunas conhecidas hoje — fechá-las é o que converte a aposta deste repositório em algo real:
+
+- [ ] **Preencher `context/architecture.md`** — hoje está vazio. Qualquer agente que precise de stack técnica, integrações e limites de sistema não tem de onde tirar essa informação.
+- [ ] **Registrar ADRs em `decisions/`** — hoje está vazia. A regra "respeite decisões já tomadas" (`CLAUDE.md`) não tem o que respeitar sem decisões documentadas.
+- [ ] **Descrever "Maxi Popular" no glossário** — sinalizado como pendente em `context/glossary.md`.
+- [ ] **Adicionar glossário técnico da API Interplayers** — os PDFs de referência já estão em `specs/features/001-app-ecommerce/PBM/`, mas não há um resumo estruturado em texto que um agente consiga ler sem abrir cada PDF.
+- [ ] **Expandir `specs/examples/`** com mais variações de histórias (técnicas, com múltiplos épicos, com edge cases complexos) para reduzir a chance de o agente extrapolar o padrão.
+- [ ] **Versionar o roadmap de outros trimestres**, não só Q3 2026, para dar ao agente contexto histórico de prioridade ao invés de só o presente.
+- [ ] **Conectar MCP do Jira** — elimina o passo manual de copiar histórias geradas para o Jira.
+- [ ] **Conectar MCP do GitHub** — fecha o ciclo spec → história → PR → verificação de que o entregue bate com a spec.
+- [ ] **Criar contexto equivalente para Portal e Core** — replicar `context/` + `CLAUDE.md` para as outras squads, validando se o padrão generaliza além do App.
