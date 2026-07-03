@@ -122,9 +122,9 @@
 | — | Tagueamento eventos MixPanel | 13/03/2026 |
 | — | Tela de downtime do app | 13/03/2026 |
 | — | Bugfix | 13/03/2026 |
-| — | Alterar farmácia na retirada | 01/06/2025 *(fora de ordem cronológica no documento original — confirmar)* |
-| — | Gestão de endereços do consumidor | 01/06/2025 *(confirmar)* |
-| — | Push notification nas transações de pedidos | 01/06/2025 *(confirmar)* |
-| 8.6.0 | Tratativa limitação de oferta no checkout | 08/06/2025 |
+| — | Alterar farmácia na retirada | 01/06/2026 *(corrigido de 01/06/2025 — ano confirmado pelo PO)* |
+| — | Gestão de endereços do consumidor | 01/06/2026 *(corrigido de 01/06/2025 — ano confirmado pelo PO)* |
+| — | Push notification nas transações de pedidos | 01/06/2026 *(corrigido de 01/06/2025 — ano confirmado pelo PO)* |
+| 8.6.0 | Tratativa limitação de oferta no checkout | 08/06/2026 *(corrigido de 08/06/2025 — ano confirmado pelo PO)* |
 | 8.6.1 | Bugs fix | *(sem data associada no documento)* |
-| 8.6.2 | Novo checkout | 02/07/2025 |
+| 8.6.2 | Novo checkout | 02/07/2026 *(corrigido de 02/07/2025 — ano confirmado pelo PO)* |
