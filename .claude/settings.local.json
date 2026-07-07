@@ -44,7 +44,17 @@
       "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\Programs\" | Where-Object { $_.Name -match -join \"claude\",\"anthropic\" })",
       "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\Programs\" | Select-Object Name)",
       "mcp__atlassian__getVisibleJiraProjects",
-      "mcp__atlassian__createJiraIssue"
+      "mcp__atlassian__createJiraIssue",
+      "mcp__atlassian__addCommentToJiraIssue",
+      "Bash(git stash *)",
+      "Bash(git mv *)",
+      "Bash(git restore *)",
+      "Bash(git show *)",
+      "WebFetch(domain:developer.funcionalmais.com)",
+      "mcp__claude-in-chrome__tabs_context_mcp"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "atlassian"
+  ]
 }
