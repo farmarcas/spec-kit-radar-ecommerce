@@ -38,7 +38,13 @@
       "PowerShell(git pull origin main)",
       "PowerShell(New-Item -ItemType File -Path \"specs\\\\features\\\\portal\\\\.gitkeep\" -Force)",
       "PowerShell(git rm \"specs/Manual-Portal-Radar-Ecommerce.pdf\")",
-      "PowerShell(git mv \"specs/Manual-Portal-Radar-Ecommerce.md\" \"specs/features/portal/Manual-Portal-Radar-Ecommerce.md\")"
+      "PowerShell(git mv \"specs/Manual-Portal-Radar-Ecommerce.md\" \"specs/features/portal/Manual-Portal-Radar-Ecommerce.md\")",
+      "PowerShell(New-Item -ItemType File -Path \"specs\\\\features\\\\portal\\\\Fluxo.Estorno.Pgto\\\\.gitkeep\" -Force)",
+      "PowerShell(git add specs/features/portal/Fluxo.Estorno.Pgto/.gitkeep)",
+      "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\Programs\" | Where-Object { $_.Name -match -join \"claude\",\"anthropic\" })",
+      "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\Programs\" | Select-Object Name)",
+      "mcp__atlassian__getVisibleJiraProjects",
+      "mcp__atlassian__createJiraIssue"
     ]
   }
 }
