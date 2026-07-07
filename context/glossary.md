@@ -10,7 +10,15 @@
 | **Loja Ativa** | Lojista que realizou ao menos uma transação no período de referência. Base do NSM. |
 | **Portal** | Front-end web do Radar destinado aos lojistas. Gerenciam estoque, preços, pedidos e configurações. |
 | **App** | Aplicativo mobile do Radar destinado ao consumidor final. |
-| **Balconista** | Atendente da farmácia associada que opera o Portal para gerenciar pedidos. |
+| **Rede** | Agrupamento de lojas associadas dentro da plataforma Radar (ex: ACFARMA, Ultra Popular). Uma Rede pode conter múltiplos Grupos de lojas e Lojas individuais, e possui indicadores agregados próprios. [TODO: confirmar com o time se "Rede" é sinônimo do termo "GE (Grupo Econômico)" já definido abaixo, ou se são conceitos distintos]. |
+| **Grupo de lojas** | Subconjunto de Lojas dentro de uma Rede, com configuração própria de atendimento de pedidos e tipo de estoque (Espelhado / Integrado / Independente) e usuários vinculados ao grupo. |
+| **Balconista** | Atendente da farmácia associada que opera o Portal para gerenciar pedidos. No Portal, esse perfil é identificado como **Contato cliente**: vinculado a uma única loja, sem acesso à criação/remoção de promoções ou outras ações críticas de operação. |
+| **Gestor de Loja** | Perfil de acesso do Portal destinado a associados/donos de loja. Acesso completo a todas as funcionalidades do Portal, podendo ser vinculado a N lojas. |
+| **Gestor de Rede** | Perfil de acesso do Portal equivalente ao Gestor de Loja, mas vinculado a uma ou mais Redes (grupos de lojas) em vez de lojas individuais. |
+| **Admin** | Perfil de acesso do Portal com visão de todas as Redes, todas as Lojas e todas as funcionalidades. Único perfil com acesso a todos os módulos além do módulo Catálogo. |
+| **Catálogo** | Módulo administrativo (exclusivo do perfil Admin) com o cadastro mestre de produtos da plataforma Radar, compartilhado entre todas as Redes. Inclui cadastro/edição de produtos, Grupos de produtos e aprovação de Solicitações de produtos. |
+| **Grupo de produtos** | Conjunto de produtos agrupados por uma regra de composição (ex: mesma marca, mesmo produto), usado tanto no Catálogo quanto na criação de Promoções por grupo. Na UI do módulo Catálogo essa entidade ainda aparece com o nome legado **"Família"** — é a mesma entidade, e a nomenclatura está em processo de unificação para "Grupo de produtos" em toda a plataforma. |
+| **Solicitação de produto** | Fluxo pelo qual uma Rede pede a inclusão de um novo produto (por EAN) no Catálogo mestre. O produto só passa a existir na plataforma após aprovação do Admin (status Pendente/Aprovado/Reprovado). |
 
 ## Negócio e Produto
 
