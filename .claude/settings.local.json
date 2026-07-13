@@ -51,7 +51,10 @@
       "Bash(git restore *)",
       "Bash(git show *)",
       "WebFetch(domain:developer.funcionalmais.com)",
-      "mcp__claude-in-chrome__tabs_context_mcp"
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "PowerShell(git pull origin main --rebase)",
+      "PowerShell(git stash)",
+      "PowerShell(git stash pop)"
     ]
   },
   "enabledMcpjsonServers": [
