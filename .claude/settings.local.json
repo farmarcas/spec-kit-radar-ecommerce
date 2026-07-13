@@ -52,9 +52,11 @@
       "Bash(git show *)",
       "WebFetch(domain:developer.funcionalmais.com)",
       "mcp__claude-in-chrome__tabs_context_mcp",
-      "PowerShell(git pull origin main --rebase)",
-      "PowerShell(git stash)",
-      "PowerShell(git stash pop)"
+      "Bash(ls -la \"/c/Users/daniel.costa_farmarc/AppData/Local/Temp/\" | grep -E \"DD-00|ANALISE-PRIORIZACAO\")",
+      "mcp__atlassian__getAccessibleAtlassianResources",
+      "mcp__atlassian__getJiraIssueTypeMetaWithFields",
+      "WebFetch(domain:docs.datadoghq.com)",
+      "WebSearch"
     ]
   },
   "enabledMcpjsonServers": [
