@@ -71,7 +71,8 @@
       "PowerShell(node --version)",
       "PowerShell(npx --version)",
       "PowerShell(& \"C:\\\\Program Files\\\\nodejs\\\\node.exe\" --version; [Environment]::GetEnvironmentVariable\\(\"PATH\",\"Machine\"\\) -split \";\" | Select-String \"nodejs\")",
-      "Bash(git rev-list *)"
+      "Bash(git rev-list *)",
+      "Bash(git merge *)"
     ]
   },
   "enabledMcpjsonServers": [
