@@ -73,7 +73,9 @@
       "PowerShell(& \"C:\\\\Program Files\\\\nodejs\\\\node.exe\" --version; [Environment]::GetEnvironmentVariable\\(\"PATH\",\"Machine\"\\) -split \";\" | Select-String \"nodejs\")",
       "Bash(git rev-list *)",
       "Bash(git merge *)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "mcp__atlassian__searchJiraIssuesUsingJql",
+      "mcp__atlassian__editJiraIssue"
     ]
   },
   "enabledMcpjsonServers": [
