@@ -56,10 +56,28 @@
       "mcp__atlassian__getAccessibleAtlassianResources",
       "mcp__atlassian__getJiraIssueTypeMetaWithFields",
       "WebFetch(domain:docs.datadoghq.com)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__datadog__list_datadog_skills",
+      "mcp__datadog__load_datadog_skill",
+      "mcp__datadog__search_datadog_services",
+      "mcp__datadog__analyze_datadog_logs",
+      "mcp__datadog__search_datadog_logs",
+      "mcp__datadog__aggregate_spans",
+      "mcp__datadog__search_datadog_spans",
+      "mcp__datadog__get_datadog_trace",
+      "Bash(mkdir *)",
+      "Bash(split -l 25 -d trace_ids.txt batch_)",
+      "Skill(schedule)",
+      "PowerShell(node --version)",
+      "PowerShell(npx --version)",
+      "PowerShell(& \"C:\\\\Program Files\\\\nodejs\\\\node.exe\" --version; [Environment]::GetEnvironmentVariable\\(\"PATH\",\"Machine\"\\) -split \";\" | Select-String \"nodejs\")",
+      "Bash(git rev-list *)"
     ]
   },
   "enabledMcpjsonServers": [
-    "atlassian"
+    "atlassian",
+    "figma-dev-mode-mcp",
+    "datadog",
+    "slack"
   ]
 }
