@@ -56,7 +56,9 @@
       "mcp__atlassian__getAccessibleAtlassianResources",
       "mcp__atlassian__getJiraIssueTypeMetaWithFields",
       "WebFetch(domain:docs.datadoghq.com)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__atlassian__searchJiraIssuesUsingJql",
+      "mcp__atlassian__editJiraIssue"
     ]
   },
   "enabledMcpjsonServers": [
