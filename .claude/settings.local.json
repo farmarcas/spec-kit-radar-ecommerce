@@ -75,7 +75,8 @@
       "Bash(git merge *)",
       "Bash(git status *)",
       "mcp__atlassian__searchJiraIssuesUsingJql",
-      "mcp__atlassian__editJiraIssue"
+      "mcp__atlassian__editJiraIssue",
+      "Bash(git commit *)"
     ]
   },
   "enabledMcpjsonServers": [
