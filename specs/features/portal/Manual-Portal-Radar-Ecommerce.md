@@ -2,7 +2,7 @@
 
 > Documentação funcional do **Portal** (front-end web do Radar E-commerce, usado pelos Associados/Lojistas e pela Farmarcas para gerenciar suas lojas). Objetivo: apoiar o aculturamento de Associados na ferramenta e servir de base de consulta para o N1 de suporte.
 >
-> Fonte: mapeamento de telas reais do Portal em produção, cruzado com o código-fonte (`ecomm-front-webapp-portal-angular`) e validado com o time de produto. Atualizado em 2026-07-03.
+> Fonte: mapeamento de telas reais do Portal em produção, cruzado com o código-fonte (`ecomm-front-webapp-portal-angular`), validado com o time de produto e com o FAQ interno de suporte (CS/Anjos). Atualizado em 2026-07-14.
 >
 > **Fora do escopo deste manual:** o aplicativo mobile do consumidor final (App) — ver `FAQ-App-Radar-Ecommerce.md`.
 
@@ -74,6 +74,13 @@ Ao entrar numa Rede, a aba **Lojas** lista todas as unidades cadastradas com:
 
 Ações disponíveis: **Nova loja** (cadastrar uma unidade), filtro por **Módulo**, **Estoque Centralizado** e **Exportar Lojas** (baixa a listagem).
 
+**O que é o botão "Estoque Centralizado"?** É o atalho, no nível da Rede, para a tela de [Grupo de lojas](#4-grupo-de-lojas) — tanto para ver os grupos já criados quanto para criar um novo. A ideia por trás dessa configuração é otimizar a operação: em vez de um operador de call center precisar abrir uma aba por loja para atender pedidos de várias filiais, o grupo permite unificar o atendimento numa única tela, com todos os pedidos das lojas participantes centralizados numa loja principal.
+
+**Módulo Vendas x Módulo Ofertas — o que muda na prática?**
+- **Vendas**: a loja processa a compra completa dentro do próprio app — carrinho, checkout e pagamento acontecem no aplicativo.
+- **Ofertas**: não há compra pelo app. O associado cria as ofertas no Portal, elas são replicadas no aplicativo, e o consumidor final apenas **ativa** a oferta pelo app — a compra em si só é finalizada fisicamente na loja, quando o cliente informa o CPF e a oferta é vinculada a ele no momento do pagamento (é por isso que esse módulo não gera "Pedidos" no Portal).
+- Uma loja pode solicitar a migração de Ofertas para Vendas — ver [Configurações da Loja](#6-configurações-da-loja), onboarding e liberação da Chave de integração/API.
+
 ### Como trocar de loja
 
 O seletor no cabeçalho (ex: "Acfarma - Centro ▾") permite alternar entre as lojas às quais o usuário tem acesso, sem precisar logar novamente.
@@ -95,9 +102,11 @@ Lista os grupos com: nome, data de criação, quantidade de Lojas e Usuários vi
 
 Dentro do detalhe de um grupo, o botão **"Configurar atendimento e estoque"** abre um modal com 3 opções — escolha de acordo com como as lojas do grupo devem operar:
 
-1. **Centralizar os pedidos em uma única loja e espelhar o estoque nas demais filiais** → *Atendimento: Loja principal* / *Estoque: Espelhado*. Uma loja "mãe" recebe todos os pedidos do grupo, e o estoque dela é replicado (espelhado) para as demais unidades.
-2. **Cada loja processa os pedidos com estoques integrados entre elas** → *Atendimento: Loja a loja* / *Estoque: Integrado*. Cada loja atende seus próprios pedidos, mas o estoque é compartilhado/consolidado entre as lojas do grupo.
-3. **Cada loja processa os pedidos com estoques independentes** → *Atendimento: Loja a loja* / *Estoque: Independente*. Cada loja funciona de forma totalmente autônoma — pedidos e estoque não se misturam com as demais lojas do grupo.
+1. **Estoque Espelhado** — uma loja "mãe" (loja principal) recebe todos os pedidos do grupo, e o estoque dela é replicado (espelhado) para as demais unidades. É possível incluir uma loja secundária: nesse caso, os estoques das duas lojas são somados, exibindo a quantidade total no aplicativo.
+2. **Estoque Integrado** — o estoque é somado fisicamente entre todas as lojas do agrupamento.
+3. **Estoque Independente** — os estoques de cada loja do grupo ficam isolados uns dos outros.
+
+**Importante:** independentemente do tipo de estoque escolhido, configurar um Grupo de lojas (Estoque Centralizado) **sempre centraliza o atendimento dos pedidos na tela da loja principal**. Os 3 tipos acima definem exclusivamente o comportamento do **estoque** entre as lojas do grupo — não onde os pedidos são atendidos.
 
 > **Atenção:** essa configuração tem impacto direto na disponibilidade de produtos mostrada no App para os consumidores de cada loja do grupo — escolha com cuidado antes de mudar um grupo já em operação.
 
@@ -129,13 +138,33 @@ Principais informações exibidas:
 
 ## 6. Configurações da Loja
 
-Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções. Um widget **"Seu progresso"** no canto inferior acompanha quantas dessas configurações essenciais já foram concluídas (ex: "2/3 concluído"), com atalho "Continuar configuração".
+Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções. Um widget **"Seu progresso"** no canto inferior acompanha quantas dessas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nesse checklist de onboarding são:
+
+1. Informações da Loja
+2. Endereço Comercial
+3. Horário de atendimento
+4. Criação de oferta
+
+Ao concluir essas etapas, o Portal mostra a opção **"Faça Upgrade"**, convidando o associado a ativar o **módulo de Vendas** (checkout completo pelo app, em vez do módulo Ofertas) — com um botão "Acompanhar solicitação" para ver o status desse pedido.
+
+**Fluxo de migração de Ofertas para Vendas (liberação da Chave de integração/API):**
+1. O associado solicita a migração de Ofertas para o módulo Vendas pelo Portal.
+2. A Chave de integração do ERP (API) é liberada e deve ser inserida no sistema ERP da loja.
+3. A ativação do módulo e o espelhamento do estoque acontecem de forma **separada** — o módulo pode já estar ativo enquanto o estoque ainda está sincronizando; isso pode levar um tempo até os produtos aparecerem no app.
+4. Se a solicitação ficar travada em "Aguardando" por muito tempo, ou o estoque não aparecer depois de um tempo razoável, o próximo passo é acionar o suporte do próprio sistema ERP para validar a integração do lado deles.
 
 ### 6.1 Dados da Loja
 
 - **Informações da loja**: CNPJ (não editável), Razão social, Nome da loja no app (o nome que o consumidor vê), E-mail, Telefone, WhatsApp (pode ser um número 0800), Farmacêutico responsável e CRF, e a Chave de integração do ERP (não editável, gerada pela plataforma).
 - **Endereço comercial**: CEP, Estado, Logradouro, Número, Complemento, Bairro, Cidade e Ponto de referência (opcional, ajuda o consumidor a localizar a loja). Há um mapa para confirmar visualmente a localização — mover o pin no mapa **não altera** o endereço textual cadastrado, serve só para ajuste visual/geolocalização.
-- **Horário de Atendimento**: dias e horários em que a loja está aberta ao público, independente das regras de entrega/retirada (ver seção 6.2). Ativa-se cada dia individualmente e define o intervalo "De/Até".
+- **Horário de Atendimento**: dias e horários em que a loja está aberta ao público. Ativa-se cada dia individualmente e define o intervalo "De/Até".
+
+> **Existem 3 tipos de horário no Portal, e todos precisam estar corretos:**
+> - **Horário de Atendimento** (aqui em Dados da Loja) — é o horário principal, o que o consumidor efetivamente vê ao buscar a loja no app.
+> - **Horário de Entrega** (em Formas de Entrega) — define quando a loja aceita pedidos para entrega.
+> - **Horário de Retirada** (em Formas de Entrega) — define quando o cliente pode buscar um pedido na loja.
+>
+> Os horários de Entrega e Retirada **não aparecem diretamente na vitrine do app**, mas alimentam o cálculo de quando o cliente pode escolher cada opção e qual será a previsão de recebimento. Se o horário exibido no app estiver errado, o primeiro lugar a checar é justamente qual desses três está desalinhado.
 
 ### 6.2 Formas de Entrega
 
@@ -167,7 +196,24 @@ A tela **Estoque** mostra o catálogo de produtos daquela loja específica, com:
 - **Exibir preço**: toggle Sim/Não — controla se aquele produto aparece com preço visível no App.
 - Toggle geral **Disponível**, indicador **ERP atualizado** (data/hora da última sincronização) e filtro por **Grupo**.
 
-> **Alerta importante:** se aparecer um aviso vermelho no topo da tela dizendo que os preços foram **ocultados no aplicativo por falha de comunicação com o ERP há mais de 3 dias**, significa que a loja parou de sincronizar dados com o ERP e os produtos ficaram invisíveis para o consumidor no App. Nesse caso, a orientação é **contatar o suporte do ERP** para verificar a integração — não é algo que se resolve só pelo Portal.
+**De onde vem o preço "R$ App"?** Ele é extraído via API diretamente do sistema ERP da loja. Divergências geralmente vêm de: (a) uma oferta ativa no ERP ou um "caderno de ofertas" — nesse caso o Portal sempre traz o **menor valor** disponível; ou (b) atraso na sincronização entre o ERP e o Portal.
+
+**Como editar o preço manualmente:** na tela Estoque, busque o produto por nome ou EAN, clique no ícone de lápis (editar), informe o valor correto e confirme em "Atualizar" — esse é o campo **R$ customizado**. Não existe uma regra ou validação sobre esse valor: fica valendo exatamente o que for digitado, até que alguém remova a customização; hoje esse recurso na tela de Estoque é exclusivo do perfil **Contato cliente** (balconista). Se muitos produtos aparecerem com valor divergente ao mesmo tempo, o recomendado é abrir chamado com o suporte do ERP pedindo uma atualização forçada em lote, em vez de corrigir um por um manualmente.
+
+**Como ocultar um produto com preço/estoque errado:** desmarque a opção "Exibir preço" na linha do produto — ele some do app até a correção ser feita, sem precisar remover o cadastro.
+
+**Como ocultar medicamentos do aplicativo:** existem só duas formas — desabilitar o estoque geral daquele grupo de produtos, ou desativar item por item dentro do Estoque. Hoje **não é possível** ocultar por categoria inteira de uma vez.
+
+> **Alerta importante:** se aparecer um aviso vermelho no topo da tela dizendo que os preços foram **ocultados no aplicativo por falha de comunicação com o ERP há mais de 72 horas (3 dias)**, significa que a loja parou de sincronizar dados com o ERP e os produtos ficaram invisíveis para o consumidor no App — essa desativação automática é proposital, para evitar venda com preço/estoque desatualizado. Nesse caso, a orientação é:
+> 1. Abrir chamado com o suporte técnico do seu sistema ERP.
+> 2. Solicitar a **"Nova Integração de Preço e Estoque"**.
+> 3. Informar ao suporte a **Chave de integração do ERP** da loja (em `Configurações > Dados da Loja > Informações da loja`).
+>
+> Lembrando que a loja também pode aparecer fora do app por **desativação manual** do estoque (toggle "Disponível" desligado no Portal) — vale checar os dois motivos antes de abrir chamado.
+
+### Solicitando um produto novo
+
+Se a loja precisa vender um produto que ainda não existe no catálogo mestre da plataforma, use o ícone de solicitação de produto na barra de ferramentas da tela Estoque (ao lado do ícone de exportar). Ele abre o formulário **"Solicitar produto"**, onde é possível informar Nome do produto e Fabricante, e depois, para cada item, o **Código de barras (EAN)**, a **Apresentação** (ex: "Dorflex caixa com 10") e uma imagem/foto de referência — dá para solicitar **até 50 produtos de uma vez**. Essa solicitação segue para aprovação do Admin (ver [Catálogo](#12-catálogo-admin)).
 
 ---
 
@@ -203,7 +249,9 @@ A tela **Promoções** tem duas visões, cada uma em sua aba:
 - **Individuais**: promoções aplicadas a um produto específico.
 - **Por grupo**: promoções aplicadas a um **Grupo de produtos** (conjunto de produtos relacionados — ex: uma linha de uma marca).
 
-Cada linha mostra: Ativação, Vendas, Conversão, Tipo de oferta, Período de divulgação e Status (**Ativa**, **Finalizada** ou **Cancelada**). É possível selecionar várias promoções e cancelá-las em lote, filtrar por Tipo de oferta/Status, e destacar uma promoção com a etiqueta **"Em destaque ⭐"**.
+Cada linha mostra: Ativação, Vendas, Conversão, Tipo de oferta, Período de divulgação e Status (**Ativa**, **Finalizada** ou **Cancelada**). É possível selecionar várias promoções e cancelá-las em lote, filtrar por Tipo de oferta/Status, e destacar uma promoção com a etiqueta **"Em destaque ⭐"** — não há limite de quantas promoções podem estar em destaque ao mesmo tempo, e ter ao menos uma cria uma seção própria chamada **"Ofertas em destaque"** no aplicativo.
+
+**Medicamentos controlados não entram em promoção.** Hoje o Portal já impede isso na própria criação da oferta: esses produtos aparecem desabilitados na lista de seleção de produtos do passo 5.
 
 ### Criando uma nova promoção
 
@@ -239,6 +287,12 @@ A tela **Usuários** lista as pessoas com acesso ao Portal (nome, Perfil de aces
 
 Ao convidar/editar um usuário, defina o **Perfil de acesso** (ver [seção 2](#2-perfis-de-acesso)) e, dependendo do perfil escolhido, vincule-o a uma loja específica (Contato cliente), a uma ou mais lojas (Gestor de Loja) ou a uma ou mais Redes (Gestor de Rede).
 
+**Um mesmo e-mail não pode ser convidado duas vezes.** O Portal bloqueia o convite se o e-mail já existir no sistema (mensagem "Parece que o usuário já existe em nosso sistema", com opção de voltar ou editar o usuário existente) — não é possível, por exemplo, dar a uma pessoa um segundo login para acumular acesso a outra Rede/loja; o vínculo adicional precisa ser feito editando a mesma conta.
+
+**Não existe uma função para mudar um usuário/loja de GE (Grupo Econômico).** Se uma loja é removida do Portal, todos os usuários vinculados a ela perdem esse vínculo automaticamente:
+- Um usuário **Contato cliente** (vinculado só àquela loja) continua conseguindo logar, mas passa a ver uma **tela em branco**, sem lojas para trabalhar.
+- Os demais perfis (Gestor de Loja/Rede/Admin), se tiverem acesso a outras lojas, simplesmente deixam de ver os dados da loja removida e continuam vendo as demais normalmente.
+
 ---
 
 ## 12. Catálogo (Admin)
@@ -249,7 +303,11 @@ O módulo **Catálogo** é exclusivo do perfil **Admin** (time Farmarcas) e cont
 
 ### Produtos
 
-Listagem com todos os produtos cadastrados na plataforma (departamento, categoria, subclasse, grupo de produtos e status). Cada produto tem uma tela de edição com campos como Nome, EAN (fixo), Marca, Fabricante, tipo de cadastro (Medicamento ou Não Medicamento), Registro MS (para medicamentos), a chave **"Permitir promocionar"** (controla se aquele produto pode entrar em promoções) e a categorização (Departamento/Categoria/Subcategoria).
+Listagem com todos os produtos cadastrados na plataforma (departamento, categoria, subclasse, grupo de produtos e status). Cada produto tem uma tela de edição com campos como Nome, EAN (fixo), Marca, Fabricante, tipo de cadastro (Medicamento ou Não Medicamento), Registro MS (para medicamentos), o toggle **Genérico** (quando ativado, exibe a tag "genérico" no detalhe do item para o consumidor no app), a chave **"Permitir promocionar"** e a categorização (Departamento/Categoria/Subcategoria).
+
+**"Permitir promocionar"** controla se o produto pode ser adicionado a um Grupo de produtos promocional — se desativado, o produto não pode ser incluído. Atenção: se o produto **já estava** num grupo promocional e depois recebe essa flag desativada, ele **não é removido automaticamente** do grupo — a restrição vale só para novas inclusões.
+
+**"Despublicar produto"** remove o produto do catálogo oficial: mesmo que uma loja continue enviando aquele EAN via integração com o ERP, o produto não volta a ser exibido no catálogo dela. O histórico do EAN é mantido em pedidos antigos e relatórios já existentes — só a exibição futura é bloqueada.
 
 ### Grupos de produtos
 
@@ -259,12 +317,16 @@ Um Grupo de produtos reúne vários produtos sob uma regra de composição (ex: 
 
 ### Solicitações de produtos
 
-Quando uma Rede precisa de um produto que ainda não existe no catálogo mestre, ela envia uma **solicitação** (nome do produto + EAN). O Admin analisa e aprova ou reprova — o produto só passa a existir na plataforma (e pode ser vendido) depois de aprovado.
+Quando uma loja precisa de um produto que ainda não existe no catálogo mestre, ela envia uma **solicitação** pelo formulário "Solicitar produto" (acessível pela tela [Estoque](#7-estoque) — ver "Solicitando um produto novo"), informando nome, fabricante, EAN(s), apresentação e imagem de referência. Essa tela de Catálogo é onde o **Admin** revisa a fila de solicitações (Rede de origem, nome do produto, EAN, data, status Pendente/Aprovado/Reprovado) e aprova ou reprova — o produto só passa a existir na plataforma (e pode ser vendido) depois de aprovado.
 
 ---
 
 ## Notas de manutenção deste documento
 
-- A relação entre o termo "Rede" e "GE — Grupo Econômico" (já usado no glossário do produto) ainda precisa ser confirmada com o time: podem ser sinônimos ou conceitos distintos.
-- O fluxo pelo qual um Associado efetivamente *envia* uma Solicitação de produto (visto neste manual apenas do lado do Admin/Catálogo) ainda não foi mapeado — atualizar esta seção quando essa tela for identificada.
-- Este documento cobre o que foi visto em telas reais até 2026-07-03; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
+- **Em aberto (baixa prioridade, achado técnico):** o `SessionPermissionGuard` do front-end (permissões finas tipo `offer:*`/`product:*`/`order:*`) segue desabilitado no código-fonte; o time de produto não confirmou se é proposital (backend cobre a validação) ou dívida técnica — sem impacto conhecido no dia a dia do associado, mantido aqui só como registro para o time de engenharia.
+- **Resolvido:** Rede = bandeira/franquia (ex: ACFARMA, Ultra Popular); GE (Grupo Econômico) = conjunto de lojas do mesmo empresário dentro de uma Rede — conceito de negócio por trás da funcionalidade Grupo de lojas.
+- **Resolvido:** o fluxo de Solicitação de produto pelo Associado foi identificado (ícone na tela Estoque) — ver seção 7.
+- **Resolvido:** independentemente do tipo de estoque (Espelhado/Integrado/Independente), o Grupo de lojas sempre centraliza o atendimento de pedidos na loja principal — ver seção 4.
+- **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados.
+- **Resolvido:** o bug do modal de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
+- Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-14; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.

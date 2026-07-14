@@ -2,7 +2,7 @@
 
 > **Uso deste documento:** conteúdo-fonte para um bot de atendimento que responde dúvidas simples de Associados/Lojistas sobre o uso do Portal Radar E-commerce (ex: "onde encontro minha API KEY", "como vejo o módulo da minha loja"). Cada bloco de pergunta/resposta abaixo foi escrito para ser **autocontido** — não depende de ler o restante do documento para fazer sentido — pensando em recuperação por trechos (chunking) por um sistema de busca/RAG.
 >
-> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular` e validado com o time de produto). Atualizado em 03 de julho de 2026.
+> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 14 de julho de 2026.
 >
 > **Regra para o bot:** se a dúvida do associado não estiver coberta aqui, o bot deve admitir que não sabe e direcionar para o suporte humano (Farmarcas/N1) — nunca inventar um caminho de tela que não está descrito neste documento. A seção final "Perguntas sem resposta confirmada" lista o que ainda não foi mapeado.
 
@@ -22,6 +22,10 @@
 - [Banners](#banners)
 - [Usuários](#usuários)
 - [Catálogo de produtos](#catálogo-de-produtos)
+- [Precificação e descontos vindos do ERP (ex: sistema BIG)](#precificação-e-descontos-vindos-do-erp-ex-sistema-big)
+- [Integração ERP Alpha7](#integração-erp-alpha7)
+- [Meios de pagamento (Braspag, Cielo, Rede, Antifraude)](#meios-de-pagamento-braspag-cielo-rede-antifraude)
+- [Notificações, instabilidades e contingência](#notificações-instabilidades-e-contingência)
 - [Perguntas sem resposta confirmada](#perguntas-sem-resposta-confirmada)
 
 ---
@@ -35,13 +39,16 @@ Associados nem sempre usam o nome exato do campo/tela do Portal. Esta tabela aju
 | "Minha API KEY", "chave da loja", "código de integração", "token do ERP" | **Chave de integração do ERP** | `Configurações > Dados da Loja > Informações da loja` (campo somente leitura, gerado pela plataforma) |
 | "Módulo da minha loja", "meu plano", "o que minha loja pode fazer" | **Módulo ativado** (Vendas ou Ofertas) | Coluna "Módulo ativado" na tela `Lojas` (nível Rede) |
 | "Loja mãe", "loja centralizadora" | **Loja principal** (dentro da configuração de um Grupo) | `Grupo de lojas > (grupo) > Configurar atendimento e estoque` |
-| "Rede", "franquia", "bandeira" | **Rede** | Nível mais alto da hierarquia, acima de Grupo/Loja |
+| "Rede", "franquia", "bandeira" | **Rede** | Nível mais alto da hierarquia — várias lojas de diferentes GEs (empresários) sob a mesma bandeira |
+| "GE", "meu grupo econômico", "empresa" | **GE (Grupo Econômico)** | Conjunto de lojas do mesmo empresário/associado dentro de uma Rede — conceito de negócio por trás do **Grupo de lojas** no Portal |
 | "Meu perfil", "meu nível de acesso", "o que eu posso fazer no sistema" | **Perfil de acesso** (Contato cliente / Gestor de Loja / Gestor de Rede / Admin) | Tela `Usuários` |
 | "Balconista" | **Contato cliente** (é o nome oficial do perfil no Portal) | Tela `Usuários` |
 | "Fila de pedidos", "pedidos chegando" | Aba **"Na fila"** dentro de `Pedidos` | `Pedidos` |
 | "Desconto", "campanha", "oferta" | **Promoção** | `Promoções` |
 | "Anúncio", "propaganda do app" | **Banner** | `Banners` (também chamada de "Anúncios do aplicativo") |
-| "Cadastrar produto novo" | **Solicitação de produto** (não é autoatendimento — ver seção Catálogo) | `Catálogo > Solicitações` (só Admin vê e aprova) |
+| "Cadastrar produto novo", "pedir produto novo" | **Solicitação de produto** | Ícone "Solicitar produto" na tela `Estoque` — é self-service, mas depende de aprovação do Admin (Catálogo) |
+| "Anjo" | Profissional do time de **Operações internas da Farmarcas** que dá suporte ao associado (termo interno) | — |
+| "Sistema BIG", "Alfa 7"/"Alpha7", "Soft", "TRIER" | Sistemas de **ERP** usados pelas farmácias, integrados ao Portal via API | Fora do Portal — são os sistemas de gestão do próprio associado |
 
 ---
 
@@ -83,9 +90,10 @@ Na tela `Lojas` (nível Rede), a coluna **"Módulo ativado"** mostra "Vendas" (l
 Em `Configurações > Dados da Loja > Informações da loja`, o campo **CNPJ** aparece no topo do formulário (também somente leitura).
 
 **Onde configuro o horário que minha loja atende?**
-Existem dois horários diferentes e independentes:
-1. **Horário de Atendimento geral da loja** — em `Configurações > Dados da Loja > Horário de Atendimento`.
-2. **Horário de entrega/retirada** — em `Configurações > Formas de Entrega`, dentro de "Receber em casa" (aba Horário de funcionamento) ou "Retirada na loja" (aba Horário de funcionamento). Esse horário pode ser diferente do horário geral de atendimento.
+Existem 3 tipos de horário, independentes entre si (ver detalhe na seção Configurações da Loja):
+1. **Horário de Atendimento** (o principal, o que o cliente vê no app) — em `Configurações > Dados da Loja > Horário de Atendimento`.
+2. **Horário de Entrega** — em `Configurações > Formas de Entrega > Horário de Funcionamento`.
+3. **Horário de Retirada** — em `Configurações > Formas de Entrega > Retirada na Loja`.
 
 **Onde vejo quantos pedidos estão em aberto agora?**
 Em `Pedidos`, o quadro mostra colunas por status (Na fila, Em separação, Liberados, Concluídos, Cancelados), cada uma com um contador. Também dá pra ver um resumo consolidado ("Total de Pedidos em Aberto") na tela `Indicadores`.
@@ -113,24 +121,38 @@ Na tela `Usuários`, existe um botão para convidar/criar novo usuário — lá 
 ## Redes, Grupos e Lojas
 
 **O que é uma Rede?**
-É o nível mais alto de organização no Portal, abaixo apenas da Farmarcas — representa uma bandeira/franqueadora com várias lojas associadas (ex: ACFARMA, Ultra Popular). Uma Rede pode ter vários Grupos de lojas e Lojas individuais dentro dela.
+É o nível mais alto de organização no Portal, abaixo apenas da Farmarcas — representa uma bandeira/franqueadora (ex: ACFARMA, Ultra Popular, Super Popular). Dentro de uma Rede existem lojas de vários GEs (empresários) diferentes.
+
+**O que é um GE (Grupo Econômico)?**
+É o conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma Rede. É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal — ou seja, quando um associado tem várias filiais, ele normalmente organiza essas lojas num Grupo de lojas dentro do Portal.
 
 **O que é um Grupo de lojas e para que serve?**
-É um agrupamento de lojas dentro de uma Rede (por exemplo, filiais do mesmo empresário) que compartilham uma regra comum de **atendimento de pedidos** e **tipo de estoque**. Serve para centralizar ou distribuir como os pedidos são processados e como o estoque é compartilhado entre as lojas do grupo.
+É a funcionalidade do Portal que organiza as lojas de um mesmo GE dentro de uma Rede, definindo uma regra comum de **atendimento de pedidos** e **tipo de estoque**. A vantagem principal é operacional: em vez de um atendente precisar abrir uma aba por loja, o grupo permite acompanhar os pedidos de todas as lojas participantes numa única tela.
 
 **Quais são as opções de atendimento e estoque de um Grupo de lojas?**
-Ao configurar um grupo (botão "Configurar atendimento e estoque" dentro do detalhe do grupo), existem 3 opções:
-1. **Centralizar os pedidos numa loja principal e espelhar o estoque nas demais filiais** — uma loja "mãe" recebe todos os pedidos do grupo, e o estoque dela é replicado (espelhado) para as outras. Aparece como Atendimento "Loja principal" / Estoque "Espelhado".
-2. **Cada loja processa seus próprios pedidos, com estoques integrados entre elas** — cada loja atende seus pedidos, mas o estoque é compartilhado/consolidado entre todas as lojas do grupo. Aparece como Atendimento "Loja a loja" / Estoque "Integrado".
-3. **Cada loja processa seus próprios pedidos, com estoques independentes** — cada loja funciona de forma totalmente autônoma, sem misturar pedido nem estoque com as demais. Aparece como Atendimento "Loja a loja" / Estoque "Independente".
+Ao configurar um grupo (botão "Configurar atendimento e estoque" dentro do detalhe do grupo), existem 3 opções — mas elas dizem respeito **só ao estoque**, não a onde os pedidos são atendidos:
+1. **Estoque Espelhado** — uma loja "mãe" (loja principal) recebe todos os pedidos do grupo, e o estoque dela é replicado (espelhado) para as outras. É possível incluir uma loja secundária: nesse caso os estoques das duas lojas são somados, exibindo a quantidade total no app.
+2. **Estoque Integrado** — o estoque é somado fisicamente entre todas as lojas do grupo.
+3. **Estoque Independente** — os estoques de cada loja do grupo ficam isolados uns dos outros.
+
+**Importante:** não importa qual das 3 opções de estoque é escolhida — configurar um Grupo de lojas **sempre centraliza o atendimento dos pedidos na tela da loja principal**. A escolha entre Espelhado/Integrado/Independente afeta só o comportamento do estoque entre as lojas do grupo.
 
 Essa escolha afeta diretamente o que aparece disponível no aplicativo para os consumidores de cada loja do grupo — deve ser mudada com cuidado se o grupo já estiver em operação.
 
 **Como adiciono uma loja a um Grupo?**
 No detalhe do grupo (aba "Lojas"), existe o botão **"Adicionar loja"**.
 
+**O que é o "Estoque Centralizado" que aparece na tela de Lojas?**
+É o botão de atalho, no nível da Rede, para a tela de Grupo de lojas — tanto para ver os grupos existentes quanto para criar um novo. Não é uma funcionalidade separada, é a mesma configuração de Grupo de lojas descrita acima.
+
+**Consigo mudar uma loja de GE (Grupo Econômico)?**
+Não existe uma função para isso no Portal hoje. Se uma loja for removida, todos os usuários vinculados a ela perdem esse vínculo — ver seção Usuários.
+
+**Ao tentar cadastrar minha loja, o sistema diz que ela já está vinculada, mas meu CNPJ consta como não cadastrado. O que fazer?**
+Isso costuma ser um conflito de duplicidade ou vínculo residual no banco de dados (comum quando uma bandeira mudou de CNPJ). É preciso acionar o suporte Farmarcas para que o time técnico remova o vínculo antigo e libere o recadastro — não é algo que o associado resolve sozinho pelo Portal.
+
 **O que significa "ERP conectado até" na lista de Lojas?**
-É a data/hora da última vez que aquela loja sincronizou dados com o sistema ERP dela. Se essa data estiver muito atrasada (mais de 3 dias), é sinal de problema de comunicação — ver a seção Estoque abaixo sobre o alerta correspondente.
+É a data/hora da última vez que aquela loja sincronizou dados com o sistema ERP dela. Se essa data estiver muito atrasada (mais de 72 horas / 3 dias), é sinal de problema de comunicação — ver a seção Estoque abaixo sobre o alerta correspondente.
 
 ---
 
@@ -152,6 +174,20 @@ Sim, no nível da Rede a tela de Indicadores mostra um **Ranking das lojas por f
 **O que tem dentro de Configurações?**
 Três grandes seções, no menu lateral: **Dados da Loja**, **Formas de Entrega** e **Pagamentos**. Um indicador "Seu progresso" no canto inferior mostra quantas configurações essenciais já foram concluídas.
 
+**Quais são as etapas do checklist "Seu progresso"?**
+1. Informações da Loja
+2. Endereço Comercial
+3. Horário de atendimento
+4. Criação de oferta
+
+Ao concluir essas etapas, aparece a opção **"Faça Upgrade"**, para solicitar a ativação do **módulo de Vendas** (veja a próxima pergunta).
+
+**Como funciona a migração do módulo Ofertas para o módulo Vendas (e a liberação da Chave API)?**
+1. O associado solicita a migração pelo Portal (via "Faça Upgrade", depois de concluir o checklist de onboarding).
+2. A Chave de integração do ERP (API) é liberada e deve ser inserida no sistema ERP da loja.
+3. A ativação do módulo de Vendas e o espelhamento do estoque acontecem **separadamente** — pode levar um tempo até o estoque aparecer no app mesmo com o módulo já ativo.
+4. Se a solicitação ficar travada em "Aguardando" por muito tempo, ou o estoque demorar demais para aparecer, o associado deve acionar o suporte do próprio ERP para validar a integração do lado deles.
+
 **O que preencho em "Dados da Loja > Informações da loja"?**
 CNPJ (fixo), Razão social, Nome da loja no app (nome visível para o consumidor), E-mail, Telefone, WhatsApp (pode ser um número 0800), Farmacêutico responsável, CRF do farmacêutico, e a Chave de integração do ERP (fixa, gerada pela plataforma).
 
@@ -161,8 +197,22 @@ Em `Configurações > Dados da Loja > Endereço comercial`: preencha CEP, Estado
 **O que é o "Horário de Atendimento" em Dados da Loja?**
 É o horário geral em que a loja está aberta ao público — diferente do horário de entrega/retirada configurado em Formas de Entrega. Você ativa cada dia da semana individualmente e define o intervalo "De/Até".
 
+**Por que meu horário aparece incorreto no aplicativo?**
+Geralmente é uma configuração pendente ou desalinhada entre os **3 tipos de horário** que existem no Portal:
+- **Horário de Atendimento** — o principal, é o que o cliente vê ao buscar a loja no app. Configura em `Configurações > Dados da Loja > Horário de Atendimento`.
+- **Horário de Entrega** — define quando a loja aceita pedidos para entrega. Configura em `Configurações > Formas de Entrega > Horário de Funcionamento`.
+- **Horário de Retirada** — define quando o cliente pode buscar um pedido na loja. Configura em `Configurações > Formas de Entrega > Retirada na Loja`.
+
+Os horários de Entrega e Retirada não aparecem diretamente na vitrine do app, mas alimentam o cálculo de quando o cliente pode escolher cada opção e a previsão de recebimento — por isso, se algo parecer errado, vale checar os três.
+
 **Como funciona "Receber em casa"?**
 Em `Configurações > Formas de Entrega > Receber em casa`, ative o toggle e configure: horário de funcionamento para entrega, o raio de atendimento (distância máxima, até 30 km, com faixas de Alcance × Taxa de Entrega × Tempo de Entrega — dá pra criar várias faixas de preço por distância) e, opcionalmente, frete grátis a partir de um valor mínimo de compra.
+
+**Configurei as faixas de entrega mas elas não salvam. O que fazer?**
+Depois de preencher Alcance, Taxa e Tempo de uma faixa, é **obrigatório clicar no botão "+"** para adicionar aquela regra à listagem antes de clicar em Salvar. Se pular esse clique no "+", os dados somem. Se mesmo assim o problema persistir, é preciso acionar o suporte para inserir os dados manualmente.
+
+**O cliente está pertinho da farmácia mas o app diz que ele está "fora do alcance". O que conferir?**
+Primeiro, confirme no Portal se o raio de entrega está configurado corretamente. Se estiver certo, o problema costuma ser do lado do cliente: ele pode ter digitado o CEP/endereço errado, ou até colocado o CEP da própria farmácia no campo de entrega por engano — peça um print da tela dele para confirmar.
 
 **Como funciona "Retirada na loja"?**
 Em `Configurações > Formas de Entrega > Retirada na loja`, ative o toggle e configure o horário em que a loja aceita retirada, e o "Tempo de retirada" — quantos minutos depois da confirmação do pedido o produto fica pronto para o cliente buscar (esse tempo aparece pro consumidor no app).
@@ -180,11 +230,47 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 **O que mostra a tela de Estoque?**
 Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e um toggle "Exibir preço" que controla se o produto aparece com preço visível no app.
 
-**Meus produtos sumiram do aplicativo, o que houve?**
-Provavelmente é o alerta de **ERP desatualizado**: se a loja não sincroniza com o ERP há mais de 3 dias, o Portal oculta automaticamente os preços no aplicativo e mostra um aviso vermelho no topo da tela de Estoque. **A solução é contatar o suporte do seu sistema ERP** para verificar por que a comunicação parou — não é algo que se resolve só pelo Portal.
+**Minha loja não aparece no aplicativo. O que pode ser?**
+Dois motivos principais:
+1. **Perda de conexão com o ERP** — o sistema da loja parou de enviar dados para o Portal.
+2. **Desativação manual** — o estoque foi desabilitado propositalmente dentro do Portal (toggle "Disponível" desligado).
 
-**Como coloco um preço diferente pra um produto específico?**
-Na tela de Estoque, use o campo "R$ customizado" na linha do produto. Esse valor sobrescreve o preço padrão vindo do ERP. Se quiser voltar ao preço original, é só remover o valor customizado (ícone de lixeira ao lado do campo).
+**Por que a loja é desativada automaticamente?**
+Se o Portal perder a comunicação com o ERP por mais de **72 horas (3 dias)**, a loja é desativada automaticamente — é uma medida de segurança para não vender produto com preço desatualizado ou sem estoque real.
+
+**Como resolver a desativação por falta de comunicação com o ERP?**
+1. Abra um chamado com o suporte técnico do seu sistema ERP.
+2. Peça a reconfiguração: solicite a **"Nova Integração de Preço e Estoque"**.
+3. Informe ao suporte a sua **Chave de Integração** (token único). Se não souber onde encontrá-la: `Portal > Configurações > Informações da Loja > Chave de integração do ERP`.
+
+**Por que o preço de um produto aparece incorreto às vezes?**
+O preço exibido no app vem direto via API do seu ERP. Divergências normalmente vêm de:
+- **Ofertas ativas no ERP** — se o produto está numa oferta ou "caderno de ofertas" do seu sistema, o Portal sempre traz o **menor valor** disponível.
+- **Atraso de sincronização** — o sistema pode estar aguardando a atualização da base entre o ERP e o Portal.
+
+**Consigo alterar o preço direto no Portal?**
+Sim — acesse `Estoque`, busque o produto por nome ou EAN, clique no ícone de lápis (editar), informe o preço correto e confirme em "Atualizar" (isso preenche o campo **R$ customizado**). Recomendado só para casos isolados: se vários produtos estiverem com valor errado ao mesmo tempo, o ideal é abrir chamado com o suporte do ERP pedindo uma **atualização forçada da base de estoque e preço** em lote, em vez de corrigir um por um. Não existe validação/regra sobre esse valor customizado — ele fica valendo exatamente o que foi digitado até ser removido (ícone de lixeira ao lado do campo). Hoje esse recurso de customizar preço direto na tela de Estoque é exclusivo do perfil **Contato cliente** (balconista).
+
+**Como oculto um produto com preço ou estoque errado, sem excluir o cadastro?**
+Acesse o produto na tela Estoque e desmarque a opção **"Exibir preço"**. Ele deixa de aparecer no app até a correção ser feita.
+
+**Como oculto medicamentos do aplicativo?**
+Duas formas: desabilitar o estoque geral daquele grupo de produtos, ou desativar item por item dentro do Estoque. **Não é possível** ocultar por categoria inteira de uma vez — tem que ser tudo ou um por um.
+
+**Ativei o módulo de Vendas e a API, mas o estoque ainda não aparece no app. O que houve?**
+A ativação do módulo e a sincronização/espelhamento do estoque acontecem de forma separada — o estoque pode levar um tempo para aparecer, mesmo com o módulo já ativo. A loja pode seguir preenchendo as demais configurações normalmente enquanto isso.
+
+**Mudamos de ERP (ex: do BIG para o Alpha7), trocamos o token, mas o app continua puxando o estoque do sistema antigo. Como resolver?**
+Entre em contato com o suporte do novo ERP e peça uma **limpeza de dados anteriores** (cache/histórico) antes de subir o estoque novamente — isso evita o conflito entre o estoque antigo e o novo durante o espelhamento.
+
+**No formulário de integração do ERP, o que colocar no campo "Nome da Empresa"?**
+Os dados da **Farmarcas** — a integração é feita via API usando a chave que está no Portal, não os dados da própria farmácia associada.
+
+**Como os pedidos do e-commerce aparecem no meu sistema ERP?**
+A integração ocorre via API, enviando os pedidos em formato de pré-venda (ou pedido integrado, dependendo do ERP) diretamente para a tela do sistema da loja — o formato exato varia por ERP (ver também a seção sobre o Alpha7 abaixo).
+
+**Como solicito um produto que ainda não existe no catálogo?**
+Use o ícone "Solicitar produto" na barra de ferramentas da tela Estoque. No formulário, informe Nome do produto e Fabricante, e para cada item o Código de barras (EAN), a Apresentação (ex: "Dorflex caixa com 10") e uma imagem de referência — dá pra solicitar **até 50 produtos de uma vez**. A solicitação vai para aprovação do time Farmarcas (Admin/Catálogo).
 
 ---
 
@@ -202,6 +288,12 @@ Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja
 
 **Como funciona o troco quando o pagamento é em dinheiro?**
 O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido, exibidos no painel de detalhe do pedido.
+
+**Meus pedidos estão travados na fase "Liberados" e não mudam de status. O que fazer?**
+Isso indica instabilidade na comunicação de status entre os sistemas — não é algo que o associado resolve sozinho pelo Portal. Anote os números dos pedidos afetados e tire prints das telas, e acione o suporte Farmarcas o quanto antes para que o time técnico analise e destrave o fluxo.
+
+**Reclamaram de um produto errado num pedido, mas os dados não batem com o que o cliente diz. Como proceder?**
+Sempre confira o **EAN (código de barras)** do produto no cadastro do Estoque/Catálogo antes de tudo. Se o associado disser que o produto é de uma especificação (ex: 60g) mas o EAN aponta outra (ex: 180g), o correto é aguardar o retorno do cliente com a confirmação dos dados reais do produto físico antes de seguir com o chamado.
 
 ---
 
@@ -227,6 +319,12 @@ Na listagem de Promoções, selecione a(s) promoção(ões) e use a ação de ca
 **Como removo só uma loja de uma promoção sem cancelar tudo?**
 Abra o detalhe da promoção (clique na linha da lista) — lá aparece a seção "Lojas participantes", com opção de remover uma loja específica sem afetar as demais.
 
+**Consigo colocar um medicamento controlado em promoção?**
+Não. O Portal já bloqueia isso na criação da oferta — medicamentos controlados aparecem desabilitados na lista de seleção de produtos do passo 5.
+
+**Existe limite de promoções "Em destaque"?**
+Não há limite de quantas promoções podem estar marcadas como destaque ao mesmo tempo. Ter ao menos uma promoção em destaque cria uma seção própria chamada **"Ofertas em destaque"** no aplicativo do consumidor.
+
 ---
 
 ## Banners
@@ -247,24 +345,115 @@ Na tela `Usuários`, use a opção de convidar/criar usuário. Você vai precisa
 **Posso remover o acesso de alguém?**
 Sim, na listagem de Usuários existe uma ação para desvincular/remover um usuário — mas usuários com perfil Contato cliente não têm essa ação disponível para eles mesmos (não conseguem remover outros usuários).
 
+**Consigo convidar a mesma pessoa/e-mail para dar acesso a outra loja ou rede?**
+Não com o mesmo e-mail. O Portal bloqueia o convite se aquele e-mail já existir no sistema (aparece a mensagem "Parece que o usuário já existe em nosso sistema", com opção de "Voltar" ou "Editar usuário"). Para dar acesso adicional a alguém, edite o cadastro existente em vez de tentar criar um segundo login.
+
+**O que acontece com os usuários se uma loja é removida do Portal?**
+Todos os usuários vinculados àquela loja perdem o vínculo automaticamente:
+- Um **Contato cliente** (vinculado a uma única loja) continua conseguindo logar, mas passa a ver uma tela em branco, sem loja para trabalhar.
+- Os demais perfis (Gestor de Loja/Rede/Admin), se tiverem outras lojas vinculadas, simplesmente deixam de ver os dados da loja removida e seguem vendo as demais normalmente.
+
+Não existe uma função para "mudar" uma loja de GE/rede dentro do Portal — a única forma de reorganizar é removendo e recadastrando o vínculo.
+
+**Enviei um convite de usuário e ele não chegou / deu erro. O que fazer?**
+Na maioria das vezes é preenchimento incorreto do e-mail do convidado, ou uma configuração travada no perfil de quem está enviando o convite. Confira se o e-mail foi digitado certo; se persistir, acione o suporte para ajustar o perfil de quem está convidando.
+
+**Dá pra alterar o e-mail de um usuário já cadastrado?**
+Sim, mas se o sistema der erro na troca, confira se o novo e-mail já não está associado a outra conta ativa — e-mails duplicados geram conflito e bloqueiam a alteração.
+
+**Dá pra buscar um usuário pelo CPF para redefinir senha ou trocar e-mail?**
+Sim, o painel permite buscar por CPF para localizar o cadastro e seguir com a redefinição.
+
 ---
 
 ## Catálogo de produtos
 
 **Eu, como associado, posso cadastrar um produto novo direto no Portal?**
-Não. O catálogo de produtos é **centralizado e compartilhado entre todas as Redes** da plataforma, gerenciado pelo time da Farmarcas (perfil Admin). Se você precisa de um produto que ainda não existe no catálogo, isso é feito por meio de uma **Solicitação de produto**.
+Não diretamente — o catálogo de produtos é **centralizado e compartilhado entre todas as Redes** da plataforma, gerenciado pelo time da Farmarcas (perfil Admin). Mas o pedido para incluir um produto novo é **self-service**: você mesmo envia a solicitação pela tela Estoque (ver seção Estoque, "Como solicito um produto que ainda não existe no catálogo?"), só a aprovação final é que fica com a Farmarcas.
 
 **O que é uma Solicitação de produto?**
-É o pedido para incluir um produto novo (por nome + EAN) no catálogo mestre da plataforma. A solicitação é analisada pelo time Farmarcas (Admin), que aprova ou reprova — o produto só passa a existir e pode ser vendido depois de aprovado.
+É o pedido para incluir um produto novo (nome, fabricante, EAN, apresentação e imagem) no catálogo mestre da plataforma, enviado pelo associado a partir da tela Estoque. A solicitação é analisada pelo time Farmarcas (Admin), que aprova ou reprova — o produto só passa a existir e pode ser vendido depois de aprovado.
+
+**Consigo cadastrar produtos e preços em massa, ou preciso fazer um por um?**
+Dá para fazer em massa, via carga de dados (planilha/integração) — não precisa cadastrar produto por produto manualmente.
 
 **Um produto meu não pode entrar em promoção, por quê?**
-Cada produto no catálogo tem uma configuração chamada **"Permitir promocionar"**. Se estiver desativada para aquele produto, ele não pode ser incluído em nenhuma promoção. Essa configuração é feita no cadastro do produto no Catálogo, gerenciado pela Farmarcas.
+Cada produto no catálogo tem uma configuração chamada **"Permitir promocionar"**, feita no cadastro do produto (gerenciado pela Farmarcas). Se estiver desativada, o produto não pode ser **adicionado** a nenhum grupo promocional. Detalhe: se o produto já estava num grupo promocional antes de receber essa restrição, ele não é removido automaticamente do grupo — a regra só vale para novas inclusões.
+
+**O que acontece quando um produto é "despublicado" do catálogo?**
+Ele deixa de ser exibido no catálogo de todas as lojas — mesmo que uma loja continue enviando aquele EAN via integração com o ERP, ele não volta a aparecer. O registro do EAN continua existindo em pedidos antigos e relatórios, só a exibição futura é bloqueada.
+
+**O que muda quando um produto é marcado como "Genérico"?**
+No aplicativo, aparece uma tag "genérico" no detalhe daquele item para o consumidor.
+
+---
+
+## Precificação e descontos vindos do ERP (ex: sistema BIG)
+
+> Estas perguntas são mais técnicas e giram em torno do **ERP do associado** (BIG, Alfa 7/Alpha7, Soft), não do Portal em si — mas são comuns o suficiente para o bot reconhecer e orientar o primeiro passo.
+
+**Por que a configuração de preços e descontos no meu ERP parece tão complexa?**
+É comum na maioria dos sistemas de ERP (BIG, Alpha7, Soft): existem múltiplas variáveis e formas de aplicar desconto e estruturar preço, o que gera bastante campo de preenchimento.
+
+**Como funciona a lógica de desconto no sistema BIG?**
+O BIG parte de uma **Tabela de Desconto**: toda vez que o módulo Radar Farma é configurado, uma tabela padrão é definida como ponto de partida para as regras do sistema.
+
+**Como investigar por que um produto está com preço/desconto errado (sistema BIG)?**
+Siga do geral para o específico:
+1. **Tabela de Desconto do Produto** — veja se existe uma regra específica para aquele produto.
+2. **Desconto do Grupo** — se não houver regra específica, confira se o grupo daquele produto tem desconto automático ativo.
+3. **Cadastro do Produto** — por último, confira se existe uma regra de "Preço Filial" aplicada, e se o produto não está marcado como inativo no sistema.
+
+---
+
+## Integração ERP Alpha7
+
+**Meus pedidos do app estão entrando no ERP Alpha7 como "Orçamento em cotação", em vez de já virarem pedido de entrega para faturar no PDV. Por quê?**
+Esse é o comportamento padrão da integração atual do Alpha7: os pedidos do app chegam ao ERP, mas entram inicialmente na listagem de orçamentos, não direto como pedido de entrega.
+
+**O que fazer para o pedido aparecer no PDV para faturamento?**
+Fluxo manual, por enquanto:
+1. Acesse a listagem de orçamentos no ERP.
+2. Abra o orçamento correspondente ao pedido do app.
+3. Altere o status de "Orçamento em cotação" para **"Orçamento de entrega"**.
+4. Depois dessa conversão, o pedido fica visível no PDV para emissão de nota e faturamento.
+
+**Isso vai continuar sendo manual?**
+A equipe de tecnologia da Farmarcas já está em contato com o time da Alpha7 para tornar esse fluxo automático (pedidos entrando direto como entrega). Está em avaliação de viabilidade técnica pelo lado da Alpha7, sem data confirmada.
+
+---
+
+## Meios de pagamento (Braspag, Cielo, Rede, Antifraude)
+
+**Como contrato a Braspag? Tem mensalidade ou taxa inicial?**
+A contratação é **100% self-service pelo próprio Portal**, em `Configurações > Pagamentos` — não precisa (e não deve) abrir chamado de suporte para isso.
+
+**Por que preciso assinar um contrato via D4Sign enviado pelo ERP, se a integração por API não tem custo?**
+Mesmo sem taxa de integração, a assinatura é **obrigatória** por exigência regulatória e de LGPD — é o termo de aceite para o compartilhamento e tráfego de dados de clientes entre os sistemas.
+
+**Quem ajuda na configuração do Antifraude da Braspag?**
+O suporte do e-commerce orienta o fluxo inicial (kickoff), mas o acompanhamento detalhado do antifraude é feito junto com a própria Braspag/adquirente.
+
+**O link do contrato Braspag veio com CNPJ/Razão Social errados. Como corrigir?**
+É preciso levantar os dados corretos da loja e pedir ao suporte interno a geração e reenvio de um novo link D4Sign.
+
+**Estou recebendo muitos erros de "Cartão Inválido" ou "Compra não finalizada" numa loja específica. O que pode ser?**
+Geralmente está ligado a instabilidade na adquirente (Cielo, Rede etc). Vale confirmar se a loja está usando a adquirente homologada correta para o perfil dela, e se o e-commerce já foi incluído/liberado no painel da própria credenciadora de cartões.
+
+---
+
+## Notificações, instabilidades e contingência
+
+**Paramos de receber notificação de pedido novo via WhatsApp depois de uma atualização do Portal. O que houve?**
+O serviço antigo de notificação via WhatsApp foi descontinuado. Um novo sistema, mais estável, está em fase de implementação/subida em produção.
+
+**O Portal ou o app estão fora do ar / não consigo logar. Existe um link alternativo?**
+Sim, em caso de suspeita de instabilidade na URL principal, há um link de contingência: `https://admin-ecomm.radarfarmarcas.com.br/network/list`.
 
 ---
 
 ## Perguntas sem resposta confirmada
 
-Estes pontos ainda não foram totalmente mapeados/confirmados — o bot deve reconhecer a pergunta, mas responder que vai encaminhar para o suporte humano em vez de inventar um caminho de tela:
+- **`SessionPermissionGuard` desabilitado no front-end** (achado técnico da exploração de código, não é dúvida de associado) — sem confirmação se é proposital ou dívida técnica; sem impacto conhecido no dia a dia do Portal. Mantido só como registro para o time de engenharia, não para o bot responder a associados.
 
-- **Como o associado efetivamente envia uma Solicitação de produto pelo Portal** (a tela mapeada até agora mostra só o lado do Admin, que aprova/reprova).
-- **Se "Rede" é o mesmo conceito que "GE — Grupo Econômico"** já usado no glossário do produto, ou se são coisas diferentes.
+Todos os demais pontos que estavam em aberto (atendimento de pedidos em Grupo de lojas, definição de "Anjo", bug do modal de cancelamento) já foram esclarecidos e incorporados ao conteúdo acima.
