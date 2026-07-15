@@ -22,6 +22,7 @@
 10. [Banners](#10-banners)
 11. [Usuários](#11-usuários)
 12. [Catálogo (Admin)](#12-catálogo-admin)
+13. [Acesso ao Portal: Login, Senha e Cadastro](#13-acesso-ao-portal-login-senha-e-cadastro)
 
 ---
 
@@ -347,6 +348,12 @@ Ao clicar num pedido, o painel de detalhe mostra: dados do cliente (nome, CPF), 
 
 Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido.
 
+### Cancelando um pedido
+
+Ao cancelar um pedido, abre o modal **"Cancelar pedido #[número]"**, pedindo para **selecionar o motivo da recusa**: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. A ação exige confirmação e **não pode ser desfeita**.
+
+Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"** — o cancelamento em si não dispara um estorno automático visível nessa tela, é um lembrete operacional para o atendente tratar o reembolso separadamente.
+
 ### Relatório de Pedidos (Exportar)
 
 O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**Últimos 7 dias / 30 dias / 90 dias / Personalizado**) e o botão **"Gerar Relatório"**, que baixa um Excel (.xlsx) com o detalhe dos pedidos.
@@ -408,14 +415,26 @@ O formulário de criação segue 5 passos:
    - Para um grupo: escolha a regra de composição do grupo (ex: "Mesmo produto • mesma marca") e o tipo de desconto (ex: "Preço fixo (de/por)").
 2. **Onde essa promoção será válida?** — seleciona a(s) loja(s) participante(s).
 3. **Quando a promoção estará ativa?** — data de início/fim e dias da semana em que a promoção roda.
-4. **Regras da promoção** — tempo de uso da oferta, se permite um novo uso após um período, e limite de itens por compra.
+4. **Regras da promoção** — hoje só o **Limite por compra** é configurável aqui. *(Os campos "Tempo para uso" e "Novo uso da oferta" existiam antes e foram removidos da tela — o sistema aplica um padrão fixo internamente: 1 dia de tempo de uso e "Não renovar" para novo uso, sem exibir isso ao associado.)*
 5. **Produtos da promoção** — depende da escolha do passo 1:
    - *Um produto*: busque por nome/EAN, aplique um desconto geral de uma vez (campo "Desconto geral" + botão "Aplicar") ou ajuste o desconto produto a produto. Também é possível **importar uma planilha (.xlsx)** com a lista de produtos e descontos — o Portal informa quantos produtos foram encontrados e quantos não puderam ser importados.
    - *Grupo de produtos*: busque um grupo já cadastrado (ver [Catálogo](#12-catálogo-admin)) e defina o preço "De" e "Por" para o grupo inteiro.
 
-### Detalhes e cancelamento de uma promoção
+### Detalhes de uma promoção
 
-Clicando numa promoção da lista, abre um painel com o produto/grupo, status, EAN e a lista de **lojas participantes**, com opção de remover uma loja específica da promoção sem cancelar tudo. O cancelamento de uma promoção pede confirmação antes de ser efetivado, já que a ação não pode ser desfeita.
+Clicando numa promoção da lista, abre um painel (drawer) com o produto/grupo, status, EAN, uma seção **"Desempenho"** (Ativação/Vendas/Conversão) e a lista de **lojas participantes**, com opção de remover uma loja específica da promoção sem cancelar tudo.
+
+**Os botões no rodapé do drawer mudam conforme o status da promoção:**
+- **Promoção Ativa**: mostra **"Cancelar oferta"** e **"Destacar oferta"** (ou "Retirar destaque", se já estiver em destaque).
+- **Promoção Finalizada ou Cancelada**: mostra só o botão **"Repetir oferta"** (ver abaixo) — não é mais possível cancelar ou destacar uma promoção que já terminou.
+
+**Perfil Contato cliente (balconista):** não vê **nenhum** botão no rodapé desse drawer, em nenhum status — não cancela, não destaca e não repete promoções.
+
+O cancelamento de uma promoção pede confirmação antes de ser efetivado, já que a ação não pode ser desfeita.
+
+### Repetindo uma promoção
+
+No drawer de detalhes de uma promoção **Finalizada** ou **Cancelada**, o botão **"Repetir oferta"** leva direto para o formulário de criação de uma nova promoção, **pré-preenchido com todos os dados da promoção original** (produtos, lojas, tipo de desconto, regras) — **exceto as datas de início e fim**, que precisam ser escolhidas de novo. Qualquer campo pré-preenchido pode ser alterado antes de salvar. Funciona tanto para promoções individuais quanto por grupo.
 
 ---
 
@@ -579,6 +598,31 @@ Um Grupo de produtos reúne vários produtos sob uma regra de composição (ex: 
 ### Solicitações de produtos
 
 Quando uma loja precisa de um produto que ainda não existe no catálogo mestre, ela envia uma **solicitação** pelo formulário "Solicitar produto" (acessível pela tela [Estoque](#7-estoque) — ver "Solicitando um produto novo"), informando nome, fabricante, EAN(s), apresentação e imagem de referência. Essa tela de Catálogo é onde o **Admin** revisa a fila de solicitações (Rede de origem, nome do produto, EAN, data, status Pendente/Aprovado/Reprovado) e aprova ou reprova — o produto só passa a existir na plataforma (e pode ser vendido) depois de aprovado.
+
+---
+
+## 13. Acesso ao Portal: Login, Senha e Cadastro
+
+### Login
+
+Tela inicial do Portal: **"Bem-vindo — Faça login para acessar sua conta."** Campos **E-mail** e **Senha** (com ícone de olho para mostrar/ocultar), checkbox **"Lembrar senha"**, link **"Esqueceu a senha?"** e botão **"Entrar"**.
+
+### Esqueceu a senha
+
+Ao clicar em "Esqueceu a senha?": tela **"Esqueceu a senha?"** — "Basta inserir o seu e-mail e enviaremos um link para você redefinir a sua senha." Campo de e-mail cadastrado, botão **"Enviar"**, e link **"Voltar ao login"**. Depois de enviar, aparece uma tela de sucesso: **"E-mail enviado — Confira sua caixa de entrada e siga os passos para recuperar sua senha. Caso não tenha recebido, verifique sua caixa de spam."**, com botão "Fechar".
+
+> **Diferente do App:** no aplicativo do consumidor final, a redefinição de senha é feita por **CPF**; no Portal, é feita por **e-mail com link de redefinição** — são fluxos diferentes, não confundir.
+
+### Completando o cadastro (convite de usuário)
+
+Quando um usuário é convidado (ver [Usuários](#11-usuários)), ele recebe algo (provavelmente um e-mail — a ser confirmado) que leva a um fluxo de **"Complete seu cadastro"** em 2 passos, com barra de progresso:
+
+1. **Passo 1**: "Preencha os campos abaixo para finalizar o seu cadastro e começar a usar o Radar E-commerce." Campos: **Nome completo** e **CPF**. Botão "Avançar".
+2. **Passo 2**: Campos **Nova senha** e **Confirmar nova senha**, com uma lista de requisitos de senha exibida ao lado (mínimo de caracteres, letra maiúscula/minúscula, caractere especial). Botão **"Concluir cadastro"**.
+
+Ao final, tela de sucesso: **"Parabéns, cadastro concluído! Agora você está redirecionado para a tela de login..."**, com botão **"Fazer login"**.
+
+**Do lado de quem convida** (ver [Usuários](#11-usuários)): o convite é feito por um modal simples — só o **e-mail** do convidado (com validação, bloqueando duplicados), mais o Perfil de acesso e o vínculo a loja/lojas/rede. Não há campos adicionais (nome, telefone etc.) nesse momento — esses dados só são preenchidos pelo próprio convidado no fluxo de "Complete seu cadastro" descrito acima.
 
 ---
 

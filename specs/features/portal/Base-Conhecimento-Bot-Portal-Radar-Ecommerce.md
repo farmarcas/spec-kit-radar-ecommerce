@@ -55,7 +55,13 @@ Associados nem sempre usam o nome exato do campo/tela do Portal. Esta tabela aju
 ## Acesso, login e perfis
 
 **Como eu entro no Portal?**
-Você acessa pela tela de login do Portal com seu e-mail e senha cadastrados. Se esqueceu a senha, use o link "Esqueceu a senha?" na própria tela de login.
+Tela "Bem-vindo — Faça login para acessar sua conta", com campos E-mail e Senha (ícone de olho pra mostrar/ocultar), checkbox "Lembrar senha" e botão "Entrar".
+
+**Esqueci minha senha do Portal, o que fazer?**
+Clique em "Esqueceu a senha?" na tela de login, informe seu e-mail cadastrado e clique em "Enviar". Você recebe uma tela de confirmação ("E-mail enviado") e um link por e-mail para redefinir a senha (confira a caixa de spam se não chegar). **Atenção:** isso é diferente do app do consumidor final, onde a redefinição é feita por CPF, não por e-mail — não confundir os dois fluxos.
+
+**Recebi um convite pra usar o Portal, como completo meu cadastro?**
+O convite leva a um fluxo "Complete seu cadastro" em 2 passos: primeiro Nome completo e CPF; depois Nova senha + Confirmar nova senha (com os requisitos de senha mostrados na tela — mínimo de caracteres, maiúscula/minúscula, caractere especial). Ao concluir, aparece "Parabéns, cadastro concluído!" e um botão para ir à tela de login.
 
 **O que é a hierarquia Rede > Grupo de lojas > Loja?**
 O Portal Radar organiza tudo em 4 níveis: a **Farmarcas** é a dona da plataforma; uma **Rede** é o conjunto de lojas de uma bandeira/franqueadora (ex: ACFARMA); um **Grupo de lojas** é um subconjunto opcional de lojas dentro de uma Rede (ex: filiais do mesmo dono); e a **Loja** é a unidade individual, com CNPJ próprio, onde o dia a dia acontece.
@@ -379,6 +385,12 @@ Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja
 **Como funciona o troco quando o pagamento é em dinheiro?**
 O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido, exibidos no painel de detalhe do pedido.
 
+**Como cancelo um pedido, e quais motivos posso selecionar?**
+Ao cancelar, abre o modal "Cancelar pedido #[número]", pedindo o motivo: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, ou Sem estoque. Pede confirmação e não pode ser desfeito.
+
+**O pedido que vou cancelar já foi pago online. Muda alguma coisa?**
+Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso. O cancelamento em si não dispara um estorno automático nessa tela — é um lembrete para o atendente tratar o reembolso separadamente.
+
 **Meus pedidos estão travados na fase "Liberados" e não mudam de status. O que fazer?**
 Isso indica instabilidade na comunicação de status entre os sistemas — não é algo que o associado resolve sozinho pelo Portal. Anote os números dos pedidos afetados e tire prints das telas, e acione o suporte Farmarcas o quanto antes para que o time técnico analise e destrave o fluxo.
 
@@ -416,7 +428,7 @@ No botão "Nova promoção", siga os 5 passos do formulário:
 1. Escolha **o que promover** — Um produto ou Grupo de produtos — e o tipo de desconto (ex: Desconto % ou Preço fixo).
 2. Escolha **em quais lojas** a promoção vale.
 3. Defina **quando** ela fica ativa — data de início/fim e dias da semana.
-4. Configure as **regras de uso** — tempo para usar a oferta, se permite um novo uso depois de um tempo, e limite de itens por compra.
+4. Configure as **regras de uso** — hoje só existe o campo **Limite por compra** (os campos "tempo para uso" e "novo uso da oferta" foram removidos da tela; o sistema aplica por padrão 1 dia de uso e "não renovar", sem mostrar isso na interface).
 5. Escolha **os produtos**: busque por nome/EAN (ou por grupo, se escolheu "Grupo de produtos" no passo 1), ajuste o desconto individualmente ou aplique um "Desconto geral" de uma vez para todos os produtos selecionados.
 
 **Dá pra cadastrar vários produtos de uma vez numa promoção?**
@@ -427,6 +439,12 @@ Na listagem de Promoções, selecione a(s) promoção(ões) e use a ação de ca
 
 **Como removo só uma loja de uma promoção sem cancelar tudo?**
 Abra o detalhe da promoção (clique na linha da lista) — lá aparece a seção "Lojas participantes", com opção de remover uma loja específica sem afetar as demais.
+
+**O que aparece no rodapé do detalhe de uma promoção?**
+Depende do status: se estiver **Ativa**, mostra "Cancelar oferta" e "Destacar oferta"/"Retirar destaque". Se estiver **Finalizada** ou **Cancelada**, mostra só o botão **"Repetir oferta"**. O perfil Contato cliente (balconista) não vê nenhum desses botões, em nenhum status.
+
+**Como funciona "Repetir oferta"?**
+No detalhe de uma promoção Finalizada ou Cancelada, o botão "Repetir oferta" abre o formulário de criação já preenchido com os dados da promoção original (produtos, lojas, tipo de desconto, regras) — só as datas de início/fim ficam em branco, precisam ser escolhidas de novo. Dá pra editar qualquer campo antes de salvar. Funciona para promoções individuais e por grupo.
 
 **Consigo colocar um medicamento controlado em promoção?**
 Não. O Portal já bloqueia isso na criação da oferta — medicamentos controlados aparecem desabilitados na lista de seleção de produtos do passo 5.
@@ -476,7 +494,7 @@ Não — dá para marcar **"Banner permanente"** em vez de definir uma data de t
 ## Usuários
 
 **Como convido uma pessoa nova para acessar o Portal?**
-Na tela `Usuários`, use a opção de convidar/criar usuário. Você vai precisar escolher o **Perfil de acesso** dele (Contato cliente, Gestor de Loja, Gestor de Rede ou Admin — ver seção "Acesso, login e perfis") e vinculá-lo à loja, lojas ou rede correspondente.
+Na tela `Usuários`, use a opção de convidar/criar usuário. O modal de convite é simples: apenas o **e-mail** do convidado (com validação, bloqueando duplicados), o **Perfil de acesso** dele (Contato cliente, Gestor de Loja, Gestor de Rede ou Admin — ver seção "Acesso, login e perfis") e o vínculo à loja, lojas ou rede correspondente. Não há campos adicionais (nome, telefone etc.) nesse momento — quem preenche esses dados é o próprio convidado, no fluxo de "Complete seu cadastro" (ver "Acesso, login e perfis").
 
 **Posso remover o acesso de alguém?**
 Sim, na listagem de Usuários existe uma ação para desvincular/remover um usuário — mas usuários com perfil Contato cliente não têm essa ação disponível para eles mesmos (não conseguem remover outros usuários).
