@@ -118,21 +118,71 @@ Duas abas: **Lojas** (lista as unidades do grupo, com botão "Adicionar loja") e
 
 ## 5. Indicadores
 
-A tela **Indicadores** é o painel de acompanhamento de performance — tanto no nível da loja quanto no nível da Rede. É aqui que o Associado acompanha os principais números do negócio.
+A tela **Indicadores** é o painel de acompanhamento de performance, disponível tanto no nível da Loja quanto no nível da Rede. Dentro dela existem duas visões, uma para cada módulo que a loja/rede pode operar:
 
-Principais informações exibidas:
+- **Home de Vendas** — indicadores de pedidos/checkout completo pelo app.
+- **Home de Ofertas** — indicadores do módulo Ofertas (ativação de ofertas e conversão em compra na loja física).
 
-- **Faturamento** (com gráfico por dia da semana), **Taxa de cancelamento** e **quantidade de Pedidos** no período.
-- **Ticket médio**.
-- **Ranking das lojas** por faturamento (útil no nível Rede, para comparar unidades).
-- **Top produtos mais vendidos**, com opção de baixar a lista.
-- **Total de Pedidos em Aberto** e sua distribuição por status (Fila / Liberados / Em separação).
-- **Tempo médio para iniciar o atendimento** e **tempo médio total de atendimento** — bons indicadores de agilidade operacional.
-- **Média de itens por cesta** e **volume de pedidos cancelados**.
-- Segmentação do público: **faixa etária por geração**, **gênero** e **região**.
-- **Formas de pagamento** (Online vs Offline, com detalhamento por bandeira/tipo) e **métodos de entrega** (Delivery vs Retirada).
+**Confirmado:** "Indicadores" é o nome real da aba de navegação — é essa mesma tela que funciona como a Home/painel principal ao entrar numa loja ou rede. Dentro dela, duas sub-abas: **Vendas** e **Ofertas**.
 
-**Ajustando o período de análise:** o seletor no topo (ex: "Últimos 7 dias") permite trocar a janela de tempo dos indicadores, e o botão **Filtrar** refina por outros critérios. **Exportar** baixa os dados exibidos.
+Em todas as variações, o cabeçalho tem: aviso de **atualização automática a cada 30 minutos** (com data/hora da última atualização), um seletor de período (ex.: "Últimos 7 dias", "Últimos 12 meses", com opção de período **Personalizado** via calendário), um botão **Filtrar** (critérios adicionais) e **Exportar**. **Trocar o período recarrega a tela inteira** — cada card busca os dados de novo no servidor (não é um recálculo local), então é normal ver os cards em *skeleton* (esqueleto de carregamento) por um instante após mudar o filtro.
+
+### 5.1 Home de Vendas
+
+No topo, uma faixa com 3 abas (cada uma mostra um gráfico de linha/barra por dia dentro do período; trocar de aba **não** busca dados novos — as 3 já vêm carregadas, só alterna qual gráfico aparece):
+
+| Indicador | O que significa (tooltip) |
+|---|---|
+| **Faturamento** | "Representa o valor total das vendas registradas no período selecionado." |
+| **Pedidos cancelados** | "Total de pedidos cancelados no período selecionado." |
+| **Pedidos concluídos** | "Total de pedidos finalizados no período selecionado." |
+
+*Comportamento do gráfico:* passar o mouse sobre um ponto mostra o valor em R$ daquele dia. Não há clique/drill-down. Sem legenda (é um valor único por dia). O eixo horizontal muda de granularidade conforme o período selecionado (dias, semanas, meses etc.), mas quem decide os grupos exibidos é o servidor — o Portal só exibe o que a API devolve.
+
+Demais indicadores da Home de Vendas:
+
+| Indicador | O que significa |
+|---|---|
+| **Ticket Médio** | "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos." *(gráfico de barras, mesmo comportamento de hover em R$, sem clique/legenda)* |
+| **Total de Pedidos em Aberto** | "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." Tem um botão **"Visualizar pedidos"**. |
+| **Volume dos pedidos em aberto** | Soma em R$ de todos os pedidos ainda não finalizados (Na fila + Em separação + Liberados). |
+| **Pedidos em aberto por status** | Contagem de pedidos em cada status (Fila / Em separação / Liberados), exibida em %. *(gráfico de rosca; hover mostra "Status: quantidade (%)"; legenda é uma lista estática de cores com o percentual de cada status, sem interação)* ⚠️ Hoje esse indicador filtra incorretamente pelo período de datas selecionado — deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação. Correção já registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Tempo médio para iniciar primeiro atendimento** | Tempo entre o pedido entrar "Na fila" e ser concluído. Exibido em formato de duração (ex.: "9h e 37min"). |
+| **Tempo médio total de atendimento** | Também entendido como "Na fila" até "Concluído" — a definição exata implementada hoje ainda não está confirmada com engenharia; correção/checagem registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056) (inclusive a sobreposição de definição com o indicador acima). Exibido em formato de duração (ex.: "2 dias e 11h"). |
+| **Média de itens por cesta** | Média de itens por pedido, considerando todos os pedidos (concluídos ou não). |
+| **Volume dos pedidos cancelados** | Valor em R$ (não quantidade) que seria faturado pelos pedidos cancelados no período. ⚠️ A label atual do card não deixa isso claro — correção registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Faixa etária por gerações** | "Distribuição dos clientes que realizaram compras no período, agrupados por gerações." Faixas exibidas: 18–28 anos (Geração Z), 29–44 anos (Geração Millennials Y), 45–60 anos (Geração X), +60 anos (Baby Boomers). *(gráfico de barras; hover mostra só o valor bruto, sem tooltip customizado; sem clique/legenda)* |
+| **Região** *(só no painel de Rede)* | "Distribuição dos clientes que compraram no período, agrupados conforme a localização geográfica cadastrada." Categorias: Sudeste, Norte, Sul, Centro-Oeste, Nordeste e "Estado inválido" (quando o cadastro do cliente não tem estado válido). Não existe no painel por Loja. |
+| **Gênero** | "Distribuição dos clientes que realizaram compras no período, de acordo com a informação de gênero cadastrado." Categorias: Homem, Mulher, Indefinido. *(gráfico de pizza; hover mostra "Categoria: quantidade (%)"; legenda estática com % abaixo do gráfico; mostra um círculo vazio quando não há dados)* |
+| **Ranking das lojas** *(só no painel de Rede)* | "Classificação das lojas de acordo com o valor total vendido no período, da maior para a menor receita bruta." Exibido como pódio (1º, 2º, 3º lugar) com nome, CNPJ e valor de cada loja; não é um gráfico. Não encontrei opção de ver colocações além do 3º lugar. Não existe no painel por Loja. |
+| **Top produtos mais vendidos** | "Apresenta os produtos que tiveram o maior número de vendas no período, destacando os campeões de desempenho." Lista ranqueada (não é gráfico) — cada produto mostra nome, EAN, unidades vendidas e valor em R$. Botão "Baixar produtos" para exportar. |
+| **Formas de pagamento** | "Distribuição dos pedidos realizados no período, de acordo com o meio de pagamento utilizado." *(gráfico de rosca; legenda detalha Online → Crédito/Pix e Offline → Balcão/Na entrega, todos em %)* |
+| **Métodos de entrega** | "Mostra como os pedidos foram recebidos pelos clientes no período, diferenciando opções como Receber em Casa (entrega no endereço do cliente) e Retirada (o próprio cliente busca o pedido na loja ou ponto de coleta)." |
+| **Lojas sem opção de receber em casa** *(só no painel de Rede)* | "Lojas que oferecem apenas a modalidade de retirada, sem opção de entrega em domicílio. Esse indicador ajuda a identificar associados que podem não ter operação logística para envio." Tem um botão "Ver lojas com retirada" (ícone de download, então provavelmente exporta uma lista em vez de navegar — não confirmado). |
+
+### 5.2 Home de Ofertas
+
+| Indicador | O que significa (tooltip) |
+|---|---|
+| **Total de ofertas criadas** | "Quantidade de ofertas cadastradas pelas lojas no período." |
+| **Ofertas ativadas** | "Quantidade de ofertas que os clientes finais ativaram no aplicativo durante o período." |
+| **Taxa de conversão das ofertas em vendas** | "Percentual de ofertas ativadas pelos clientes no app que resultaram efetivamente em compras no período." |
+| **Total de vendas realizadas** | "Quantidade total de pedidos concluídos no período, resultando em compras efetivamente finalizadas." |
+| **Quantidade de conversão em vendas** | "Total de pedidos finalizados como vendas no período selecionado." *(gráfico de barras com legenda PDV/Aplicativo)* |
+| **Faixa etária por gerações** | "Distribuição dos clientes que realizaram ativações no período, agrupados por gerações (ex.: Geração Z, Millennials, Geração X, Baby Boomers)." |
+| **Região** | "Distribuição dos clientes que realizaram ativações no período, agrupados conforme a localização geográfica cadastrada (ex.: Sudeste, Sul, Nordeste)." — aqui **existe** tanto no painel por Loja quanto por Rede (diferente da Home de Vendas). |
+| **Gênero** | Distribuição dos clientes que realizaram **ativações** no período, por gênero cadastrado. ⚠️ Hoje o tooltip do app mostra o mesmo texto da Home de Vendas ("realizaram compras") — é um erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Top produtos com mais ativações** | Produtos com maior número de **ativações** no período. ⚠️ Hoje o tooltip do app mostra o mesmo texto da Home de Vendas ("maior número de vendas") — erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Lojas sem ofertas em exibição** | "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas." |
+| **Aviso: Loja indisponível no app** *(só no painel por Loja, loja única)* | "Essa loja está indisponível para os clientes no app porque não há nenhuma oferta ativa." |
+
+### 5.3 Comportamento geral dos gráficos
+
+- Todos os gráficos são feitos com a mesma biblioteca (Chart.js). Não existe nenhum gráfico com clique para filtrar ou "abrir detalhe" — a interação sempre para no hover.
+- Nenhuma legenda é clicável para esconder/mostrar uma série — todas as legendas são listas estáticas de cor + rótulo (e às vezes %), só para leitura.
+- Mudar o período no topo da tela **recarrega todos os cards da página** (uma nova chamada por card), não é um filtro local — por isso pode levar um instante para os cards atualizarem.
+- Nos gráficos de rosca e no gráfico de gênero, quando não há nenhum dado no período, aparece um círculo cinza vazio no lugar do gráfico. Já Faturamento, Ticket Médio, Faixa etária e Região não têm essa ilustração — se não houver dado, a área do gráfico aparece em branco.
+- "Top produtos" tem uma ilustração própria de vazio, com o texto "Sem dados... por enquanto!".
 
 ---
 

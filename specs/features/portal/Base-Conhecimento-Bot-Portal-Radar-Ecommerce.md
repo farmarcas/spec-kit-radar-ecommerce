@@ -159,13 +159,60 @@ Isso costuma ser um conflito de duplicidade ou vínculo residual no banco de dad
 ## Indicadores
 
 **O que é a tela de Indicadores?**
-É o painel onde o associado acompanha os principais números do negócio: faturamento, quantidade de pedidos, taxa de cancelamento, ticket médio, ranking de lojas (no nível Rede), produtos mais vendidos, tempo médio de atendimento, formas de pagamento e métodos de entrega usados pelos consumidores, entre outros.
+É uma aba de navegação real chamada "Indicadores" — funciona como a Home/painel principal ao entrar numa loja ou rede. Tem duas sub-abas: **Vendas** e **Ofertas**.
 
 **Como eu mudo o período de análise dos indicadores?**
-Use o seletor no topo da tela (por padrão mostra algo como "Últimos 7 dias") para trocar a janela de tempo. O botão **Filtrar** permite refinar por outros critérios, e **Exportar** baixa os dados exibidos.
+Use o seletor no topo da tela (ex.: "Últimos 7 dias", "Últimos 12 meses", com opção de período Personalizado via calendário). O botão **Filtrar** permite refinar por outros critérios, e **Exportar** baixa os dados exibidos. A tela também tem **atualização automática a cada 30 minutos** (mostra a data/hora da última atualização no cabeçalho). **Importante:** mudar o período recarrega todos os cards da tela (uma chamada nova por card) — é normal ver os cards em "esqueleto de carregamento" por um instante.
 
 **Consigo comparar minhas lojas entre si?**
-Sim, no nível da Rede a tela de Indicadores mostra um **Ranking das lojas por faturamento**, útil para comparar o desempenho de diferentes unidades.
+Sim, no nível da Rede a Home de Vendas mostra um **Ranking das lojas** por faturamento (pódio com as 3 primeiras posições — não encontrei opção de ver mais do que isso). Esse card não existe no painel por Loja.
+
+### Home de Vendas — o que cada indicador significa
+
+No topo há 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), cada uma com seu próprio gráfico já carregado — trocar de aba só alterna qual é exibido, não busca dado novo:
+- **Faturamento**: "Representa o valor total das vendas registradas no período selecionado."
+- **Pedidos cancelados**: "Total de pedidos cancelados no período selecionado."
+- **Pedidos concluídos**: "Total de pedidos finalizados no período selecionado."
+
+Demais indicadores:
+- **Ticket Médio**: "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos."
+- **Total de Pedidos em Aberto**: "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." Tem botão "Visualizar pedidos".
+- **Volume dos pedidos em aberto**: soma em R$ de todos os pedidos ainda não finalizados (Na fila + Em separação + Liberados).
+- **Pedidos em aberto por status** (gráfico de rosca Fila/Em separação/Liberados, em %): contagem de pedidos por status. Hoje esse indicador tem um problema: filtra pelo período de data selecionado, quando deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação — correção já registrada em ticket interno.
+- **Tempo médio para iniciar primeiro atendimento**: tempo entre o pedido entrar "Na fila" e ser concluído (formato de duração, ex.: "9h e 37min").
+- **Tempo médio total de atendimento**: também entendido como "Na fila" até "Concluído" (ex.: "2 dias e 11h") — definição exata ainda em checagem com engenharia (pode haver sobreposição com o indicador anterior; já registrado em ticket interno).
+- **Média de itens por cesta**: média de itens por pedido, considerando todos os pedidos (concluídos ou não).
+- **Volume dos pedidos cancelados**: valor em R$ (não quantidade) que seria faturado pelos pedidos cancelados no período — a label do card hoje não deixa isso claro (correção registrada).
+- **Faixa etária por gerações**: "Distribuição dos clientes que realizaram compras no período, agrupados por gerações." Faixas: 18–28 anos (Geração Z), 29–44 anos (Geração Millennials Y), 45–60 anos (Geração X), +60 anos (Baby Boomers).
+- **Região** (só no painel de Rede, não existe por Loja nesta home): "Distribuição dos clientes que compraram no período, agrupados conforme a localização geográfica cadastrada." Categorias: Sudeste, Norte, Sul, Centro-Oeste, Nordeste, Estado inválido.
+- **Gênero**: "Distribuição dos clientes que realizaram compras no período, de acordo com a informação de gênero cadastrado." Categorias: Homem, Mulher, Indefinido.
+- **Ranking das lojas** (só Rede): ver pergunta acima.
+- **Top produtos mais vendidos**: "Apresenta os produtos que tiveram o maior número de vendas no período, destacando os campeões de desempenho." — lista ranqueada (nome, EAN, unidades e R$ por produto) com botão "Baixar produtos".
+- **Formas de pagamento**: "Distribuição dos pedidos realizados no período, de acordo com o meio de pagamento utilizado" (detalha Online → Crédito/Pix e Offline → Balcão/Na entrega, tudo em %).
+- **Métodos de entrega**: "Mostra como os pedidos foram recebidos pelos clientes no período, diferenciando opções como Receber em Casa (entrega no endereço do cliente) e Retirada (o próprio cliente busca o pedido na loja ou ponto de coleta)."
+- **Lojas sem opção de receber em casa** (só Rede): "Lojas que oferecem apenas a modalidade de retirada, sem opção de entrega em domicílio. Esse indicador ajuda a identificar associados que podem não ter operação logística para envio." Botão "Ver lojas com retirada".
+
+### Home de Ofertas — o que cada indicador significa
+
+- **Total de ofertas criadas**: "Quantidade de ofertas cadastradas pelas lojas no período."
+- **Ofertas ativadas**: "Quantidade de ofertas que os clientes finais ativaram no aplicativo durante o período."
+- **Taxa de conversão das ofertas em vendas**: "Percentual de ofertas ativadas pelos clientes no app que resultaram efetivamente em compras no período."
+- **Total de vendas realizadas**: "Quantidade total de pedidos concluídos no período, resultando em compras efetivamente finalizadas."
+- **Quantidade de conversão em vendas**: "Total de pedidos finalizados como vendas no período selecionado" (gráfico com legenda PDV/Aplicativo).
+- **Faixa etária por gerações**: "Distribuição dos clientes que realizaram ativações no período, agrupados por gerações..."
+- **Região** (aqui existe por Loja e por Rede): "Distribuição dos clientes que realizaram ativações no período, agrupados conforme a localização geográfica cadastrada (ex.: Sudeste, Sul, Nordeste)."
+- **Gênero**: distribuição por gênero de quem **ativou** ofertas no período (o app hoje mostra por engano o mesmo texto da Home de Vendas, falando em "compras" — já reportado como bug).
+- **Top produtos com mais ativações**: produtos com mais ativações no período (o app hoje mostra por engano o texto de "vendas" da Home de Vendas — já reportado como bug).
+- **Lojas sem ofertas em exibição**: "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas."
+- **Aviso: Loja indisponível no app** (só quando é uma única loja): "Essa loja está indisponível para os clientes no app porque não há nenhuma oferta ativa."
+
+### Como os gráficos se comportam
+
+- Passar o mouse sobre um ponto/barra/fatia mostra o valor (em R$ nos gráficos de Faturamento/Ticket Médio; valor + % nos gráficos de rosca e no de Gênero). Nos gráficos de barra de Faixa etária/Região, o hover mostra só o valor bruto, sem tooltip customizado.
+- **Não existe clique para filtrar ou abrir detalhe** em nenhum gráfico da tela.
+- Nenhuma legenda é clicável — todas são listas estáticas de cor + rótulo, só para leitura.
+- Mudar o período recarrega a página inteira (uma chamada nova por card).
+- Gráficos de rosca e o de Gênero mostram um círculo cinza vazio quando não há dado no período; Faturamento/Ticket Médio/Faixa etária/Região não têm essa ilustração (ficam em branco); "Top produtos" tem sua própria ilustração de vazio ("Sem dados... por enquanto!").
 
 ---
 
