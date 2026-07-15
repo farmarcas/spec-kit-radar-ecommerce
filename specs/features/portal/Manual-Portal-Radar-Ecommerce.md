@@ -81,6 +81,23 @@ Ações disponíveis: **Nova loja** (cadastrar uma unidade), filtro por **Módul
 - **Ofertas**: não há compra pelo app. O associado cria as ofertas no Portal, elas são replicadas no aplicativo, e o consumidor final apenas **ativa** a oferta pelo app — a compra em si só é finalizada fisicamente na loja, quando o cliente informa o CPF e a oferta é vinculada a ele no momento do pagamento (é por isso que esse módulo não gera "Pedidos" no Portal).
 - Uma loja pode solicitar a migração de Ofertas para Vendas — ver [Configurações da Loja](#6-configurações-da-loja), onboarding e liberação da Chave de integração/API.
 
+### Tela "Redes" (nível Admin)
+
+Só o perfil Admin acessa essa tela (aba "Redes" no menu de plataforma). Lista **todas as Redes cadastradas na plataforma**, com nome, quantidade de lojas cadastradas e um botão "Abrir rede". Tem busca por nome e um botão **"Exportar redes"**.
+
+### Relatórios exportáveis (Lojas e Redes)
+
+Dois relatórios em Excel (.xlsx) relacionados a essa hierarquia:
+
+| Relatório | Como é baixado | Escopo |
+|---|---|---|
+| **Relatório de redes** | Botão **"Exportar redes"** na tela "Redes" (nível Admin). | Todas as lojas de todas as Redes que o usuário tem acesso — para o Admin, isso é a plataforma inteira. |
+| **Relatório de lojas** | Botão **"Exportar Lojas"** na tela "Lojas" de uma Rede específica. | Todas as lojas **daquela Rede** que o usuário tem acesso — se um Gestor de Loja só tem 5 lojas vinculadas, o relatório só traz essas 5, mesmo que a Rede tenha mais lojas. |
+
+Ambos têm exatamente as mesmas colunas: **Nome Rede, Nome Loja, CNPJ Loja, Estado Loja, Cidade Loja, ERP conectado até** (data da última sincronização, ou "Sem data" se nunca conectou), **Módulo** (Oferta ou Vendas — no arquivo exportado o valor vem no singular "Oferta", mesmo a tela mostrando "Ofertas"), **Data Solicitação do Vendas** (data em que a loja pediu a migração para o módulo Vendas — "Sem data" se nunca solicitou), **Loja Ativa** (Sim/Não) e **Pagamento Online** (mostra "Braspag" quando configurado, ou "Não configurado").
+
+> **Atenção ao termo "Loja Ativa" neste relatório:** aqui, **Loja Ativa = Sim** significa apenas que a loja existe e não foi removida (a ação "remover loja" na listagem de Lojas faz uma exclusão lógica/soft-delete, que marca a loja como inativa). **Isso não é o mesmo conceito do NSM do produto** ("Volume de Transações por Loja Ativa", onde Loja Ativa = loja que transacionou no período de referência — ver glossário). São dois conceitos diferentes usando o mesmo nome — importante não confundir um com o outro ao ler este relatório.
+
 ### Como trocar de loja
 
 O seletor no cabeçalho (ex: "Acfarma - Centro ▾") permite alternar entre as lojas às quais o usuário tem acesso, sem precisar logar novamente.

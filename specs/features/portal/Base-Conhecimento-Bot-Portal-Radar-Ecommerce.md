@@ -154,6 +154,18 @@ Isso costuma ser um conflito de duplicidade ou vínculo residual no banco de dad
 **O que significa "ERP conectado até" na lista de Lojas?**
 É a data/hora da última vez que aquela loja sincronizou dados com o sistema ERP dela. Se essa data estiver muito atrasada (mais de 72 horas / 3 dias), é sinal de problema de comunicação — ver a seção Estoque abaixo sobre o alerta correspondente.
 
+**O que é a tela "Redes"?**
+Tela exclusiva do perfil Admin, lista todas as Redes cadastradas na plataforma com nome, quantidade de lojas e botão "Abrir rede". Tem busca e um botão "Exportar redes".
+
+**Como baixo o relatório de Redes ou de Lojas?**
+- **Relatório de redes**: botão "Exportar redes" na tela "Redes" (nível Admin) — traz todas as lojas de todas as Redes que o usuário tem acesso.
+- **Relatório de lojas**: botão "Exportar Lojas" na tela "Lojas" de uma Rede específica — traz só as lojas **daquela Rede** que o usuário tem acesso (um Gestor de Loja com 5 lojas vinculadas só vê essas 5 no relatório, mesmo que a Rede tenha mais).
+
+Ambos têm as mesmas colunas: Nome Rede, Nome Loja, CNPJ Loja, Estado Loja, Cidade Loja, ERP conectado até, Módulo (Oferta/Vendas — no arquivo vem "Oferta" no singular), Data Solicitação do Vendas, Loja Ativa (Sim/Não), Pagamento Online (Braspag ou "Não configurado").
+
+**"Loja Ativa" no relatório é a mesma coisa do NSM (Volume de Transações por Loja Ativa)?**
+Não. Nesse relatório, **Loja Ativa = Sim** só indica que a loja existe e não foi removida (a ação de "remover loja" faz uma exclusão lógica/soft-delete, que marca como inativa). É diferente do conceito de NSM, onde Loja Ativa = loja que transacionou no período de referência. São dois usos diferentes do mesmo termo — não confundir.
+
 ---
 
 ## Indicadores
