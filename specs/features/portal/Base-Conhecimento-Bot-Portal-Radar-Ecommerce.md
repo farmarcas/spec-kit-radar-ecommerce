@@ -286,7 +286,7 @@ Geralmente é uma configuração pendente ou desalinhada entre os **3 tipos de h
 Os horários de Entrega e Retirada não aparecem diretamente na vitrine do app, mas alimentam o cálculo de quando o cliente pode escolher cada opção e a previsão de recebimento — por isso, se algo parecer errado, vale checar os três.
 
 **Como funciona "Receber em casa"?**
-Em `Configurações > Formas de Entrega > Receber em casa`, ative o toggle e configure: horário de funcionamento para entrega, o raio de atendimento (distância máxima, até 30 km, com faixas de Alcance × Taxa de Entrega × Tempo de Entrega — dá pra criar várias faixas de preço por distância) e, opcionalmente, frete grátis a partir de um valor mínimo de compra.
+Em `Configurações > Formas de Entrega > Receber em casa`, ative o toggle e configure: horário de funcionamento para entrega, o raio de atendimento (distância máxima, até 30 km, com faixas de Alcance × Taxa de Entrega × Tempo de Entrega — dá pra criar quantas faixas forem necessárias, cada uma exibida numa lista com ícone de excluir ao lado, então também dá pra remover uma faixa já criada) e, opcionalmente, frete grátis a partir de um valor mínimo de compra.
 
 **Configurei as faixas de entrega mas elas não salvam. O que fazer?**
 Depois de preencher Alcance, Taxa e Tempo de uma faixa, é **obrigatório clicar no botão "+"** para adicionar aquela regra à listagem antes de clicar em Salvar. Se pular esse clique no "+", os dados somem. Se mesmo assim o problema persistir, é preciso acionar o suporte para inserir os dados manualmente.
@@ -298,7 +298,7 @@ Primeiro, confirme no Portal se o raio de entrega está configurado corretamente
 Em `Configurações > Formas de Entrega > Retirada na loja`, ative o toggle e configure o horário em que a loja aceita retirada, e o "Tempo de retirada" — quantos minutos depois da confirmação do pedido o produto fica pronto para o cliente buscar (esse tempo aparece pro consumidor no app).
 
 **Como ativo pagamento com maquininha?**
-Em `Configurações > Pagamentos > Com maquininha`, defina se aceita pagamento na entrega e/ou na retirada, e marque as bandeiras de cartão aceitas (Débito, Crédito, e outras formas como Dinheiro e Pix).
+Em `Configurações > Pagamentos > Com maquininha` não existe um interruptor geral — o controle é só pelas duas perguntas Sim/Não, "Deseja ativar o pagamento na entrega?" e "Deseja ativar o pagamento na retirada?" (a loja pode ter nenhum, um ou os dois habilitados), mais a seleção de bandeiras aceitas (tem atalho "Selecionar todas"): Débito (Banescard, Cabal, Elo, Hiper, Union Pay, Visa), Crédito (Alelo Pagamentos, Amex, Banescard, Cabal, Coopercard, Credz, Diners, Discovery Network, Elo, Hiper, Hipercard, JCB, Mais!, Mastercard, Sorocred, Union Pay, Visa), Outros (Dinheiro, Pix).
 
 **Como ativo pagamento online (cartão pela internet)?**
 Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dados fornecidos pela credenciadora **Braspag** (Adquirente, se habilitou PIX, Nome na Fatura, MerchantId, MerchantKey, ClientID, ClientSecret). Os campos ficam bloqueados até a integração estar corretamente conectada.
@@ -309,6 +309,12 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 
 **O que mostra a tela de Estoque?**
 Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e um toggle "Exibir preço" que controla se o produto aparece com preço visível no app.
+
+**Como o estoque da minha loja é montado?**
+O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso. A comunicação é **passiva e incremental**: o Portal só recebe o que o ERP manda, e o ERP manda só o que mudou (preço ou estoque) desde o último envio — não é uma base completa a cada vez.
+
+**O estoque (quantidade) pode ser editado no Portal?**
+Não — só o **preço** pode ser ajustado manualmente (ver abaixo). A quantidade em estoque sempre reflete exatamente o que o ERP envia.
 
 **Minha loja não aparece no aplicativo. O que pode ser?**
 Dois motivos principais:
@@ -324,15 +330,16 @@ Se o Portal perder a comunicação com o ERP por mais de **72 horas (3 dias)**, 
 3. Informe ao suporte a sua **Chave de Integração** (token único). Se não souber onde encontrá-la: `Portal > Configurações > Informações da Loja > Chave de integração do ERP`.
 
 **Por que o preço de um produto aparece incorreto às vezes?**
-O preço exibido no app vem direto via API do seu ERP. Divergências normalmente vêm de:
-- **Ofertas ativas no ERP** — se o produto está numa oferta ou "caderno de ofertas" do seu sistema, o Portal sempre traz o **menor valor** disponível.
-- **Atraso de sincronização** — o sistema pode estar aguardando a atualização da base entre o ERP e o Portal.
+O seu ERP envia **dois preços** por produto: um "preço bruto" (full price) e um "preço de venda" (price) — o Portal sempre exibe o **menor dos dois**, porque você pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP. Divergências também podem vir de atraso de sincronização entre o ERP e o Portal.
 
 **Consigo alterar o preço direto no Portal?**
-Sim — acesse `Estoque`, busque o produto por nome ou EAN, clique no ícone de lápis (editar), informe o preço correto e confirme em "Atualizar" (isso preenche o campo **R$ customizado**). Recomendado só para casos isolados: se vários produtos estiverem com valor errado ao mesmo tempo, o ideal é abrir chamado com o suporte do ERP pedindo uma **atualização forçada da base de estoque e preço** em lote, em vez de corrigir um por um. Não existe validação/regra sobre esse valor customizado — ele fica valendo exatamente o que foi digitado até ser removido (ícone de lixeira ao lado do campo). Hoje esse recurso de customizar preço direto na tela de Estoque é exclusivo do perfil **Contato cliente** (balconista).
+Sim — acesse `Estoque`, clique no ícone de lápis (editar) na linha do produto — abre o modal **"Alterar preço do produto"**, com o Preço App atual e um campo "Novo preço". Isso preenche o campo **R$ customizado**. Não existe validação sobre esse valor: fica valendo exatamente o que foi digitado até ser removido. **Isso só altera o preço — a quantidade em estoque não é editável pelo Portal.** Hoje esse recurso é exclusivo do perfil **Contato cliente** (balconista). Se vários produtos estiverem com valor errado ao mesmo tempo, o ideal é abrir chamado com o suporte do ERP pedindo uma atualização forçada da base em lote, em vez de corrigir um por um.
 
 **Como oculto um produto com preço ou estoque errado, sem excluir o cadastro?**
-Acesse o produto na tela Estoque e desmarque a opção **"Exibir preço"**. Ele deixa de aparecer no app até a correção ser feita.
+Acesse o produto na tela Estoque e desmarque a opção **"Exibir preço"**. Ele deixa de aparecer no app até a correção ser feita. Esse toggle funciona por produto; o toggle "Disponível" no topo da tela é o equivalente para a **loja inteira** (liga/desliga tudo de uma vez) — usado, por exemplo, quando o associado percebe muitos problemas de preço/estoque e prefere pausar a loja no app enquanto ajusta o ERP. É o mesmo campo que o sistema desliga sozinho após 72h sem comunicação com o ERP.
+
+**O que é o ícone ⓘ ao lado do EAN de um produto?**
+Mostra em tooltip a última atualização de **estoque** e a última atualização de **preço** daquele EAN especificamente — podem ser datas diferentes, já que o ERP manda uma ou outra de forma independente.
 
 **Como oculto medicamentos do aplicativo?**
 Duas formas: desabilitar o estoque geral daquele grupo de produtos, ou desativar item por item dentro do Estoque. **Não é possível** ocultar por categoria inteira de uma vez — tem que ser tudo ou um por um.
@@ -351,6 +358,9 @@ A integração ocorre via API, enviando os pedidos em formato de pré-venda (ou 
 
 **Como solicito um produto que ainda não existe no catálogo?**
 Use o ícone "Solicitar produto" na barra de ferramentas da tela Estoque. No formulário, informe Nome do produto e Fabricante, e para cada item o Código de barras (EAN), a Apresentação (ex: "Dorflex caixa com 10") e uma imagem de referência — dá pra solicitar **até 50 produtos de uma vez**. A solicitação vai para aprovação do time Farmarcas (Admin/Catálogo).
+
+**Como baixo o relatório de Estoque/Preço?**
+Ícone de exportar na barra de ferramentas da tela Estoque. Colunas: Ean, Preço bruto (full price do ERP), Preço Venda (price do ERP — o menor dos dois é o exibido no app), Categoria, Nome do produto, Estoque, Data da última atualização. *(Em ajuste — [ECP-1064](https://farmarcas.atlassian.net/browse/ECP-1064): essa última coluna será separada em "última atualização de estoque" e "última atualização de preço".)*
 
 ---
 
@@ -446,7 +456,20 @@ Não mais — essas colunas são resquício de uma segmentação de público que
 São os anúncios que aparecem no carrossel da home do aplicativo do consumidor. Cada banner tem posição (pode ser reordenado arrastando), imagem, destino do clique, métricas de exibições/cliques, período de divulgação e os estados (UFs) onde é exibido.
 
 **Como crio um novo banner?**
-Na tela `Banners`, use o botão **"Novo banner"** no canto superior direito.
+Na tela `Banners`, use o botão **"Novo banner"** — abre um wizard de 4 passos: **Início → Espaços → Lojas → Configurações**.
+1. **Início**: escolha "Inserir um banner" (única opção hoje).
+2. **Espaços**: escolha onde o banner aparece — hoje só **"No carrossel da home"** ("Em uma vitrine de produtos" está marcado "Em breve"). Specs: até **5 banners**, **320×220px**, até **1MB**, formatos **PNG/JPG**.
+3. **Lojas**: escolha "Todas as lojas" ou selecione por Estado (UF), podendo refinar por loja dentro do estado.
+4. **Configurações**: para cada banner, defina o destino do clique e o período de exibição (ou "Banner permanente").
+
+**Quais são os tipos de destino de um banner (o que acontece quando o cliente clica)?**
+- **Banner estático**: nenhuma ação, só exibe a imagem.
+- **Departamento**: leva para um departamento do catálogo (ex.: Cosméticos).
+- **Uma seleção de produtos**: leva para uma lista específica de produtos (busca por nome/EAN ou importação). Importante: **só aparece em lojas que têm esses produtos em estoque** — se o banner não aparecer numa loja, provavelmente é falta de estoque desses produtos.
+- **Um link externo**: abre uma URL fora do app.
+
+**O banner precisa ter data de término?**
+Não — dá para marcar **"Banner permanente"** em vez de definir uma data de término.
 
 ---
 

@@ -253,7 +253,7 @@ Ao concluir essas etapas, o Portal mostra a opção **"Faça Upgrade"**, convida
 
 **Receber em casa** (toggle Ativado/Desativado):
 - *Horário de funcionamento*: dias/horários em que a loja aceita pedidos para entrega (pode ser diferente do horário geral de atendimento da loja).
-- *Raio de atendimento*: define, num mapa, a distância máxima atendida (limite de até 30 km) e uma tabela de faixas de **Alcance (km) × Taxa de Entrega (R$) × Tempo de Entrega**, permitindo criar várias faixas de preço conforme a distância (botão "+" adiciona uma nova faixa).
+- *Raio de atendimento*: define, num mapa, a distância máxima atendida (limite de até 30 km) e uma tabela de faixas de **Alcance (km) × Taxa de Entrega (R$) × Tempo de Entrega**. É possível cadastrar quantas faixas forem necessárias — elas aparecem como uma lista, cada uma com um ícone de excluir ao lado, então dá para remover uma faixa já criada a qualquer momento. **Atenção:** depois de preencher uma faixa, é obrigatório clicar no botão **"+"** para adicioná-la à listagem antes de Salvar — se pular esse clique, os dados somem sem aviso.
 - *Frete Grátis*: permite configurar frete grátis a partir de um valor mínimo de compra — uma estratégia para incentivar tickets maiores.
 
 **Retirada na loja** (toggle Ativado/Desativado):
@@ -262,7 +262,10 @@ Ao concluir essas etapas, o Portal mostra a opção **"Faça Upgrade"**, convida
 
 ### 6.3 Pagamentos
 
-**Com maquininha**: define se a loja aceita pagamento na entrega e/ou na retirada, e quais bandeiras de cartão são aceitas (Débito, Crédito e Outros como Dinheiro e Pix).
+**Com maquininha**: não tem um interruptor geral — o controle é só pelas duas perguntas Sim/Não, "Deseja ativar o pagamento na entrega?" e "Deseja ativar o pagamento na retirada?" (a loja pode ter nenhum, um, ou os dois habilitados), mais a seleção de bandeiras aceitas (com atalho "Selecionar todas"):
+- **Débito**: Banescard, Cabal, Elo, Hiper, Union Pay, Visa.
+- **Crédito**: Alelo Pagamentos, Amex, Banescard, Cabal, Coopercard, Credz, Diners, Discovery Network, Elo, Hiper, Hipercard, JCB, Mais!, Mastercard, Sorocred, Union Pay, Visa.
+- **Outros**: Dinheiro, Pix.
 
 **Online**: ativa o pagamento online via integração com a **Braspag**. Precisa preencher dados fornecidos pela credenciadora/adquirente (Adquirente, se habilitou PIX, Nome na Fatura, MerchantId, MerchantKey, ClientID, ClientSecret) antes de conseguir ativar. Os campos ficam bloqueados até a integração ser conectada.
 
@@ -272,14 +275,31 @@ Ao concluir essas etapas, o Portal mostra a opção **"Faça Upgrade"**, convida
 
 A tela **Estoque** mostra o catálogo de produtos daquela loja específica, com:
 
-- **Produto** (nome + EAN), **R$ App** (preço exibido no aplicativo) e **R$ customizado** (um preço específico, diferente do preço padrão do ERP, definido manualmente — pode ser removido para voltar ao preço original).
+- **Produto** (nome + EAN, com um ícone ⓘ — ver "Última atualização por produto" abaixo), **R$ App** (preço exibido no aplicativo) e **R$ customizado** (um preço específico, diferente do preço padrão do ERP, definido manualmente — pode ser removido para voltar ao preço original).
 - **Estoque loja**: quantidade disponível.
 - **Exibir preço**: toggle Sim/Não — controla se aquele produto aparece com preço visível no App.
 - Toggle geral **Disponível**, indicador **ERP atualizado** (data/hora da última sincronização) e filtro por **Grupo**.
 
-**De onde vem o preço "R$ App"?** Ele é extraído via API diretamente do sistema ERP da loja. Divergências geralmente vêm de: (a) uma oferta ativa no ERP ou um "caderno de ofertas" — nesse caso o Portal sempre traz o **menor valor** disponível; ou (b) atraso na sincronização entre o ERP e o Portal.
+### Como o estoque da loja é montado
 
-**Como editar o preço manualmente:** na tela Estoque, busque o produto por nome ou EAN, clique no ícone de lápis (editar), informe o valor correto e confirme em "Atualizar" — esse é o campo **R$ customizado**. Não existe uma regra ou validação sobre esse valor: fica valendo exatamente o que for digitado, até que alguém remova a customização; hoje esse recurso na tela de Estoque é exclusivo do perfil **Contato cliente** (balconista). Se muitos produtos aparecerem com valor divergente ao mesmo tempo, o recomendado é abrir chamado com o suporte do ERP pedindo uma atualização forçada em lote, em vez de corrigir um por um manualmente.
+O ERP de cada loja envia **EAN, quantidade e preço** para o Portal. Para cada EAN recebido:
+- Se o EAN **existe no catálogo oficial** (ver [Catálogo](#12-catálogo-admin)), o produto entra na lista de Estoque da loja.
+- Se o EAN **não existe** no catálogo, o produto é **desprezado** — não aparece em lugar nenhum, sem erro ou aviso.
+
+**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez.
+
+**De onde vem o preço "R$ App"?** O ERP envia **dois preços** por produto — um **"preço bruto" (full price)** e um **"preço de venda" (price)**. O Portal sempre exibe o **menor dos dois** recebidos, porque o associado pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP — o ecommerce sempre reflete o preço mais vantajoso que o ERP informou.
+
+**Como editar o preço manualmente:** clique no ícone de lápis (editar) na linha do produto — abre o modal **"Alterar preço do produto"**, mostrando o Preço App atual e um campo **"Novo preço"**. Não existe validação sobre esse valor: fica valendo exatamente o que for digitado, até ser removido; isso popula a coluna **R$ customizado**. **Importante: o estoque (quantidade) não é editável pelo Portal** — só o preço; a quantidade sempre reflete o que o ERP enviar. Hoje esse recurso é exclusivo do perfil **Contato cliente** (balconista). Se muitos produtos aparecerem com valor divergente ao mesmo tempo, o recomendado é abrir chamado com o suporte do ERP pedindo uma atualização forçada em lote, em vez de corrigir um por um manualmente.
+
+### Última atualização por produto
+
+Ao lado do EAN de cada produto, um ícone ⓘ mostra em tooltip a **última atualização de estoque** e a **última atualização de preço** daquele EAN especificamente (podem ser datas diferentes, já que o ERP envia uma ou outra de forma independente/incremental).
+
+### Os dois "interruptores" da tela de Estoque
+
+- **"Disponível: Sim/Não"** (toggle geral, no topo): liga/desliga **a loja inteira** no aplicativo. É o mesmo toggle que, se desligado por muito tempo de comunicação com o ERP (72h), o sistema aciona automaticamente (ver alerta abaixo) — mas também pode ser desligado manualmente pelo próprio associado, por exemplo quando ele percebe muitos problemas de preço/estoque e prefere pausar a loja no app enquanto ajusta o ERP.
+- **"Exibir preço: Sim/Não"** (por linha de produto): o mesmo conceito, mas no nível do produto individual — desligar esconde só aquele EAN específico do app para aquela loja, sem afetar o restante do estoque.
 
 **Como ocultar um produto com preço/estoque errado:** desmarque a opção "Exibir preço" na linha do produto — ele some do app até a correção ser feita, sem precisar remover o cadastro.
 
@@ -295,6 +315,12 @@ A tela **Estoque** mostra o catálogo de produtos daquela loja específica, com:
 ### Solicitando um produto novo
 
 Se a loja precisa vender um produto que ainda não existe no catálogo mestre da plataforma, use o ícone de solicitação de produto na barra de ferramentas da tela Estoque (ao lado do ícone de exportar). Ele abre o formulário **"Solicitar produto"**, onde é possível informar Nome do produto e Fabricante, e depois, para cada item, o **Código de barras (EAN)**, a **Apresentação** (ex: "Dorflex caixa com 10") e uma imagem/foto de referência — dá para solicitar **até 50 produtos de uma vez**. Essa solicitação segue para aprovação do Admin (ver [Catálogo](#12-catálogo-admin)).
+
+### Relatório de Estoque/Preço
+
+O ícone de exportar na barra de ferramentas da tela Estoque baixa um Excel (.xlsx) com **todo o estoque daquela loja**. Colunas: Ean, **Preço bruto** (full price recebido do ERP), **Preço Venda** (price recebido do ERP — o Portal exibe sempre o menor entre os dois, ver acima), Categoria, Nome do produto, Estoque, Data da última atualização.
+
+> **Em processo de ajuste** ([ECP-1064](https://farmarcas.atlassian.net/browse/ECP-1064)): a coluna única "Data da última atualização" vai ser substituída por duas colunas separadas — última atualização de **estoque** e última atualização de **preço** — para bater com a informação que já aparece no ícone ⓘ de cada produto na tela.
 
 ---
 
@@ -397,7 +423,25 @@ Clicando numa promoção da lista, abre um painel com o produto/grupo, status, E
 
 A tela **Banners** (também chamada de "Anúncios do aplicativo") controla os banners exibidos no carrossel da home do App.
 
-Cada banner tem: **posição** (arrastar para reordenar), **mídia** (imagem + nome), **destino** do clique, métricas de **exibições** e **cliques**, **período de divulgação** (início/fim) e **UFs** onde é exibido. É possível filtrar por Estado, Loja e Status, e criar um novo banner pelo botão **"Novo banner"**.
+### Listagem "Anúncios do aplicativo"
+
+Filtros no topo: **Espaço do aplicativo** (hoje só "Carrossel da home"), **Estados**, **Lojas**, **Status** (ex.: "Em exibição"). A tabela mostra: **UFs** (onde o banner é exibido), **Posição** (arrastar para reordenar, com opção de excluir), **Mídia** (miniatura + nome), **Destino (ir para...)** — mostra o tipo de destino escolhido (ex.: "Departamento › Cosméticos", "Seleção de pr... › 72 produtos"), métricas de **Exibições** e **Cliques**, e **Divulgação** (Início/Fim).
+
+### Criando um novo banner (wizard de 4 passos)
+
+Botão **"Novo banner"** abre um wizard com 4 etapas, mostradas como uma trilha no topo da tela: **Início → Espaços → Lojas → Configurações**.
+
+1. **Início**: "O que você gostaria de fazer?" — hoje só existe a opção **"Inserir um banner"**.
+2. **Espaços**: "Em qual área do aplicativo você gostaria de inserir um banner?" — opções **"No carrossel da home"** (única disponível hoje) e **"Em uma vitrine de produtos"** (marcada **"Em breve"**, desabilitada). A tela mostra um preview em tempo real dentro de um mockup do app. Especificações do banner: até **5 banners** por vez, dimensão **320×220px**, peso até **1MB**, formatos **PNG e JPG**.
+3. **Lojas**: "Em quais regiões ou lojas você gostaria de exibir seu(s) banner(s)?" — busca por CNPJ, nome ou endereço da loja; opção **"Todas as lojas"**; ou seleção por Estado (UF), cada UF expansível (para refinar por loja específica dentro do estado).
+4. **Configurações**: para cada banner enviado (até 5), configure individualmente pelo botão **"Configurar"** no card do banner:
+   - **"Ao clicar, leve o cliente para..."** — 4 tipos de destino:
+     - **Banner estático**: sem nenhuma ação ao clicar, o banner só é exibido.
+     - **Departamento**: leva o cliente para um departamento específico do catálogo (ex.: Cosméticos).
+     - **Uma seleção de produtos**: busca produtos por nome/EAN (ou importa uma lista via botão "Importar") para montar a lista de produtos de destino. **Atenção:** só lojas que têm esses produtos em estoque exibirão esse banner — se o banner não aparecer numa loja específica, o motivo mais provável é falta de estoque desses produtos ali.
+     - **Um link externo**: campo de URL (`https://`) para redirecionar para fora do app.
+   - **"Exibir este banner no período de..."**: datas de Início/Término, ou toggle **"Banner permanente"** (sem data de término).
+   - Ações: **Cancelar**/**Salvar** (confirma a configuração daquele banner específico) e, no rodapé geral do wizard, **Voltar**/**Salvar e publicar** (finaliza e publica todos os banners do carrossel).
 
 ---
 
