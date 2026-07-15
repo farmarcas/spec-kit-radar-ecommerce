@@ -375,6 +375,25 @@ Isso indica instabilidade na comunicação de status entre os sistemas — não 
 **Reclamaram de um produto errado num pedido, mas os dados não batem com o que o cliente diz. Como proceder?**
 Sempre confira o **EAN (código de barras)** do produto no cadastro do Estoque/Catálogo antes de tudo. Se o associado disser que o produto é de uma especificação (ex: 60g) mas o EAN aponta outra (ex: 180g), o correto é aguardar o retorno do cliente com a confirmação dos dados reais do produto físico antes de seguir com o chamado.
 
+**Como baixo o relatório de Pedidos?**
+Botão "Exportar" no topo da tela Pedidos → escolha o período (Últimos 7/30/90 dias ou Personalizado) → "Gerar Relatório". Colunas atuais: Número do pedido, Valor, Itens, Data da compra, Taxa de entrega, Tipo da compra (Delivery/Retirada), Nome da Loja, CNPJ, Pagamento (Online/Offline), Status, Motivo, CPF, Meio de Pagamento, Data de Cancelamento (só para cancelados).
+
+**A coluna "Motivo" do relatório de Pedidos significa sempre a mesma coisa?**
+Não — é usada para duas coisas diferentes dependendo do status: em pedidos entregues/retirados, mostra o tipo de entrega ("Entrega em domicilio"/"Retirar na loja"); em pedidos cancelados, mostra o motivo do cancelamento (texto livre, ex: "Cliente solicitou produto por engano").
+
+**Por que aparece "Status desconhecido" no relatório de Pedidos?**
+É um estado inconsistente já identificado pelo time de produto — está previsto para ser removido/desconsiderado do relatório (ver ticket de ajuste abaixo). Se um associado perguntar sobre isso, é um bug conhecido, não uma configuração dele.
+
+**O relatório de Pedidos está passando por uma correção — o que muda?**
+Sim, o ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747) (refinado, ainda não implementado) define o comportamento correto:
+- Pedidos em status **ativo** (Na fila/Em separação/Liberados) sempre aparecem no relatório, **independente do período** selecionado — é uma fotografia em tempo real.
+- Pedidos em status **final** (Concluídos/Cancelados) respeitam o período, mas pela data em que **entraram** nesse status, não pela data de criação.
+- Nova coluna **"Usuário Cancelamento"**: mostra quem cancelou/concluiu; se foi o próprio ERP, mostra "ERP".
+- Lojas que fazem parte de um Grupo: o relatório sempre traz pedidos de **todas as lojas do grupo**, ignorando filtro de loja aplicado pelo usuário.
+- Período menor que 6 meses: download direto na tela (toast de sucesso); maior que isso, mantém o fluxo atual.
+- "Status desconhecido" deixa de aparecer.
+- *(Ainda em discussão no ticket, não confirmado: substituir o envio por e-mail por download direto, e um limite de tamanho para esse download.)*
+
 ---
 
 ## Promoções
@@ -404,6 +423,20 @@ Não. O Portal já bloqueia isso na criação da oferta — medicamentos control
 
 **Existe limite de promoções "Em destaque"?**
 Não há limite de quantas promoções podem estar marcadas como destaque ao mesmo tempo. Ter ao menos uma promoção em destaque cria uma seção própria chamada **"Ofertas em destaque"** no aplicativo do consumidor.
+
+**Quais filtros e ordenações existem na lista de Promoções?**
+- Filtrar por **Tipo de oferta**: Preço fixo, Desconto %.
+- Filtrar por **Status**: Ativa, Finalizados, Cancelados.
+- **Ordenar** por: Data, Nome, Mais ativadas, Menos ativadas, Mais vendidas, Menos vendidas, Maiores conversões, Menores conversões.
+
+**Um balconista (Contato cliente) consegue ver as Promoções?**
+Sim — ele vê a listagem completa (individuais e por grupo, com todas as métricas) e pode exportar o relatório, mas **não tem o botão "Nova promoção"** — segue não podendo criar/cancelar promoções.
+
+**Como baixo o relatório de Promoções/Ofertas?**
+Botão "Exportar" → painel "Relatório de ofertas" → escolha um intervalo (dois calendários de mês lado a lado) → "Gerar relatório". **O relatório é filtrado pela data de criação da promoção**, não pela data de vigência/divulgação. Colunas: Item em oferta (Produto/Familia), Tipo oferta (aqui aparece "Preço fixo"/"Porcentagem %" — nome um pouco diferente do usado no wizard, "Desconto %"), Nome produto, Ean, Ativação, Vendas, Pdv ou App (formato "0/0" = vendas no PDV / vendas no App), Conversão, Início da divulgação, Fim da divulgação, Status, Criação.
+
+**Por que o relatório de ofertas tem colunas de "Gênero" e "Faixa etária"? Consigo segmentar por público?**
+Não mais — essas colunas são resquício de uma segmentação de público que existia numa versão antiga da tela de criação de promoção. O aplicativo **nunca respeitou** essa segmentação, mesmo antes da tela ser refatorada — é um dado morto. Estão sendo removidas do relatório ([ECP-1062](https://farmarcas.atlassian.net/browse/ECP-1062)) e das telas do Portal ([ECP-1063](https://farmarcas.atlassian.net/browse/ECP-1063)). A coluna "Média" do relatório também está sendo removida (cálculo não está claro nem para o time de produto).
 
 ---
 

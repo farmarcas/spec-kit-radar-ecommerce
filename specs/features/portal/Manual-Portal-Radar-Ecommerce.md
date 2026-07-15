@@ -321,6 +321,28 @@ Ao clicar num pedido, o painel de detalhe mostra: dados do cliente (nome, CPF), 
 
 Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido.
 
+### Relatório de Pedidos (Exportar)
+
+O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**Últimos 7 dias / 30 dias / 90 dias / Personalizado**) e o botão **"Gerar Relatório"**, que baixa um Excel (.xlsx) com o detalhe dos pedidos.
+
+**Colunas observadas hoje:** Número do pedido, Valor, Itens (quantidade), Data da compra, Taxa de entrega, Tipo da compra (Delivery/Retirada), Nome da Loja, CNPJ, Pagamento (Online/Offline), Status (Entregue/Retirado/Cancelado/"Status desconhecido"), Motivo, CPF, Meio de Pagamento (Pix/Cartão de Crédito/Dinheiro), Data de Cancelamento (só populada para pedidos cancelados).
+
+> **Atenção — coluna "Motivo" tem duplo uso:** para pedidos entregues/retirados, ela mostra o motivo do tipo de compra ("Entrega em domicilio"/"Retirar na loja"); para pedidos **cancelados**, o mesmo campo passa a mostrar o **motivo do cancelamento** (ex.: "Cliente solicitou produto por engano"). É a mesma coluna sendo usada para dois propósitos diferentes dependendo do status.
+
+> **"Status desconhecido":** hoje esse valor pode aparecer na coluna Status — é um estado inconsistente já identificado pelo time de produto, que deve ser desconsiderado do relatório (ver ajuste abaixo).
+
+**Este relatório está em processo de adequação — ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747)** ("Refinado", ainda não implementado). Regras definidas para a versão corrigida:
+
+1. **Filtro por status é dinâmico:**
+   - Pedidos em status **ativo** (Na fila / Em separação / Liberados) devem **sempre** aparecer no relatório, **ignorando** o período selecionado — é uma "fotografia" em tempo real do que está em aberto.
+   - Pedidos em status **final** (Concluídos / Cancelados) devem respeitar o período selecionado, mas filtrando pela **data em que o pedido entrou nesse status** (`updatedAt`), não pela data de criação — considerando o dia cheio (00:00:01 do primeiro dia até 23:59:59 do último), com cuidado para o fuso não deslocar pedidos para o dia errado.
+2. **Nova coluna "Usuário Cancelamento"**: para pedidos concluídos/cancelados, deve trazer o usuário responsável pela mudança de status; se o cancelamento foi feito pelo próprio ERP (sem usuário do Portal envolvido), o valor deve ser **"ERP"**.
+3. **Lojas em grupo:** ao exportar de uma loja que faz parte de um Grupo de lojas (qualquer configuração de estoque), o relatório deve trazer os pedidos de **todas as lojas do grupo**, ignorando qualquer filtro de loja aplicado pelo usuário.
+4. **Entrega do arquivo:** se o período selecionado for menor que 6 meses, o download deve acontecer direto na tela (com toast de sucesso, sem abrir modal); para períodos maiores, mantém-se o fluxo atual (envio, possivelmente por e-mail).
+5. **"Status desconhecido"** deve ser desconsiderado/excluído do relatório.
+
+> Os pontos sobre substituir o envio por e-mail (SendGrid) por download direto, e um possível limite de tamanho para esse download, ainda estavam em discussão no ticket — **não estão decididos**, não tratar como regra confirmada.
+
 ---
 
 ## 9. Promoções
@@ -330,9 +352,26 @@ A tela **Promoções** tem duas visões, cada uma em sua aba:
 - **Individuais**: promoções aplicadas a um produto específico.
 - **Por grupo**: promoções aplicadas a um **Grupo de produtos** (conjunto de produtos relacionados — ex: uma linha de uma marca).
 
-Cada linha mostra: Ativação, Vendas, Conversão, Tipo de oferta, Período de divulgação e Status (**Ativa**, **Finalizada** ou **Cancelada**). É possível selecionar várias promoções e cancelá-las em lote, filtrar por Tipo de oferta/Status, e destacar uma promoção com a etiqueta **"Em destaque ⭐"** — não há limite de quantas promoções podem estar em destaque ao mesmo tempo, e ter ao menos uma cria uma seção própria chamada **"Ofertas em destaque"** no aplicativo.
+Cada linha mostra: Ativação, Vendas, Conversão, Tipo de oferta, Período de divulgação e Status (**Ativa**, **Finalizada** ou **Cancelada**). É possível selecionar várias promoções e cancelá-las em lote, e destacar uma promoção com a etiqueta **"Em destaque ⭐"** — não há limite de quantas promoções podem estar em destaque ao mesmo tempo, e ter ao menos uma cria uma seção própria chamada **"Ofertas em destaque"** no aplicativo.
+
+**Filtros e ordenação disponíveis:**
+- **Tipo de oferta**: Preço fixo, Desconto %.
+- **Status**: Ativa, Finalizados, Cancelados. *(nota: os rótulos do filtro aparecem no plural, mas o valor de Status exibido nas linhas é sempre no singular — "Finalizada"/"Cancelada" — pequena inconsistência de gramática, não afeta o funcionamento.)*
+- **Ordenar**: Data, Nome, Mais ativadas, Menos ativadas, Mais vendidas, Menos vendidas, Maiores conversões, Menores conversões.
+
+Um filtro aplicado aparece como um chip removível (ex.: "Preço fixo ✕") acima da lista.
+
+**Acesso do perfil Contato cliente (balconista):** o balconista **vê** a listagem completa de Promoções (individuais e por grupo, com todas as métricas) e pode exportar o relatório, mas **não tem o botão "Nova promoção"** — reforça a regra já mencionada de que esse perfil não cria/cancela promoções.
 
 **Medicamentos controlados não entram em promoção.** Hoje o Portal já impede isso na própria criação da oferta: esses produtos aparecem desabilitados na lista de seleção de produtos do passo 5.
+
+### Relatório de ofertas (Exportar)
+
+O botão **"Exportar"** abre o painel **"Relatório de ofertas"**, com dois calendários de mês lado a lado (para escolher um intervalo de datas) e o botão **"Gerar relatório"**. **O relatório é filtrado pela data de criação da promoção**, não pela data de vigência/divulgação.
+
+**Colunas do relatório:** Item em oferta (Produto/Familia), Tipo oferta (aqui aparece como "Preço fixo"/"Porcentagem %" — nomenclatura um pouco diferente da usada no wizard de criação, que mostra "Desconto %"), Nome produto, Ean, Ativação, Vendas, **Pdv ou App** (formato "0/0" — mostra quantas vendas daquela oferta vieram do PDV da loja vs. do aplicativo), Conversão, Início da divulgação, Fim da divulgação, Status, Criação.
+
+> **Colunas sendo removidas** (ver [ECP-1062](https://farmarcas.atlassian.net/browse/ECP-1062)): o relatório hoje também traz **"Genero"** e **"Faixa etária"** (resquício de uma segmentação de público que existia numa versão antiga da tela de criação — o app nunca respeitou essa segmentação, é um dado morto) e uma coluna **"Média"** cujo cálculo não está claro nem para o time de produto. As três serão removidas do relatório. A mesma segmentação por Gênero/Faixa etária também está sendo removida das telas do Portal (drawer/criação de promoção) — ver [ECP-1063](https://farmarcas.atlassian.net/browse/ECP-1063).
 
 ### Criando uma nova promoção
 
