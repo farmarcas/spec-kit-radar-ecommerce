@@ -365,13 +365,110 @@ O módulo **Catálogo** é exclusivo do perfil **Admin** (time Farmarcas) e cont
 
 **O que o Associado precisa saber:** o lojista não cadastra produtos novos livremente — todo produto vendido no App já precisa existir nesse catálogo central, com todas as informações de cadastro (nome, marca, fabricante, se é medicamento, categorização, imagens) e status "Publicado".
 
+> **Regra de negócio central do Catálogo:** o estoque de cada loja é montado **a partir** deste catálogo oficial. Quando a integração de uma loja com o ERP dela envia dados de um produto (por EAN), o Portal só usa esse EAN para montar o estoque da loja **se ele já existir no catálogo oficial**. Se o EAN não existir no catálogo, o Portal simplesmente **ignora** aquele item — ele não entra no estoque da loja e não gera nenhum aviso para o associado. Por isso a curadoria do Catálogo (o que existe, com qual EAN) afeta diretamente o que cada loja consegue vender no app.
+
 ### Produtos
 
-Listagem com todos os produtos cadastrados na plataforma (departamento, categoria, subclasse, grupo de produtos e status). Cada produto tem uma tela de edição com campos como Nome, EAN (fixo), Marca, Fabricante, tipo de cadastro (Medicamento ou Não Medicamento), Registro MS (para medicamentos), o toggle **Genérico** (quando ativado, exibe a tag "genérico" no detalhe do item para o consumidor no app), a chave **"Permitir promocionar"** e a categorização (Departamento/Categoria/Subcategoria).
+Listagem com todos os produtos cadastrados na plataforma (departamento, categoria, subclasse, grupo de produtos e status).
 
 **"Permitir promocionar"** controla se o produto pode ser adicionado a um Grupo de produtos promocional — se desativado, o produto não pode ser incluído. Atenção: se o produto **já estava** num grupo promocional e depois recebe essa flag desativada, ele **não é removido automaticamente** do grupo — a restrição vale só para novas inclusões.
 
 **"Despublicar produto"** remove o produto do catálogo oficial: mesmo que uma loja continue enviando aquele EAN via integração com o ERP, o produto não volta a ser exibido no catálogo dela. O histórico do EAN é mantido em pedidos antigos e relatórios já existentes — só a exibição futura é bloqueada.
+
+#### Cadastro de Novo Produto (campo a campo)
+
+| Campo | Obrigatório? | O que significa |
+|---|---|---|
+| **Nome do produto** | Sim | Nome comercial do produto (ex.: "Dipirona"). |
+| **Código de barras (EAN)** | Sim | Identificador único do produto. É a chave que conecta este catálogo oficial ao estoque de cada loja — ver regra de negócio acima. |
+| **Marca** | Sim | Marca comercial do produto. |
+| **Fabricante** | Não | Empresa fabricante (ex.: "Sanofi"). |
+| **Tipo de cadastro** (Medicamento / Não Medicamento) | Sim | Define o restante do formulário — ver comportamento condicional abaixo. |
+| **Registro MS** | Depende do Tipo de cadastro | Número de registro do produto na ANVISA (Ministério da Saúde). |
+| **Tarja** (Sem tarja / Tarja Vermelha / Tarja Preta) | Depende do Tipo de cadastro | Classificação regulatória da ANVISA: **Sem tarja** = venda livre; **Tarja Vermelha** = venda sob prescrição médica comum; **Tarja Preta** = medicamento controlado/psicotrópico, com retenção de receita (é o que o glossário do produto chama de **Controlados**). |
+| **Permitir promocionar** (toggle, padrão Não) | — | Ver definição acima, na seção Produtos. |
+| **Genérico** (toggle, padrão Não) | — | Quando ativado, exibe a tag "genérico" no detalhe do item para o consumidor no app. |
+| **Imagens do produto** | Sim | Até **1 imagem**, formatos JPG ou PNG, até 2MB. |
+| **Princípios ativos** | Sim | Um ou mais princípios ativos (campo de tags, botão "+" para adicionar mais de um). Melhora a busca e a precisão do resultado no app. |
+| **Descrição curta** | Sim | Texto resumido do produto, até 650 caracteres. |
+| **Departamento / Categoria / Subcategoria** | Departamento e Categoria sim, Subcategoria não | Árvore de categorização — ver comportamento condicional abaixo, e a árvore completa logo a seguir. |
+
+**Comportamento condicional do "Tipo de cadastro":**
+- **Medicamento** selecionado → os campos **Registro MS** e **Tarja** aparecem e passam a ser **obrigatórios**; o campo **Departamento** fica restrito às opções **Farmacinha** ou **Medicamentos**.
+- **Não Medicamento** selecionado → o campo **Registro MS** aparece mas **não é obrigatório**; o campo **Tarja** **não aparece**; o **Departamento** libera as demais opções (todas exceto Farmacinha/Medicamentos).
+
+**Ações do formulário:** **Cancelar** (descarta), **Salvar como Rascunho** (mantém o cadastro sem publicar no catálogo), **Publicar** (torna o produto visível/utilizável no catálogo oficial).
+
+#### Árvore de Categorização (Departamento → Categoria → Subcategorias)
+
+> A fonte desta árvore tem algumas entradas duplicadas ou com grafia inconsistente entre si (ex.: "Condicionador" e "Condicionadores"; "Azia E Má Digestão" e "Azia e Má Digestão"; "Sabonete/Gel Limpeza" e "Sabonete / Gel Limpeza"). Mantive as variações como estão na fonte em vez de unificar por conta própria — vale uma limpeza futura no cadastro se fizer sentido para o time.
+
+**Tipo de Produto: Medicamento**
+
+- **Farmacinha**
+  - Dor e Febre: Analgesicos / Antitermicos
+  - Azia e má digestão: Anti Gases, Antiacidos, Antidiarreicos, Má Digestão / Hepatológicos, Outros, Prisão de Ventre
+  - Alergias e infecções: Antialergicos, Antigripais, Pastilhas, Soro Nasal, Spray Garganta, Xaropes
+  - Fitoterápicos e naturais: Antroposófico, Aromaterapia, Calmante Natural ou Tratamento de Insônia, Fitoterápico, Homeopático
+  - Vitaminas: Omegas, Outros Nutrientes Puros, Polivitaminicos
+  - Outros: Outros
+- **Medicamentos**
+  - Medicamentos de Prescrição: Anti-Alégicos, Anti-Inflamatórios, Asma, Azia E Má Digestão, Azia e Má Digestão, Congestão Nasal, Controle De Peso, Controle de Peso, Desconforto Abdominal E Intestino, Desconforto Abdominal e Intestino, Diabetes, Dor De Garganta, Dor E Febre, Emagrecimento, Endocrinologia, Enxaqueca, Gastrite, Ginicologia, Gripe E Resfriado, Impotência, Infecções, Infertilidade, Insonia, Nutrientes, Outras Especialidades, Outros Medicamentos de Prescrição, Pressão Alta, Pílulas Anticoncepcionais E Diu, Reumatologia, Rinite E Sinusite, Tireóide, Tosse, Visão
+  - Medicamentos com Retenção de Receita: Antibiótico, Controlado (Port 344)
+
+**Tipo de Produto: Não Medicamento**
+
+- **Cosméticos**
+  - Rosto: Hidratação, Limpeza, Outros Cuidados, Solar, Tratamento (Anti Acne, Anti Idade)
+  - Corpo: Bronzeadores, Hidratação, Protetor Solar, Pós Sol
+  - Outros: Hidratação, Limpeza, Outros, Outros Cuidados, Solar, Tratamento (Anti Acne, Anti Idade)
+- **Cuidados Masculinos**
+  - Higiene: Acessorios Masculinos, Aparelho / Lamina De Barbear, Cosmeticos Barba, Shampoo / Condicionadores, Tonalizante Para Barba E Cabelo
+  - Outros: Outros Cuidados
+- **Cuidados pessoais**
+  - Acessórios: Acessórios para Inalação, Caneta de Insulina, Coletor Descartável, Lancetas e Agulhas, Outros Acessórios, Seringas, Tiras Reagentes
+  - Primeiros Socorros: Alcool 70, Algodão, Antiséptico e Cicatrizantes, Contusão, Curativos e Bandagens, Fitas Adesivas, Gaze e Atadura, Luva Descartável, Máscara Descartável, Outros Primeiros Socorros, Soro Fisiológico, Água Oxigenada 10vol
+  - Auto Testes: Auto Teste Colesterol, Auto Teste Covid, Auto Teste Hiv, Outros Testes, Teste Fertilidade, Teste Gravidez
+  - Aparelhos: Balança, Glicosímetro, Lancetador, Monitor De Pressão, Nebulizador ou Inalador, Outros Aparelhos, Oxímetro, Termômetro, Umidificador ou Purificador
+  - Ortopedia: Bengala e Muleta, Bota Ortopédica, Cinta e Meia de Compressão, Joelheira e Tornozeleira, Munhequeira e Cotoveleira, Outros Acessórios Ortopédicos, Protetor De Hérnia, Tipóia, Colar Cervical e Corretor Postural
+  - Cuidado com os pés: Calcanheira, Palmilhas e Protetor de Joanete
+- **Dermocosméticos**
+  - Corpo: Capilar, Hidratação, Limpeza, Outros Cuidados, Solar, Tratamento
+  - Rosto: Hidratação, Limpeza, Outros Cuidados, Solar, Tratamento
+  - Nutricosméticos: Nutricosmeticos
+  - Outros: Outros
+- **Higiene e beleza**
+  - Cabelos: Condicionador, Condicionadores, Finalizadores/Produtos Sem Enxágue, Finalizadores / Produtos Sem Enxague, Máscaras de Tratamento, Mascaras De Tratamento, Shampoo, Acessórios Para Cabelo, Agua Oxigena 20Vol 30 40, Outros, Po Descolorante, Pomadas E Gel Capilar, Tonalizantes E Tinturas, Tratamento Piolho
+  - Higiene Pessoal: Sabonete/Gel Limpeza, Sabonete / Gel Limpeza, Absorventes, Acessorios Higiene, Antifungicos, Depilação (Lamina, Ceras, Etc), Descolorantes, Fralda Adulto, Hastes Flexiveis, Lenco / Toalha Umedecida Adulto, Lenço De Papel, Outros Cuidados de Higiene, Papel Higienico, Repelentes, Sabonete Intimo
+  - Beleza: Acessorios Maquiagem, Acessórios Para Unha, Cutelaria, Esmaltes, Maquiagem, Outros
+  - Higiene Oral: Acessorios Protese Dental, Creme / Gel Dental, Enxaguante Bucal, Escova Dental, Fio / Fita Dental, Limpador De Lingua, Outros
+  - Desodorantes: Aerosol, Bastão (Stick), Creme, Outros, Roll-On
+  - Cuidado para os olhos: Alivio Vermelhidão, Lagrimas Artificiais, Limpadores De Lentes De Contato, Outros Cuidados para os Olhos
+  - Cuidados Complementares: Antitabagismo, Outros, Ouvidos
+  - Acessórios para cabelos: Outros Acessorios Cabelo, Secadores / Chapinhas / Modelador De Cachos
+  - Higiene do Ambiente: Limpeza
+- **Infantil**
+  - Amamentação: Absorvente Seios, Bomba Tira Leite, Concha Para Seios, Outros
+  - Acessórios: Acessorios Banho, Acessorios Chupeta, Acessorios Mamadeira, Acessórios Para Alimentação, Alimentadores, Chupetas, Copos, Mamadeiras, Mordedor, Outros Produtos de Puericultura
+  - Higiene do Bebê: Aspirador Nasal, Condicionadores, Creme / Gel Dental, Dedeira, Escova Dental, Fraldas, Lenco / Toalha Umedecida, Outros Produtos de Higiene Infantil, Pente / Escova Cabelos, Repelentes, Shampoo, Talcos, Tesoura / Cortador Unha
+  - Nutrição: Cereais, Formulas, Leites, Outros Produtos de Nutrição Infantil, Papinhas, Snacks, Suplemento Alimentar Em Pó, Suplemento Alimentar Pronto Para Consumo
+  - Cuidados: Colonias, Creme Assaduras, Creme Hidratante, Outros Cuidados, Protetor Solar
+  - Outros: Outros
+- **Nutrição e alimentos**
+  - Alimentos: Adoçantes, Bala/Goma de Mascar e Pastilhas, Barra de Cereais, Barra de Proteína, Chocolate/Doce e Confeitos, Diet ou Ligth, Orgânico ou Integral, Outros Alimentos, Salgadinho e Snack
+  - Bebidas: Chá, Energético, Hidratação Oral, Outras Bebidas, Suco ou Refrigerante, Suplemento Alimentar Pronto Para Consumo, Água
+  - Conveniência: Diversos, Pilha ou Bateria
+- **Outros**
+  - Outros: Outros
+- **Saúde Sexual**
+  - Acessórios Sexuais: Acessorios Intimos, Gel De Massagem
+  - Lubrificantes: Lubrificante Intimo
+  - Outros: Outros
+  - Preservativos: Preservativo Feminino, Preservativo Masculino
+- **Suplementos Alimentares**
+  - Fitness: Creatina, Hipercaloricos, Outros Suplementos, Outros Suplementos Fitness, Proteinas E Bcaa, Pré-Treino, Shakes Emagrecedores, Termogenicos
+  - Nutrição Adulto: Fórmula Especial Adulta, Suplemento Alimentar Em Pó
+  - Outros: Outros
 
 ### Grupos de produtos
 

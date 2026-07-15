@@ -454,6 +454,42 @@ Ele deixa de ser exibido no catálogo de todas as lojas — mesmo que uma loja c
 **O que muda quando um produto é marcado como "Genérico"?**
 No aplicativo, aparece uma tag "genérico" no detalhe daquele item para o consumidor.
 
+**Por que um EAN que minha loja manda pelo ERP às vezes não aparece no meu estoque?**
+Porque o estoque de cada loja é montado **a partir do Catálogo oficial**: o Portal só usa o EAN enviado pela integração do ERP se esse EAN **já existir no catálogo**. Se não existir, o item é simplesmente ignorado — não aparece no estoque, sem nenhum aviso. Se isso acontecer, a saída é solicitar a inclusão do produto (ver "Como solicito um produto que ainda não existe no catálogo?", seção Estoque).
+
+**O que preciso preencher para cadastrar um produto novo no Catálogo?** *(referência para o time Farmarcas/Admin, que é quem cadastra)*
+- **Nome do produto**, **Código de barras (EAN)** e **Marca**: obrigatórios.
+- **Fabricante**: opcional.
+- **Tipo de cadastro** (Medicamento / Não Medicamento): obrigatório, e muda o resto do formulário —
+  - **Medicamento**: exige **Registro MS** (número de registro na ANVISA) e **Tarja** (Sem tarja = venda livre / Tarja Vermelha = prescrição médica comum / Tarja Preta = controlado/psicotrópico com retenção de receita — os "Controlados" do glossário); o **Departamento** fica restrito a Farmacinha ou Medicamentos.
+  - **Não Medicamento**: Registro MS aparece mas não é obrigatório; Tarja não aparece; Departamento libera as demais opções.
+- **Permitir promocionar** e **Genérico**: toggles, padrão "Não" (ver definições acima).
+- **Imagens do produto**: obrigatório, até 1 imagem (JPG/PNG, até 2MB).
+- **Princípios ativos**: obrigatório, um ou mais (campo de tags).
+- **Descrição curta**: obrigatória, até 650 caracteres.
+- **Departamento/Categoria**: obrigatórios; **Subcategoria**: opcional (ver árvore completa abaixo).
+- Ações: **Cancelar**, **Salvar como Rascunho** (não publica ainda), **Publicar** (torna o produto visível no catálogo oficial).
+
+**Qual é a árvore completa de Departamento/Categoria/Subcategoria do Catálogo?**
+
+*(Nota: a fonte tem algumas entradas duplicadas/com grafia inconsistente, ex.: "Condicionador" e "Condicionadores" — mantidas como estão, sem unificar.)*
+
+Departamentos exclusivos de **Medicamento**: Farmacinha, Medicamentos.
+Departamentos exclusivos de **Não Medicamento**: Cosméticos, Cuidados Masculinos, Cuidados pessoais, Dermocosméticos, Higiene e beleza, Infantil, Nutrição e alimentos, Outros, Saúde Sexual, Suplementos Alimentares.
+
+- **Farmacinha**: Dor e Febre (Analgesicos/Antitermicos); Azia e má digestão (Anti Gases, Antiacidos, Antidiarreicos, Má Digestão/Hepatológicos, Outros, Prisão de Ventre); Alergias e infecções (Antialergicos, Antigripais, Pastilhas, Soro Nasal, Spray Garganta, Xaropes); Fitoterápicos e naturais (Antroposófico, Aromaterapia, Calmante Natural ou Tratamento de Insônia, Fitoterápico, Homeopático); Vitaminas (Omegas, Outros Nutrientes Puros, Polivitaminicos); Outros (Outros).
+- **Medicamentos**: Medicamentos de Prescrição (Anti-Alégicos, Anti-Inflamatórios, Asma, Azia E/e Má Digestão, Congestão Nasal, Controle De/de Peso, Desconforto Abdominal E/e Intestino, Diabetes, Dor De Garganta, Dor E Febre, Emagrecimento, Endocrinologia, Enxaqueca, Gastrite, Ginicologia, Gripe E Resfriado, Impotência, Infecções, Infertilidade, Insonia, Nutrientes, Outras Especialidades, Outros Medicamentos de Prescrição, Pressão Alta, Pílulas Anticoncepcionais E Diu, Reumatologia, Rinite E Sinusite, Tireóide, Tosse, Visão); Medicamentos com Retenção de Receita (Antibiótico, Controlado (Port 344)).
+- **Cosméticos**: Rosto (Hidratação, Limpeza, Outros Cuidados, Solar, Tratamento (Anti Acne, Anti Idade)); Corpo (Bronzeadores, Hidratação, Protetor Solar, Pós Sol); Outros (Hidratação, Limpeza, Outros, Outros Cuidados, Solar, Tratamento (Anti Acne, Anti Idade)).
+- **Cuidados Masculinos**: Higiene (Acessorios Masculinos, Aparelho/Lamina De Barbear, Cosmeticos Barba, Shampoo/Condicionadores, Tonalizante Para Barba E Cabelo); Outros (Outros Cuidados).
+- **Cuidados pessoais**: Acessórios (Acessórios para Inalação, Caneta de Insulina, Coletor Descartável, Lancetas e Agulhas, Outros Acessórios, Seringas, Tiras Reagentes); Primeiros Socorros (Alcool 70, Algodão, Antiséptico e Cicatrizantes, Contusão, Curativos e Bandagens, Fitas Adesivas, Gaze e Atadura, Luva Descartável, Máscara Descartável, Outros Primeiros Socorros, Soro Fisiológico, Água Oxigenada 10vol); Auto Testes (Auto Teste Colesterol, Auto Teste Covid, Auto Teste Hiv, Outros Testes, Teste Fertilidade, Teste Gravidez); Aparelhos (Balança, Glicosímetro, Lancetador, Monitor De Pressão, Nebulizador ou Inalador, Outros Aparelhos, Oxímetro, Termômetro, Umidificador ou Purificador); Ortopedia (Bengala e Muleta, Bota Ortopédica, Cinta e Meia de Compressão, Joelheira e Tornozeleira, Munhequeira e Cotoveleira, Outros Acessórios Ortopédicos, Protetor De Hérnia, Tipóia/Colar Cervical e Corretor Postural); Cuidado com os pés (Calcanheira, Palmilhas e Protetor de Joanete).
+- **Dermocosméticos**: Corpo (Capilar, Hidratação, Limpeza, Outros Cuidados, Solar, Tratamento); Rosto (Hidratação, Limpeza, Outros Cuidados, Solar, Tratamento); Nutricosméticos (Nutricosmeticos); Outros (Outros).
+- **Higiene e beleza**: Cabelos (Condicionador(es), Finalizadores/Produtos Sem Enxágue, Máscaras/Mascaras de Tratamento, Shampoo, Acessórios Para Cabelo, Agua Oxigena 20/30/40 Vol, Outros, Po Descolorante, Pomadas E Gel Capilar, Tonalizantes E Tinturas, Tratamento Piolho); Higiene Pessoal (Sabonete/Gel Limpeza, Absorventes, Acessorios Higiene, Antifungicos, Depilação, Descolorantes, Fralda Adulto, Hastes Flexiveis, Lenco/Toalha Umedecida Adulto, Lenço De Papel, Outros Cuidados de Higiene, Papel Higienico, Repelentes, Sabonete Intimo); Beleza (Acessorios Maquiagem, Acessórios Para Unha, Cutelaria, Esmaltes, Maquiagem, Outros); Higiene Oral (Acessorios Protese Dental, Creme/Gel Dental, Enxaguante Bucal, Escova Dental, Fio/Fita Dental, Limpador De Lingua, Outros); Desodorantes (Aerosol, Bastão/Stick, Creme, Outros, Roll-On); Cuidado para os olhos (Alivio Vermelhidão, Lagrimas Artificiais, Limpadores De Lentes De Contato, Outros Cuidados para os Olhos); Cuidados Complementares (Antitabagismo, Outros, Ouvidos); Acessórios para cabelos (Outros Acessorios Cabelo, Secadores/Chapinhas/Modelador De Cachos); Higiene do Ambiente (Limpeza).
+- **Infantil**: Amamentação (Absorvente Seios, Bomba Tira Leite, Concha Para Seios, Outros); Acessórios (Acessorios Banho, Acessorios Chupeta, Acessorios Mamadeira, Acessórios Para Alimentação, Alimentadores, Chupetas, Copos, Mamadeiras, Mordedor, Outros Produtos de Puericultura); Higiene do Bebê (Aspirador Nasal, Condicionadores, Creme/Gel Dental, Dedeira, Escova Dental, Fraldas, Lenco/Toalha Umedecida, Outros Produtos de Higiene Infantil, Pente/Escova Cabelos, Repelentes, Shampoo, Talcos, Tesoura/Cortador Unha); Nutrição (Cereais, Formulas, Leites, Outros Produtos de Nutrição Infantil, Papinhas, Snacks, Suplemento Alimentar Em Pó, Suplemento Alimentar Pronto Para Consumo); Cuidados (Colonias, Creme Assaduras, Creme Hidratante, Outros Cuidados, Protetor Solar); Outros (Outros).
+- **Nutrição e alimentos**: Alimentos (Adoçantes, Bala/Goma de Mascar e Pastilhas, Barra de Cereais, Barra de Proteína, Chocolate/Doce e Confeitos, Diet ou Ligth, Orgânico ou Integral, Outros Alimentos, Salgadinho e Snack); Bebidas (Chá, Energético, Hidratação Oral, Outras Bebidas, Suco ou Refrigerante, Suplemento Alimentar Pronto Para Consumo, Água); Conveniência (Diversos, Pilha ou Bateria).
+- **Outros**: Outros (Outros).
+- **Saúde Sexual**: Acessórios Sexuais (Acessorios Intimos, Gel De Massagem); Lubrificantes (Lubrificante Intimo); Outros (Outros); Preservativos (Preservativo Feminino, Preservativo Masculino).
+- **Suplementos Alimentares**: Fitness (Creatina, Hipercaloricos, Outros Suplementos, Outros Suplementos Fitness, Proteinas E Bcaa, Pré-Treino, Shakes Emagrecedores, Termogenicos); Nutrição Adulto (Fórmula Especial Adulta, Suplemento Alimentar Em Pó); Outros (Outros).
+
 ---
 
 ## Precificação e descontos vindos do ERP (ex: sistema BIG)
