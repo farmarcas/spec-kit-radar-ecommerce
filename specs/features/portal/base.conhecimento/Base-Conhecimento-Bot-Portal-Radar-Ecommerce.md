@@ -2,7 +2,7 @@
 
 > **Uso deste documento:** conteúdo-fonte para um bot de atendimento que responde dúvidas simples de Associados/Lojistas sobre o uso do Portal Radar E-commerce (ex: "onde encontro minha API KEY", "como vejo o módulo da minha loja"). Cada bloco de pergunta/resposta abaixo foi escrito para ser **autocontido** — não depende de ler o restante do documento para fazer sentido — pensando em recuperação por trechos (chunking) por um sistema de busca/RAG.
 >
-> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 14 de julho de 2026.
+> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 15 de julho de 2026.
 >
 > **Regra para o bot:** se a dúvida do associado não estiver coberta aqui, o bot deve admitir que não sabe e direcionar para o suporte humano (Farmarcas/N1) — nunca inventar um caminho de tela que não está descrito neste documento. A seção final "Perguntas sem resposta confirmada" lista o que ainda não foi mapeado.
 
@@ -25,6 +25,7 @@
 - [Precificação e descontos vindos do ERP (ex: sistema BIG)](#precificação-e-descontos-vindos-do-erp-ex-sistema-big)
 - [Integração ERP Alpha7](#integração-erp-alpha7)
 - [Meios de pagamento (Braspag, Cielo, Rede, Antifraude)](#meios-de-pagamento-braspag-cielo-rede-antifraude)
+- [E-mails automáticos do sistema](#e-mails-automáticos-do-sistema)
 - [Notificações, instabilidades e contingência](#notificações-instabilidades-e-contingência)
 - [Perguntas sem resposta confirmada](#perguntas-sem-resposta-confirmada)
 
@@ -629,6 +630,49 @@ O suporte do e-commerce orienta o fluxo inicial (kickoff), mas o acompanhamento 
 
 **Estou recebendo muitos erros de "Cartão Inválido" ou "Compra não finalizada" numa loja específica. O que pode ser?**
 Geralmente está ligado a instabilidade na adquirente (Cielo, Rede etc). Vale confirmar se a loja está usando a adquirente homologada correta para o perfil dela, e se o e-commerce já foi incluído/liberado no painel da própria credenciadora de cartões.
+
+---
+
+## E-mails automáticos do sistema
+
+**O Radar E-commerce manda e-mails automáticos? Como funciona?**
+Sim. Existe um centralizador de comunicação interno que aciona o SendGrid para o envio. A maioria dos e-mails avisa sobre relatórios prontos para download, eventos de acesso (convite, senha) ou o status da integração da loja com o ERP.
+
+**Cliquei em "Exportar" um relatório e nada baixou na hora. Isso é um bug?**
+Não. Toda exportação de relatório no Portal é processada em segundo plano (assíncrona) — o Portal envia um e-mail com o link de download quando o arquivo fica pronto, não na hora do clique.
+
+**Quais relatórios do Portal chegam por e-mail e de qual tela/botão eles saem?**
+- "Relatório de ofertas" → botão Exportar no painel "Relatório de ofertas" da tela Promoções.
+- "Relatório completo de produtos" e "Relatório de estoque por loja" → mesmo botão: ícone de exportar na tela Estoque (dois nomes de e-mail para o mesmo disparo).
+- "Relatório de redes" → botão "Exportar redes" na tela Redes (Admin).
+- "Relatório de lojas" → botão "Exportar Lojas" na tela Lojas de uma Rede.
+- "Relatório de pedidos em aberto" → botão "Visualizar pedidos" no card "Total de Pedidos em Aberto" (Home de Vendas).
+- "Relatório de lojas sem ofertas" → botão "Ver lojas sem ofertas" no card "Lojas sem ofertas em exibição" (Home de Ofertas).
+- "Relatório de ofertas mais ativadas" → botão "Baixar produtos" no card "Top produtos com mais ativações" (Home de Ofertas).
+- "Relatório de produtos mais vendidos" → botão "Baixar produtos" no card "Top produtos mais vendidos" (Home de Vendas).
+- "Relatório de pedidos" → botão "Gerar Relatório" na tela Pedidos.
+- "Relatório de pedidos cancelados" → botão Exportar na aba "Pedidos cancelados" da Home de Vendas (mesmo arquivo do relatório "Pedidos Faturados").
+
+**Recebi um e-mail dizendo "Recebemos uma solicitação para redefinir/alterar a senha". Qual a diferença entre os dois?**
+São dois e-mails quase idênticos: um é disparado pelo fluxo "Esqueceu a senha?" do **Portal** (texto "solicitação para **redefinir**"), o outro pelo fluxo de recuperação de senha do **App** do consumidor final (texto "solicitação para **alterar**"). O conteúdo é parecido de propósito — a diferença real é qual sistema disparou, não o texto do e-mail.
+
+**Recebi um convite por e-mail para o Radar E-commerce. Por quanto tempo ele vale?**
+O texto do e-mail diz "válido por 5 dias", mas isso está desatualizado — hoje o convite **não expira mais**. Correção do texto do template registrada em [ECP-1066](https://farmarcas.atlassian.net/browse/ECP-1066). O e-mail traz o botão "Completar meu cadastro", que leva ao formulário de 2 passos (dados pessoais + senha).
+
+**Recebi um e-mail dizendo que a integração do meu ERP foi concluída, mas ainda preciso fazer algo?**
+Sim — esse e-mail avisa que a integração técnica terminou, mas falta ativar o módulo de Vendas pelo próprio Portal (ver seção de Configurações da Loja) para começar a vender online de fato.
+
+**Recebi um e-mail com uma "Chave de integração" dizendo que minha loja foi criada. O que eu faço com isso?**
+Essa chave (API Key) é enviada automaticamente por um job tanto para o ERP quanto para o Gestor da loja; precisa ser cadastrada no sistema ERP da loja para iniciar o envio de estoque, preços e pedidos ao Radar E-commerce. O mesmo e-mail já avisa que dá para convidar usuários para o Portal enquanto isso.
+
+**Recebi um e-mail dizendo que minha loja foi desconectada do ERP e saiu do aplicativo. É normal?**
+Sim, é o comportamento esperado: depois de mais de 3 dias sem enviar atualização de preço/estoque, a loja é removida temporariamente do app até a comunicação com o ERP ser restabelecida — quando reconectar, um segundo e-mail confirma que a comunicação foi restabelecida e a loja volta a aparecer automaticamente. A ação recomendada é abrir chamado com o suporte do próprio ERP.
+
+**Recebi um e-mail sobre o WhatsApp da loja ter desconectado. O que fazer?**
+Acesse o portal do Pedbot, clique em "Autenticar no WhatsApp", solicite o QR Code e escaneie com o WhatsApp da loja para reconectar. Um segundo e-mail confirma quando a conexão for reestabelecida.
+
+**Preenchi um formulário de interesse (Braspag, integração de estoque, ou como lead) — quem recebe esse e-mail, chega para mim?**
+Não chega para o lojista. Esses formulários geram e-mails internos: para o contato comercial da Braspag (quando é sobre antifraude/pagamento online), e para os times de CS Farmarcas e/ou Implantação ERP (quando é sobre leads ou interesse em integrar estoque) — servem para o time interno dar sequência ao atendimento.
 
 ---
 
