@@ -10,8 +10,8 @@
 | **Loja Ativa** | Lojista que realizou ao menos uma transação no período de referência. Base do NSM. |
 | **Portal** | Front-end web do Radar destinado aos lojistas. Gerenciam estoque, preços, pedidos e configurações. |
 | **App** | Aplicativo mobile do Radar destinado ao consumidor final. |
-| **Rede** | Agrupamento de lojas associadas dentro da plataforma Radar (ex: ACFARMA, Ultra Popular). Uma Rede pode conter múltiplos Grupos de lojas e Lojas individuais, e possui indicadores agregados próprios. [TODO: confirmar com o time se "Rede" é sinônimo do termo "GE (Grupo Econômico)" já definido abaixo, ou se são conceitos distintos]. |
-| **Grupo de lojas** | Subconjunto de Lojas dentro de uma Rede, com configuração própria de atendimento de pedidos e tipo de estoque (Espelhado / Integrado / Independente) e usuários vinculados ao grupo. |
+| **Rede** | Bandeira/franquia da qual as lojas fazem parte na plataforma Radar (ex: ACFARMA, Ultra Popular, Super Popular). É o nível mais alto de organização no Portal; dentro de uma Rede existem lojas de diferentes GEs (associados/empresários — ver **GE** abaixo). Possui indicadores agregados próprios. |
+| **Grupo de lojas** | Funcionalidade do Portal que organiza um subconjunto de Lojas dentro de uma Rede — normalmente as lojas de um mesmo **GE** — com configuração própria de atendimento de pedidos e tipo de estoque (Espelhado / Integrado / Independente) e usuários vinculados ao grupo. |
 | **Balconista** | Atendente da farmácia associada que opera o Portal para gerenciar pedidos. No Portal, esse perfil é identificado como **Contato cliente**: vinculado a uma única loja, sem acesso à criação/remoção de promoções ou outras ações críticas de operação. |
 | **Gestor de Loja** | Perfil de acesso do Portal destinado a associados/donos de loja. Acesso completo a todas as funcionalidades do Portal, podendo ser vinculado a N lojas. |
 | **Gestor de Rede** | Perfil de acesso do Portal equivalente ao Gestor de Loja, mas vinculado a uma ou mais Redes (grupos de lojas) em vez de lojas individuais. |
@@ -32,7 +32,7 @@
 | **Deeplink** | Tecnologia usada no novo checkout para receber dados necessários à precificação. |
 | **OMS** | Order Management System. Gerencia o ciclo de vida dos pedidos após criação. |
 | **Recompra** | Funcionalidade que permite ao consumidor repetir um pedido anterior com um clique. |
-| **GE** | Grupo Econômico. Grupo de uma ou mais lojas do mesmo empresário. |
+| **GE** | Grupo Econômico. Conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma **Rede** (bandeira). É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal. |
 | **Controlados** | Medicamentos que exigem receita médica. Compra disponível pelo app com retirada obrigatória na loja. |
 | **Maxi Popular** | [TODO: descrever o que é o App Maxi Popular no contexto do Radar] |
 
@@ -44,6 +44,7 @@
 | **Squad Portal** | Time responsável pelo portal web do Radar (lojistas). |
 | **Squad Core** | Time responsável pela infraestrutura e serviços centrais do Radar. |
 | **Squad CS** | Time de Customer Success do Radar. |
+| **Anjo** | Profissional do time de Operações internas da Farmarcas responsável por dar suporte a associados do Radar E-commerce/E-Delivery. |
 | **GPEEDS** | Chave do projeto Radar E-commerce no Jira. |
 | **Spec Kit** | Este repositório. Base de conhecimento versionada do produto. |
 | **ADR** | Architecture Decision Record. Registro formal de uma decisão técnica ou de produto. |
