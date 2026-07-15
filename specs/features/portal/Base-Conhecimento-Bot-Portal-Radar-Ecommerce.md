@@ -203,7 +203,7 @@ Demais indicadores:
 - **Região** (aqui existe por Loja e por Rede): "Distribuição dos clientes que realizaram ativações no período, agrupados conforme a localização geográfica cadastrada (ex.: Sudeste, Sul, Nordeste)."
 - **Gênero**: distribuição por gênero de quem **ativou** ofertas no período (o app hoje mostra por engano o mesmo texto da Home de Vendas, falando em "compras" — já reportado como bug).
 - **Top produtos com mais ativações**: produtos com mais ativações no período (o app hoje mostra por engano o texto de "vendas" da Home de Vendas — já reportado como bug).
-- **Lojas sem ofertas em exibição**: "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas."
+- **Lojas sem ofertas em exibição** (logo abaixo de "Total de ofertas criadas"): "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas." Botão "Ver lojas sem ofertas" baixa o relatório correspondente (ver seção de relatórios).
 - **Aviso: Loja indisponível no app** (só quando é uma única loja): "Essa loja está indisponível para os clientes no app porque não há nenhuma oferta ativa."
 
 ### Como os gráficos se comportam
@@ -213,6 +213,27 @@ Demais indicadores:
 - Nenhuma legenda é clicável — todas são listas estáticas de cor + rótulo, só para leitura.
 - Mudar o período recarrega a página inteira (uma chamada nova por card).
 - Gráficos de rosca e o de Gênero mostram um círculo cinza vazio quando não há dado no período; Faturamento/Ticket Médio/Faixa etária/Região não têm essa ilustração (ficam em branco); "Top produtos" tem sua própria ilustração de vazio ("Sem dados... por enquanto!").
+
+### Relatórios exportáveis da Home
+
+Alguns cards da Home baixam um relatório em Excel (.xlsx):
+
+**Como baixo o relatório de Pedidos Faturados?**
+Pelo botão **"Exportar"** no cabeçalho da Home de Vendas — funciona em qualquer uma das 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), sempre gera o mesmo relatório. Colunas: Loja (⚠️ hoje traz o CNPJ, não o nome — correção pendente), Número do pedido, Data do pedido, Nome do cliente, CPF, Detalhe do pedido (EAN do item), Método de pagamento, Método de entrega, Valor, Status. É uma linha por item do pedido, não por pedido — se um pedido tem 5 produtos, aparecem 5 linhas com o mesmo Número do pedido.
+
+**Como baixo o relatório de Pedidos em Aberto?**
+Pelo botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". Colunas: Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Pendente/Em separação/Liberado), Valor.
+
+**Como baixo o relatório de Lojas com retirada ativa?**
+Pelo botão **"Ver lojas com retirada"** no card "Lojas sem opção de receber em casa" (Home de Vendas, nível Rede). Colunas: Rede, CNPJ, Nome da loja. Deveria trazer só lojas do módulo Vendas sem entrega em domicílio — hoje não filtra corretamente por módulo (correção pendente).
+
+**Como baixo o relatório de Produtos mais ativados?**
+Pelo botão **"Baixar produtos"** no card "Top produtos com mais ativações" (Home de Ofertas). Colunas: Ranking, EAN, Nome do produto, Quantidade de ativações — sempre os 10 primeiros.
+
+**Como baixo o relatório de Lojas sem ofertas ativas?**
+Pelo botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição" (Home de Ofertas, logo abaixo de "Total de ofertas criadas"). Colunas: Rede, CNPJ, Nome da loja.
+
+> Os dois ajustes pendentes (cabeçalho "Loja"=CNPJ no relatório de Pedidos Faturados, e filtro de módulo no relatório de Lojas com retirada ativa) já estão registrados em ticket interno ([ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056)).
 
 ---
 

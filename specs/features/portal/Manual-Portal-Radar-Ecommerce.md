@@ -173,7 +173,7 @@ Demais indicadores da Home de Vendas:
 | **Região** | "Distribuição dos clientes que realizaram ativações no período, agrupados conforme a localização geográfica cadastrada (ex.: Sudeste, Sul, Nordeste)." — aqui **existe** tanto no painel por Loja quanto por Rede (diferente da Home de Vendas). |
 | **Gênero** | Distribuição dos clientes que realizaram **ativações** no período, por gênero cadastrado. ⚠️ Hoje o tooltip do app mostra o mesmo texto da Home de Vendas ("realizaram compras") — é um erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
 | **Top produtos com mais ativações** | Produtos com maior número de **ativações** no período. ⚠️ Hoje o tooltip do app mostra o mesmo texto da Home de Vendas ("maior número de vendas") — erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
-| **Lojas sem ofertas em exibição** | "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas." |
+| **Lojas sem ofertas em exibição** | "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas." Fica logo abaixo de "Total de ofertas criadas"; tem um botão "Ver lojas sem ofertas" que baixa o Relatório de Lojas sem ofertas ativas (ver seção 5.4). |
 | **Aviso: Loja indisponível no app** *(só no painel por Loja, loja única)* | "Essa loja está indisponível para os clientes no app porque não há nenhuma oferta ativa." |
 
 ### 5.3 Comportamento geral dos gráficos
@@ -183,6 +183,20 @@ Demais indicadores da Home de Vendas:
 - Mudar o período no topo da tela **recarrega todos os cards da página** (uma nova chamada por card), não é um filtro local — por isso pode levar um instante para os cards atualizarem.
 - Nos gráficos de rosca e no gráfico de gênero, quando não há nenhum dado no período, aparece um círculo cinza vazio no lugar do gráfico. Já Faturamento, Ticket Médio, Faixa etária e Região não têm essa ilustração — se não houver dado, a área do gráfico aparece em branco.
 - "Top produtos" tem uma ilustração própria de vazio, com o texto "Sem dados... por enquanto!".
+
+### 5.4 Relatórios exportáveis
+
+Alguns cards da Home baixam um relatório em Excel (.xlsx) com o detalhe por trás do número exibido. Todos os arquivos inspecionados vieram do contexto "Geral" (visão agregada, nível Rede).
+
+| Relatório | Como é baixado | Colunas |
+|---|---|---|
+| **Pedidos Faturados** | Botão **"Exportar"** no cabeçalho da Home de Vendas — funciona em qualquer uma das 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), sempre traz o mesmo relatório. | Uma linha por **item** do pedido (não por pedido): Loja *(⚠️ hoje traz o CNPJ, não o nome — correção pendente, ver nota abaixo)*, Número do pedido, Data do pedido, Nome do cliente, CPF, Detalhe do pedido *(EAN do item)*, Método de pagamento, Método de entrega, Valor, Status. |
+| **Pedidos em Aberto** | Botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". | Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Pendente / Em separação / Liberado), Valor. |
+| **Lojas com retirada ativa** | Botão **"Ver lojas com retirada"** no card "Lojas sem opção de receber em casa" (Home de Vendas, nível Rede). | Rede, CNPJ, Nome da loja. Deveria trazer só lojas do módulo Vendas sem entrega em domicílio *(⚠️ hoje não filtra corretamente por módulo — ver nota abaixo)*. |
+| **Produtos mais ativados** | Botão **"Baixar produtos"** no card "Top produtos com mais ativações" (Home de Ofertas). | Ranking, EAN, Nome do produto, Quantidade de ativações — sempre Top 10. |
+| **Lojas sem ofertas ativas** | Botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição" (Home de Ofertas, logo abaixo de "Total de ofertas criadas"). | Rede, CNPJ, Nome da loja. |
+
+> **Ajustes pendentes nos relatórios** (todos já registrados em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056)): o cabeçalho "Loja" do relatório de Pedidos Faturados precisa deixar claro que traz o CNPJ, não o nome; e o relatório de Lojas com retirada ativa hoje não respeita o módulo da loja (deveria considerar só lojas do módulo Vendas).
 
 ---
 
