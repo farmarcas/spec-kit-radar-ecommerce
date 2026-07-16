@@ -50,6 +50,7 @@ Associados nem sempre usam o nome exato do campo/tela do Portal. Esta tabela aju
 | "Cadastrar produto novo", "pedir produto novo" | **Solicitação de produto** | Ícone "Solicitar produto" na tela `Estoque` — é self-service, mas depende de aprovação do Admin (Catálogo) |
 | "Anjo" | Profissional do time de **Operações internas da Farmarcas** que dá suporte ao associado (termo interno) | — |
 | "Sistema BIG", "Alfa 7"/"Alpha7", "Soft", "TRIER" | Sistemas de **ERP** usados pelas farmácias, integrados ao Portal via API | Fora do Portal — são os sistemas de gestão do próprio associado |
+| "E-Delivery" | Nome antigo/alternativo do próprio **Portal Radar E-commerce** — mesma ferramenta, sem diferença de funcionalidade | — |
 
 ---
 
@@ -129,6 +130,9 @@ Na tela `Usuários`, existe um botão para convidar/criar novo usuário — lá 
 
 **O que é uma Rede?**
 É o nível mais alto de organização no Portal, abaixo apenas da Farmarcas — representa uma bandeira/franqueadora (ex: ACFARMA, Ultra Popular, Super Popular). Dentro de uma Rede existem lojas de vários GEs (empresários) diferentes.
+
+**Cada Rede tem o próprio aplicativo? O app tem nome diferente para cada uma?**
+Sim. Hoje existem 12 Redes na plataforma, e cada uma tem seu próprio app, com nome/marca própria (whitelabel) — por exemplo, a Rede Ultra tem o app "Ultra Popular". Todos os apps compartilham exatamente as mesmas funcionalidades; só a marca muda. Dentro do app existe o contexto de loja: o cliente vê o estoque de uma loja específica por vez, mas pode trocar de loja dentro do próprio app.
 
 **O que é um GE (Grupo Econômico)?**
 É o conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma Rede. É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal — ou seja, quando um associado tem várias filiais, ele normalmente organiza essas lojas num Grupo de lojas dentro do Portal.
@@ -668,8 +672,11 @@ Essa chave (API Key) é enviada automaticamente por um job tanto para o ERP quan
 **Recebi um e-mail dizendo que minha loja foi desconectada do ERP e saiu do aplicativo. É normal?**
 Sim, é o comportamento esperado: depois de mais de 3 dias sem enviar atualização de preço/estoque, a loja é removida temporariamente do app até a comunicação com o ERP ser restabelecida — quando reconectar, um segundo e-mail confirma que a comunicação foi restabelecida e a loja volta a aparecer automaticamente. A ação recomendada é abrir chamado com o suporte do próprio ERP.
 
+**O que é o Pedbot?**
+É a integração direta com a Meta (WhatsApp Business) que avisa a loja por WhatsApp toda vez que chega um pedido novo no módulo Vendas — é assim que o atendente sabe que precisa começar a separação. Substituiu o serviço antigo de notificação de pedido por WhatsApp.
+
 **Recebi um e-mail sobre o WhatsApp da loja ter desconectado. O que fazer?**
-Acesse o portal do Pedbot, clique em "Autenticar no WhatsApp", solicite o QR Code e escaneie com o WhatsApp da loja para reconectar. Um segundo e-mail confirma quando a conexão for reestabelecida.
+Acesse o portal do Pedbot, clique em "Autenticar no WhatsApp", solicite o QR Code e escaneie com o WhatsApp da loja para reconectar. Enquanto estiver desconectado, a loja não recebe as notificações de pedido novo por WhatsApp. Um segundo e-mail confirma quando a conexão for reestabelecida.
 
 **Preenchi um formulário de interesse (Braspag, integração de estoque, ou como lead) — quem recebe esse e-mail, chega para mim?**
 Não chega para o lojista. Esses formulários geram e-mails internos: para o contato comercial da Braspag (quando é sobre antifraude/pagamento online), e para os times de CS Farmarcas e/ou Implantação ERP (quando é sobre leads ou interesse em integrar estoque) — servem para o time interno dar sequência ao atendimento.
@@ -679,7 +686,7 @@ Não chega para o lojista. Esses formulários geram e-mails internos: para o con
 ## Notificações, instabilidades e contingência
 
 **Paramos de receber notificação de pedido novo via WhatsApp depois de uma atualização do Portal. O que houve?**
-O serviço antigo de notificação via WhatsApp foi descontinuado. Um novo sistema, mais estável, está em fase de implementação/subida em produção.
+O serviço antigo de notificação via WhatsApp foi descontinuado e substituído pelo **Pedbot** — integração direta com a Meta (WhatsApp Business) que já está em produção e cumpre a mesma função: avisar a loja por WhatsApp a cada pedido novo (ver "E-mails automáticos do sistema" para o fluxo de conexão/reconexão).
 
 **O Portal ou o app estão fora do ar / não consigo logar. Existe um link alternativo?**
 Sim, em caso de suspeita de instabilidade na URL principal, há um link de contingência: `https://admin-ecomm.radarfarmarcas.com.br/network/list`.

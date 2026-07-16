@@ -87,6 +87,8 @@ Ações disponíveis: **Nova loja** (cadastrar uma unidade), filtro por **Módul
 
 Só o perfil Admin acessa essa tela (aba "Redes" no menu de plataforma). Lista **todas as Redes cadastradas na plataforma**, com nome, quantidade de lojas cadastradas e um botão "Abrir rede". Tem busca por nome e um botão **"Exportar redes"**.
 
+**Um app por Rede (whitelabel):** hoje existem **12 Redes** na plataforma, e cada uma tem seu **próprio aplicativo com nome/marca própria** (ex.: a Rede Ultra tem o app "Ultra Popular"). Todos esses apps compartilham exatamente as mesmas funcionalidades — a diferença é só a marca. Dentro do app, existe o **contexto de loja**: o cliente final vê o estoque de uma loja específica por vez, mas pode trocar de loja dentro do próprio app (ex.: ao mudar de bairro/cidade).
+
 ### Relatórios exportáveis (Lojas e Redes)
 
 Dois relatórios em Excel (.xlsx) relacionados a essa hierarquia:
@@ -329,6 +331,8 @@ O ícone de exportar na barra de ferramentas da tela Estoque baixa um Excel (.xl
 ## 8. Pedidos
 
 A tela **Pedidos** é onde o dia a dia operacional acontece — é a tela principal de trabalho do perfil **Contato cliente** (balconista).
+
+Sempre que um pedido novo chega, o **Pedbot** (integração com WhatsApp Business/Meta — ver seção 14.4) dispara uma notificação por WhatsApp para o número cadastrado da loja, avisando o atendente para iniciar o atendimento.
 
 Os pedidos são organizados num quadro (kanban) por status, cada um com contador:
 
@@ -666,7 +670,9 @@ Toda exportação de relatório no Portal é **processada de forma assíncrona**
 
 ### 14.4 WhatsApp / Pedbot
 
-- **Conexão do WhatsApp interrompida**: orienta a reconectar pelo portal do Pedbot — acessar, clicar em "Autenticar no WhatsApp", solicitar o QR Code e escanear com o WhatsApp da loja.
+**O que é o Pedbot?** É a integração direta com a Meta (WhatsApp Business) que dispara uma notificação por WhatsApp, para o número cadastrado da loja, toda vez que chega um **pedido novo** no módulo Vendas — é assim que o atendente é avisado para começar a separação. O Pedbot **substituiu** o serviço antigo de notificação de pedido por WhatsApp (que foi descontinuado — ver seção "Notificações, instabilidades e contingência" na Base de Conhecimento).
+
+- **Conexão do WhatsApp interrompida**: orienta a reconectar pelo portal do Pedbot — acessar, clicar em "Autenticar no WhatsApp", solicitar o QR Code e escanear com o WhatsApp da loja. Enquanto desconectado, a loja não recebe as notificações de pedido novo por WhatsApp.
 - **Conexão do WhatsApp reestabelecida**: confirma que a integração voltou a funcionar normalmente.
 
 ### 14.5 Onboarding comercial e integração de nova loja (uso interno)
