@@ -14,10 +14,25 @@
     },
     "slack": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
       "env": {
         "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
         "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      }
+    },
+    "mixpanel": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@t-campbell18/mcp-mixpanel"
+      ],
+      "env": {
+        "MIXPANEL_PROJECT_ID": "${MIXPANEL_PROJECT_ID}",
+        "MIXPANEL_SERVICE_ACCOUNT_USERNAME": "${MIXPANEL_SERVICE_ACCOUNT_USERNAME}",
+        "MIXPANEL_SERVICE_ACCOUNT_PASSWORD": "${MIXPANEL_SERVICE_ACCOUNT_PASSWORD}"
       }
     }
   }
