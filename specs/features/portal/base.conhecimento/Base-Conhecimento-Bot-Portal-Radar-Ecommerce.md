@@ -2,7 +2,7 @@
 
 > **Uso deste documento:** conteúdo-fonte para um bot de atendimento que responde dúvidas simples de Associados/Lojistas sobre o uso do Portal Radar E-commerce (ex: "onde encontro minha API KEY", "como vejo o módulo da minha loja"). Cada bloco de pergunta/resposta abaixo foi escrito para ser **autocontido** — não depende de ler o restante do documento para fazer sentido — pensando em recuperação por trechos (chunking) por um sistema de busca/RAG.
 >
-> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 14 de julho de 2026.
+> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 15 de julho de 2026.
 >
 > **Regra para o bot:** se a dúvida do associado não estiver coberta aqui, o bot deve admitir que não sabe e direcionar para o suporte humano (Farmarcas/N1) — nunca inventar um caminho de tela que não está descrito neste documento. A seção final "Perguntas sem resposta confirmada" lista o que ainda não foi mapeado.
 
@@ -25,6 +25,7 @@
 - [Precificação e descontos vindos do ERP (ex: sistema BIG)](#precificação-e-descontos-vindos-do-erp-ex-sistema-big)
 - [Integração ERP Alpha7](#integração-erp-alpha7)
 - [Meios de pagamento (Braspag, Cielo, Rede, Antifraude)](#meios-de-pagamento-braspag-cielo-rede-antifraude)
+- [E-mails automáticos do sistema](#e-mails-automáticos-do-sistema)
 - [Notificações, instabilidades e contingência](#notificações-instabilidades-e-contingência)
 - [Perguntas sem resposta confirmada](#perguntas-sem-resposta-confirmada)
 
@@ -49,6 +50,7 @@ Associados nem sempre usam o nome exato do campo/tela do Portal. Esta tabela aju
 | "Cadastrar produto novo", "pedir produto novo" | **Solicitação de produto** | Ícone "Solicitar produto" na tela `Estoque` — é self-service, mas depende de aprovação do Admin (Catálogo) |
 | "Anjo" | Profissional do time de **Operações internas da Farmarcas** que dá suporte ao associado (termo interno) | — |
 | "Sistema BIG", "Alfa 7"/"Alpha7", "Soft", "TRIER" | Sistemas de **ERP** usados pelas farmácias, integrados ao Portal via API | Fora do Portal — são os sistemas de gestão do próprio associado |
+| "E-Delivery" | Nome antigo/alternativo do próprio **Portal Radar E-commerce** — mesma ferramenta, sem diferença de funcionalidade | — |
 
 ---
 
@@ -128,6 +130,9 @@ Na tela `Usuários`, existe um botão para convidar/criar novo usuário — lá 
 
 **O que é uma Rede?**
 É o nível mais alto de organização no Portal, abaixo apenas da Farmarcas — representa uma bandeira/franqueadora (ex: ACFARMA, Ultra Popular, Super Popular). Dentro de uma Rede existem lojas de vários GEs (empresários) diferentes.
+
+**Cada Rede tem o próprio aplicativo? O app tem nome diferente para cada uma?**
+Sim. Hoje existem 12 Redes na plataforma, e cada uma tem seu próprio app, com nome/marca própria (whitelabel) — por exemplo, a Rede Ultra tem o app "Ultra Popular". Todos os apps compartilham exatamente as mesmas funcionalidades; só a marca muda. Dentro do app existe o contexto de loja: o cliente vê o estoque de uma loja específica por vez, mas pode trocar de loja dentro do próprio app.
 
 **O que é um GE (Grupo Econômico)?**
 É o conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma Rede. É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal — ou seja, quando um associado tem várias filiais, ele normalmente organiza essas lojas num Grupo de lojas dentro do Portal.
@@ -373,14 +378,14 @@ Use o ícone "Solicitar produto" na barra de ferramentas da tela Estoque. No for
 ## Pedidos
 
 **O que significam as colunas do quadro de Pedidos?**
-- **Na fila**: pedido novo, ainda aguardando início do atendimento.
+- **Na fila**: pedido novo, ainda aguardando início do atendimento. Assim que o pedido cai, o sistema dispara um WhatsApp direto pro número cadastrado da loja (`Configurações > Dados da Loja`), avisando o responsável. Do lado do consumidor, ele recebe push notification a cada mudança de status e também acompanha pelo detalhe do pedido no próprio App.
 - **Em separação**: pedido sendo preparado/separado na loja.
 - **Liberados**: pedido pronto, liberado para entrega ou retirada.
 - **Concluídos**: pedido já entregue/retirado com sucesso.
 - **Cancelados**: pedido cancelado, seja pela loja ou pelo consumidor.
 
 **O que significa a etiqueta "Preço loja" / "Preço PEC" num item do pedido?**
-Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja"** é o preço padrão cadastrado no Estoque; **"Preço PEC"** vem do sistema PEC (base de clientes/preços da rede). Também pode aparecer **"Sem estoque"**, um alerta de que o item foi vendido sem estoque confirmado disponível — merece atenção redobrada na separação.
+Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja"** é o preço padrão cadastrado no Estoque; **"Preço PEC"** vem do sistema PEC (base de clientes/preços da rede). Também pode aparecer **"Sem estoque"** — uma tag gerada automaticamente pelo sistema (não é o balconista quem marca; o Portal não permite editar estoque) quando o item foi vendido com estoque baixo/não confirmado. **Importante:** não existe estorno parcial de item — se um produto do pedido está em falta, a única solução é cancelar o pedido inteiro.
 
 **Como funciona o troco quando o pagamento é em dinheiro?**
 O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido, exibidos no painel de detalhe do pedido.
@@ -389,7 +394,7 @@ O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no 
 Ao cancelar, abre o modal "Cancelar pedido #[número]", pedindo o motivo: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, ou Sem estoque. Pede confirmação e não pode ser desfeito.
 
 **O pedido que vou cancelar já foi pago online. Muda alguma coisa?**
-Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso. O cancelamento em si não dispara um estorno automático nessa tela — é um lembrete para o atendente tratar o reembolso separadamente.
+Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso. O cancelamento em si não dispara um estorno automático — **hoje isso é tratado inteiramente fora do sistema** (manualmente pela equipe), e o App do consumidor não mostra nenhum status de reembolso. É por isso que o modal pede pro atendente avisar o cliente diretamente.
 
 **Meus pedidos estão travados na fase "Liberados" e não mudam de status. O que fazer?**
 Isso indica instabilidade na comunicação de status entre os sistemas — não é algo que o associado resolve sozinho pelo Portal. Anote os números dos pedidos afetados e tire prints das telas, e acione o suporte Farmarcas o quanto antes para que o time técnico analise e destrave o fluxo.
@@ -632,10 +637,53 @@ Geralmente está ligado a instabilidade na adquirente (Cielo, Rede etc). Vale co
 
 ---
 
+## E-mails automáticos do sistema
+
+**O Radar E-commerce manda e-mails automáticos? Como funciona?**
+Sim. Existe um centralizador de comunicação interno que aciona o SendGrid para o envio. A maioria dos e-mails avisa sobre relatórios prontos para download, eventos de acesso (convite, senha) ou o status da integração da loja com o ERP.
+
+**Cliquei em "Exportar" um relatório e nada baixou na hora. Isso é um bug?**
+Não. Toda exportação de relatório no Portal é processada em segundo plano (assíncrona) — o Portal envia um e-mail com o link de download quando o arquivo fica pronto, não na hora do clique.
+
+**Quais relatórios do Portal chegam por e-mail e de qual tela/botão eles saem?**
+- "Relatório de ofertas" → botão Exportar no painel "Relatório de ofertas" da tela Promoções.
+- "Relatório completo de produtos" e "Relatório de estoque por loja" → mesmo botão: ícone de exportar na tela Estoque (dois nomes de e-mail para o mesmo disparo).
+- "Relatório de redes" → botão "Exportar redes" na tela Redes (Admin).
+- "Relatório de lojas" → botão "Exportar Lojas" na tela Lojas de uma Rede.
+- "Relatório de pedidos em aberto" → botão "Visualizar pedidos" no card "Total de Pedidos em Aberto" (Home de Vendas).
+- "Relatório de lojas sem ofertas" → botão "Ver lojas sem ofertas" no card "Lojas sem ofertas em exibição" (Home de Ofertas).
+- "Relatório de ofertas mais ativadas" → botão "Baixar produtos" no card "Top produtos com mais ativações" (Home de Ofertas).
+- "Relatório de produtos mais vendidos" → botão "Baixar produtos" no card "Top produtos mais vendidos" (Home de Vendas).
+- "Relatório de pedidos" → botão "Gerar Relatório" na tela Pedidos.
+- "Relatório de pedidos cancelados" → botão Exportar na aba "Pedidos cancelados" da Home de Vendas (mesmo arquivo do relatório "Pedidos Faturados").
+
+**Recebi um e-mail dizendo "Recebemos uma solicitação para redefinir/alterar a senha". Qual a diferença entre os dois?**
+São dois e-mails quase idênticos: um é disparado pelo fluxo "Esqueceu a senha?" do **Portal** (texto "solicitação para **redefinir**"), o outro pelo fluxo de recuperação de senha do **App** do consumidor final (texto "solicitação para **alterar**"). O conteúdo é parecido de propósito — a diferença real é qual sistema disparou, não o texto do e-mail.
+
+**Recebi um convite por e-mail para o Radar E-commerce. Por quanto tempo ele vale?**
+O texto do e-mail diz "válido por 5 dias", mas isso está desatualizado — hoje o convite **não expira mais**. Correção do texto do template registrada em [ECP-1066](https://farmarcas.atlassian.net/browse/ECP-1066). O e-mail traz o botão "Completar meu cadastro", que leva ao formulário de 2 passos (dados pessoais + senha).
+
+**Recebi um e-mail dizendo que a integração do meu ERP foi concluída, mas ainda preciso fazer algo?**
+Sim — esse e-mail avisa que a integração técnica terminou, mas falta ativar o módulo de Vendas pelo próprio Portal (ver seção de Configurações da Loja) para começar a vender online de fato.
+
+**Recebi um e-mail com uma "Chave de integração" dizendo que minha loja foi criada. O que eu faço com isso?**
+Essa chave (API Key) é enviada automaticamente por um job tanto para o ERP quanto para o Gestor da loja; precisa ser cadastrada no sistema ERP da loja para iniciar o envio de estoque, preços e pedidos ao Radar E-commerce. O mesmo e-mail já avisa que dá para convidar usuários para o Portal enquanto isso.
+
+**Recebi um e-mail dizendo que minha loja foi desconectada do ERP e saiu do aplicativo. É normal?**
+Sim, é o comportamento esperado: depois de mais de 3 dias sem enviar atualização de preço/estoque, a loja é removida temporariamente do app até a comunicação com o ERP ser restabelecida — quando reconectar, um segundo e-mail confirma que a comunicação foi restabelecida e a loja volta a aparecer automaticamente. A ação recomendada é abrir chamado com o suporte do próprio ERP.
+
+**Como funciona a notificação de pedido novo por WhatsApp?**
+Toda vez que cai um pedido novo no módulo Vendas, o sistema dispara uma mensagem de WhatsApp **direto** para o número cadastrado em `Configurações > Dados da Loja > Informações da loja` (campo WhatsApp — na prática, muitas vezes é o número do Gestor de Loja). Não existe hoje nenhuma etapa separada de conexão/autenticação — o disparo é direto pro número cadastrado.
+
+**Preenchi um formulário de interesse (Braspag, integração de estoque, ou como lead) — quem recebe esse e-mail, chega para mim?**
+Não chega para o lojista. Esses formulários geram e-mails internos: para o contato comercial da Braspag (quando é sobre antifraude/pagamento online), e para os times de CS Farmarcas e/ou Implantação ERP (quando é sobre leads ou interesse em integrar estoque) — servem para o time interno dar sequência ao atendimento.
+
+---
+
 ## Notificações, instabilidades e contingência
 
 **Paramos de receber notificação de pedido novo via WhatsApp depois de uma atualização do Portal. O que houve?**
-O serviço antigo de notificação via WhatsApp foi descontinuado. Um novo sistema, mais estável, está em fase de implementação/subida em produção.
+O serviço antigo de notificação via WhatsApp foi descontinuado. Hoje o disparo é direto pro número de WhatsApp cadastrado em `Configurações > Dados da Loja` — sem nenhuma etapa de conexão/autenticação separada (ver "Como funciona a notificação de pedido novo por WhatsApp?" na seção acima).
 
 **O Portal ou o app estão fora do ar / não consigo logar. Existe um link alternativo?**
 Sim, em caso de suspeita de instabilidade na URL principal, há um link de contingência: `https://admin-ecomm.radarfarmarcas.com.br/network/list`.

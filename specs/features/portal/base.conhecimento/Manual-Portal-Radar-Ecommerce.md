@@ -23,6 +23,7 @@
 11. [Usuários](#11-usuários)
 12. [Catálogo (Admin)](#12-catálogo-admin)
 13. [Acesso ao Portal: Login, Senha e Cadastro](#13-acesso-ao-portal-login-senha-e-cadastro)
+14. [Notificações e e-mails automáticos](#14-notificações-e-e-mails-automáticos)
 
 ---
 
@@ -85,6 +86,8 @@ Ações disponíveis: **Nova loja** (cadastrar uma unidade), filtro por **Módul
 ### Tela "Redes" (nível Admin)
 
 Só o perfil Admin acessa essa tela (aba "Redes" no menu de plataforma). Lista **todas as Redes cadastradas na plataforma**, com nome, quantidade de lojas cadastradas e um botão "Abrir rede". Tem busca por nome e um botão **"Exportar redes"**.
+
+**Um app por Rede (whitelabel):** hoje existem **12 Redes** na plataforma, e cada uma tem seu **próprio aplicativo com nome/marca própria** (ex.: a Rede Ultra tem o app "Ultra Popular"). Todos esses apps compartilham exatamente as mesmas funcionalidades — a diferença é só a marca. Dentro do app, existe o **contexto de loja**: o cliente final vê o estoque de uma loja específica por vez, mas pode trocar de loja dentro do próprio app (ex.: ao mudar de bairro/cidade).
 
 ### Relatórios exportáveis (Lojas e Redes)
 
@@ -329,6 +332,8 @@ O ícone de exportar na barra de ferramentas da tela Estoque baixa um Excel (.xl
 
 A tela **Pedidos** é onde o dia a dia operacional acontece — é a tela principal de trabalho do perfil **Contato cliente** (balconista).
 
+Sempre que um pedido novo chega, o sistema dispara uma notificação por WhatsApp direto para o número cadastrado da loja (ver seção 14.4), avisando o responsável para iniciar o atendimento. Do lado do consumidor, ele recebe uma **push notification a cada mudança de status** do pedido e também pode acompanhar esse status a qualquer momento pela tela de detalhes do pedido, dentro do próprio App (comportamento do App documentado em `FAQ-App-Radar-Ecommerce.md`, seção "Notificações").
+
 Os pedidos são organizados num quadro (kanban) por status, cada um com contador:
 
 | Status no Portal | O que significa |
@@ -344,7 +349,7 @@ Ao clicar num pedido, o painel de detalhe mostra: dados do cliente (nome, CPF), 
 **Sobre os itens do pedido**, cada produto pode trazer uma etiqueta de origem de preço:
 - **Preço loja**: preço padrão cadastrado no Estoque da loja.
 - **Preço PEC**: preço vindo do sistema PEC (base de clientes/preços da rede).
-- **Sem estoque**: alerta de que o item foi vendido sem estoque confirmado disponível — vale atenção redobrada na separação desse pedido.
+- **Sem estoque**: tag gerada **automaticamente pelo sistema** (não é uma marcação manual do atendente — o Portal não permite edição de estoque) quando o item foi vendido com estoque baixo/não confirmado — vale atenção redobrada na separação desse pedido. **Importante:** hoje não existe estorno parcial de item — se algum produto do pedido está em falta, a única saída é cancelar o pedido inteiro (ver "Cancelando um pedido" abaixo).
 
 Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido.
 
@@ -352,7 +357,7 @@ Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a
 
 Ao cancelar um pedido, abre o modal **"Cancelar pedido #[número]"**, pedindo para **selecionar o motivo da recusa**: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. A ação exige confirmação e **não pode ser desfeita**.
 
-Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"** — o cancelamento em si não dispara um estorno automático visível nessa tela, é um lembrete operacional para o atendente tratar o reembolso separadamente.
+Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"** — o cancelamento em si não dispara um estorno automático. **Hoje o estorno/reembolso é tratado inteiramente fora do sistema** (manualmente, pela equipe) — o App do consumidor não mostra nenhum status de reembolso; é por isso que o modal pede pro atendente avisar o cliente diretamente.
 
 ### Relatório de Pedidos (Exportar)
 
@@ -415,7 +420,7 @@ O formulário de criação segue 5 passos:
    - Para um grupo: escolha a regra de composição do grupo (ex: "Mesmo produto • mesma marca") e o tipo de desconto (ex: "Preço fixo (de/por)").
 2. **Onde essa promoção será válida?** — seleciona a(s) loja(s) participante(s).
 3. **Quando a promoção estará ativa?** — data de início/fim e dias da semana em que a promoção roda.
-4. **Regras da promoção** — hoje só o **Limite por compra** é configurável aqui. *(Os campos "Tempo para uso" e "Novo uso da oferta" existiam antes e foram removidos da tela — o sistema aplica um padrão fixo internamente: 1 dia de tempo de uso e "Não renovar" para novo uso, sem exibir isso ao associado.)*
+4. **Regras da promoção** — hoje só o **Limite por compra** é configurável aqui. *(Os campos "Tempo para uso" e "Novo uso da oferta" existiam antes e foram removidos da tela.)* **Regra de validade da ativação (comportamento do App documentado em `FAQ-App-Radar-Ecommerce.md`, seção "Ofertas"):** depois de removidos esses campos, uma oferta ativada pelo cliente só pode ser usada dentro do próprio período de vigência da promoção (início/fim definidos no passo 3) — não existe mais um tempo de uso/renovação separado. O **Limite por compra** vale **por cesta**, não por CPF — ou seja, o mesmo cliente pode criar vários pedidos diferentes para aproveitar a mesma promoção repetidamente; é um comportamento conhecido, a ser revisto no futuro.
 5. **Produtos da promoção** — depende da escolha do passo 1:
    - *Um produto*: busque por nome/EAN, aplique um desconto geral de uma vez (campo "Desconto geral" + botão "Aplicar") ou ajuste o desconto produto a produto. Também é possível **importar uma planilha (.xlsx)** com a lista de produtos e descontos — o Portal informa quantos produtos foram encontrados e quantos não puderam ser importados.
    - *Grupo de produtos*: busque um grupo já cadastrado (ver [Catálogo](#12-catálogo-admin)) e defina o preço "De" e "Por" para o grupo inteiro.
@@ -615,7 +620,7 @@ Ao clicar em "Esqueceu a senha?": tela **"Esqueceu a senha?"** — "Basta inseri
 
 ### Completando o cadastro (convite de usuário)
 
-Quando um usuário é convidado (ver [Usuários](#11-usuários)), ele recebe algo (provavelmente um e-mail — a ser confirmado) que leva a um fluxo de **"Complete seu cadastro"** em 2 passos, com barra de progresso:
+Quando um usuário é convidado (ver [Usuários](#11-usuários)), ele recebe um e-mail (ver seção 14.2) que leva a um fluxo de **"Complete seu cadastro"** em 2 passos, com barra de progresso:
 
 1. **Passo 1**: "Preencha os campos abaixo para finalizar o seu cadastro e começar a usar o Radar E-commerce." Campos: **Nome completo** e **CPF**. Botão "Avançar".
 2. **Passo 2**: Campos **Nova senha** e **Confirmar nova senha**, com uma lista de requisitos de senha exibida ao lado (mínimo de caracteres, letra maiúscula/minúscula, caractere especial). Botão **"Concluir cadastro"**.
@@ -626,6 +631,55 @@ Ao final, tela de sucesso: **"Parabéns, cadastro concluído! Agora você está 
 
 ---
 
+## 14. Notificações e e-mails automáticos
+
+O Radar E-commerce dispara e-mails automáticos por meio de um **centralizador de comunicação interno**, que aciona o **SendGrid** para o envio. Abaixo, o que cada e-mail significa e o que dispara cada um — útil para responder quando um associado pergunta "recebi esse e-mail, o que significa?".
+
+### 14.1 Relatórios exportados por e-mail
+
+Toda exportação de relatório no Portal é **processada de forma assíncrona**: ao clicar em "Exportar"/"Baixar", o Portal não entrega o arquivo na hora — ele processa em segundo plano e avisa por e-mail, com um link de download, quando o arquivo fica pronto.
+
+| E-mail (assunto do corpo) | Tela / botão de origem |
+|---|---|
+| "O relatório de ofertas já está disponível" | Botão **Exportar** → painel "Relatório de ofertas" na tela Promoções (ver seção 9). |
+| "O relatório completo de produtos já está disponível" e "O relatório de estoque por loja já está disponível" | **Mesmo disparo**: ícone de exportar na tela Estoque, dentro do contexto de uma loja (Relatório de Estoque/Preço, ver seção 7). Dois nomes de template diferentes para o mesmo botão. |
+| "O relatório de redes já está disponível" | Botão **"Exportar redes"** na tela Redes, nível Admin (ver seção 3). |
+| "O relatório de lojas já está disponível" | Botão **"Exportar Lojas"** na tela Lojas de uma Rede específica (ver seção 3). |
+| "O relatório de pedidos em aberto já está disponível" | Botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto" (Home de Vendas, ver seção 5.4). |
+| "O relatório de lojas sem ofertas já está disponível" | Botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição" (Home de Ofertas, ver seção 5.4). |
+| "O relatório de ofertas mais ativadas já está disponível" | Botão **"Baixar produtos"** no card "Top produtos com mais ativações" (Home de Ofertas — documentado como "Produtos mais ativados" na seção 5.4; o nome do e-mail não usa o mesmo termo do relatório). |
+| "O relatório de produtos mais vendidos já está disponível" | Botão **"Baixar produtos"** no card "Top produtos mais vendidos" (Home de Vendas, ver seção 5.1). |
+| "O relatório de pedidos já está disponível" | Botão **"Gerar Relatório"** na tela Pedidos (ver seção 8, Relatório de Pedidos/ECP-747). |
+| "O relatório de pedidos cancelados já está disponível" | Botão **Exportar** na aba "Pedidos cancelados" da Home de Vendas — mesmo arquivo do relatório "Pedidos Faturados" (ver seção 5.4); o nome do e-mail reflete a aba usada no momento da exportação, não um relatório diferente. |
+
+### 14.2 Cadastro, acesso e senha
+
+- **Convite para completar cadastro**: enviado quando alguém convida um novo usuário na tela Usuários (ver seção 11). Botão "Completar meu cadastro", leva ao fluxo de 2 passos descrito na seção 13. ⚠️ O texto do template diz "válido por 5 dias", mas hoje **o convite não expira mais** — copy desatualizada, correção registrada em [ECP-1066](https://farmarcas.atlassian.net/browse/ECP-1066).
+- **Redefinir senha (Portal)**: disparado pelo fluxo "Esqueceu a senha?" do Portal (ver seção 13). Corpo do e-mail: "Recebemos uma solicitação para **redefinir** a senha da sua conta."
+- **Redefinir senha (App)**: e-mail equivalente, mas disparado pelo fluxo de recuperação de senha do aplicativo do consumidor final. Corpo do e-mail: "Recebemos uma solicitação para **alterar** a senha da sua conta." Os dois e-mails têm layout e texto quase idênticos — a diferença prática é **qual sistema disparou** (Portal vs App), não o conteúdo em si; não confunda os dois ao dar suporte.
+
+### 14.3 Integração com o ERP (nível loja)
+
+- **"A integração do seu ERP com o Radar E-commerce foi concluída com sucesso"**: avisa que falta só ativar o módulo de vendas — ver fluxo de migração Ofertas → Vendas na seção 6.
+- **"Recebemos sua solicitação para ativação do módulo de vendas"**: confirmação enviada a quem solicitou a migração para o módulo Vendas (seção 6), avisando para acompanhar a liberação pelo próprio Portal.
+- **"A nova loja [nome] foi criada com sucesso"**: disparado por um job automático que envia a **Chave de integração (API)** tanto para o ERP quanto para o Gestor da loja, avisando que já é possível convidar usuários para o Portal.
+- **"A comunicação entre sua loja e o ERP foi restabelecida com sucesso"**: enviado quando uma loja que estava desconectada volta a sincronizar normalmente com o ERP.
+- **"Identificamos que o aplicativo da sua loja está desconectado do ERP"**: enviado quando uma loja fica **mais de 3 dias** sem enviar atualização de preço/estoque — mesmo alerta que aparece na própria tela Estoque (ver seção 7); a loja é removida temporariamente do app até a comunicação voltar. Ação recomendada: contatar o suporte do ERP para verificar a integração.
+
+> ⚠️ Existe um segundo template curto ("Aplicativo conectado ao ERP.") que cobre o **mesmo evento** de reconexão — é uma duplicação de template confirmada; considere só o e-mail "comunicação... restabelecida" acima como referência.
+
+### 14.4 Notificação de pedido novo por WhatsApp
+
+Toda vez que cai um **pedido novo** no módulo Vendas, o sistema dispara uma mensagem de WhatsApp **direto** para o número cadastrado em `Configurações > Dados da Loja > Informações da loja` (campo **WhatsApp** — na prática, muitas vezes é o número do Gestor de Loja) — ver seção 6.1. É assim que o responsável pela loja é avisado para iniciar a separação do pedido. Não existe hoje nenhuma etapa separada de conexão/autenticação para isso — o disparo é direto para o número cadastrado.
+
+### 14.5 Onboarding comercial e integração de nova loja (uso interno)
+
+Esses e-mails **não vão para o associado** — são direcionados ao time interno da Farmarcas e/ou a parceiros. Documentados aqui só para contexto, caso um associado pergunte "eu preenchi um formulário, para quem isso foi?":
+
+- **Dados enviados para contratação com a Braspag** (antifraude): vai para o contato comercial da Braspag e, em cópia, para o time interno Farmarcas, para acompanhamento.
+- **Novo lead recebido** (nome, CNPJ, e-mail, telefone, plano do interessado): vai para o time de **CS Farmarcas** e o comercial da **Braspag**.
+- **Loja demonstrou interesse em integrar o estoque** (CNPJ, solicitante, contato, chave de integração, ERP utilizado): vai para o **CS Farmarcas** e o time de **Implantação ERP**.
+
 ## Notas de manutenção deste documento
 
 - **Em aberto (baixa prioridade, achado técnico):** o `SessionPermissionGuard` do front-end (permissões finas tipo `offer:*`/`product:*`/`order:*`) segue desabilitado no código-fonte; o time de produto não confirmou se é proposital (backend cobre a validação) ou dívida técnica — sem impacto conhecido no dia a dia do associado, mantido aqui só como registro para o time de engenharia.
@@ -634,4 +688,5 @@ Ao final, tela de sucesso: **"Parabéns, cadastro concluído! Agora você está 
 - **Resolvido:** independentemente do tipo de estoque (Espelhado/Integrado/Independente), o Grupo de lojas sempre centraliza o atendimento de pedidos na loja principal — ver seção 4.
 - **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados.
 - **Resolvido:** o bug do modal de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
-- Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-14; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
+- **Templates de e-mail descartados/desconsiderados** (existem no centralizador de comunicação, mas não devem ser documentados/usados como referência — ver seção 14): "Aplicativo conectado ao ERP." (duplicado de "comunicação... restabelecida"), "Confira a lista de lojas com mais de 2 horas de atraso na integração" (será descontinuado), "Nova solicitação disponível" (não existe mais), "O relatório de lojas desativadas já está disponível" (não será utilizado), e o e-mail de falha de comunicação na integração com detalhe técnico do erro (será descontinuado).
+- Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-15; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
