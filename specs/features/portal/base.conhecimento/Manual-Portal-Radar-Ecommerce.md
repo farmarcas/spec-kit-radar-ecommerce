@@ -332,7 +332,7 @@ O ícone de exportar na barra de ferramentas da tela Estoque baixa um Excel (.xl
 
 A tela **Pedidos** é onde o dia a dia operacional acontece — é a tela principal de trabalho do perfil **Contato cliente** (balconista).
 
-Sempre que um pedido novo chega, o **Pedbot** (integração com WhatsApp Business/Meta — ver seção 14.4) dispara uma notificação por WhatsApp para o número cadastrado da loja, avisando o atendente para iniciar o atendimento.
+Sempre que um pedido novo chega, o sistema dispara uma notificação por WhatsApp direto para o número cadastrado da loja (ver seção 14.4), avisando o responsável para iniciar o atendimento. Do lado do consumidor, ele recebe uma **push notification a cada mudança de status** do pedido e também pode acompanhar esse status a qualquer momento pela tela de detalhes do pedido, dentro do próprio App (comportamento do App documentado em `FAQ-App-Radar-Ecommerce.md`, seção "Notificações").
 
 Os pedidos são organizados num quadro (kanban) por status, cada um com contador:
 
@@ -349,7 +349,7 @@ Ao clicar num pedido, o painel de detalhe mostra: dados do cliente (nome, CPF), 
 **Sobre os itens do pedido**, cada produto pode trazer uma etiqueta de origem de preço:
 - **Preço loja**: preço padrão cadastrado no Estoque da loja.
 - **Preço PEC**: preço vindo do sistema PEC (base de clientes/preços da rede).
-- **Sem estoque**: alerta de que o item foi vendido sem estoque confirmado disponível — vale atenção redobrada na separação desse pedido.
+- **Sem estoque**: tag gerada **automaticamente pelo sistema** (não é uma marcação manual do atendente — o Portal não permite edição de estoque) quando o item foi vendido com estoque baixo/não confirmado — vale atenção redobrada na separação desse pedido. **Importante:** hoje não existe estorno parcial de item — se algum produto do pedido está em falta, a única saída é cancelar o pedido inteiro (ver "Cancelando um pedido" abaixo).
 
 Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido.
 
@@ -357,7 +357,7 @@ Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a
 
 Ao cancelar um pedido, abre o modal **"Cancelar pedido #[número]"**, pedindo para **selecionar o motivo da recusa**: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. A ação exige confirmação e **não pode ser desfeita**.
 
-Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"** — o cancelamento em si não dispara um estorno automático visível nessa tela, é um lembrete operacional para o atendente tratar o reembolso separadamente.
+Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"** — o cancelamento em si não dispara um estorno automático. **Hoje o estorno/reembolso é tratado inteiramente fora do sistema** (manualmente, pela equipe) — o App do consumidor não mostra nenhum status de reembolso; é por isso que o modal pede pro atendente avisar o cliente diretamente.
 
 ### Relatório de Pedidos (Exportar)
 
@@ -420,7 +420,7 @@ O formulário de criação segue 5 passos:
    - Para um grupo: escolha a regra de composição do grupo (ex: "Mesmo produto • mesma marca") e o tipo de desconto (ex: "Preço fixo (de/por)").
 2. **Onde essa promoção será válida?** — seleciona a(s) loja(s) participante(s).
 3. **Quando a promoção estará ativa?** — data de início/fim e dias da semana em que a promoção roda.
-4. **Regras da promoção** — hoje só o **Limite por compra** é configurável aqui. *(Os campos "Tempo para uso" e "Novo uso da oferta" existiam antes e foram removidos da tela — o sistema aplica um padrão fixo internamente: 1 dia de tempo de uso e "Não renovar" para novo uso, sem exibir isso ao associado.)*
+4. **Regras da promoção** — hoje só o **Limite por compra** é configurável aqui. *(Os campos "Tempo para uso" e "Novo uso da oferta" existiam antes e foram removidos da tela.)* **Regra de validade da ativação (comportamento do App documentado em `FAQ-App-Radar-Ecommerce.md`, seção "Ofertas"):** depois de removidos esses campos, uma oferta ativada pelo cliente só pode ser usada dentro do próprio período de vigência da promoção (início/fim definidos no passo 3) — não existe mais um tempo de uso/renovação separado. O **Limite por compra** vale **por cesta**, não por CPF — ou seja, o mesmo cliente pode criar vários pedidos diferentes para aproveitar a mesma promoção repetidamente; é um comportamento conhecido, a ser revisto no futuro.
 5. **Produtos da promoção** — depende da escolha do passo 1:
    - *Um produto*: busque por nome/EAN, aplique um desconto geral de uma vez (campo "Desconto geral" + botão "Aplicar") ou ajuste o desconto produto a produto. Também é possível **importar uma planilha (.xlsx)** com a lista de produtos e descontos — o Portal informa quantos produtos foram encontrados e quantos não puderam ser importados.
    - *Grupo de produtos*: busque um grupo já cadastrado (ver [Catálogo](#12-catálogo-admin)) e defina o preço "De" e "Por" para o grupo inteiro.
@@ -668,12 +668,9 @@ Toda exportação de relatório no Portal é **processada de forma assíncrona**
 
 > ⚠️ Existe um segundo template curto ("Aplicativo conectado ao ERP.") que cobre o **mesmo evento** de reconexão — é uma duplicação de template confirmada; considere só o e-mail "comunicação... restabelecida" acima como referência.
 
-### 14.4 WhatsApp / Pedbot
+### 14.4 Notificação de pedido novo por WhatsApp
 
-**O que é o Pedbot?** É a integração direta com a Meta (WhatsApp Business) que dispara uma notificação por WhatsApp, para o número cadastrado da loja, toda vez que chega um **pedido novo** no módulo Vendas — é assim que o atendente é avisado para começar a separação. O Pedbot **substituiu** o serviço antigo de notificação de pedido por WhatsApp (que foi descontinuado — ver seção "Notificações, instabilidades e contingência" na Base de Conhecimento).
-
-- **Conexão do WhatsApp interrompida**: orienta a reconectar pelo portal do Pedbot — acessar, clicar em "Autenticar no WhatsApp", solicitar o QR Code e escanear com o WhatsApp da loja. Enquanto desconectado, a loja não recebe as notificações de pedido novo por WhatsApp.
-- **Conexão do WhatsApp reestabelecida**: confirma que a integração voltou a funcionar normalmente.
+Toda vez que cai um **pedido novo** no módulo Vendas, o sistema dispara uma mensagem de WhatsApp **direto** para o número cadastrado em `Configurações > Dados da Loja > Informações da loja` (campo **WhatsApp** — na prática, muitas vezes é o número do Gestor de Loja) — ver seção 6.1. É assim que o responsável pela loja é avisado para iniciar a separação do pedido. Não existe hoje nenhuma etapa separada de conexão/autenticação para isso — o disparo é direto para o número cadastrado.
 
 ### 14.5 Onboarding comercial e integração de nova loja (uso interno)
 

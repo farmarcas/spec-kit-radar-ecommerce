@@ -260,3 +260,16 @@ O lojista (farmácia associada), pelo Portal Radar E-commerce / E-Delivery. O ap
 ---
 
 *Documento gerado a partir do Spec Kit da squad App (Radar E-commerce), com base em `product.md`, `glossary.md`, `spec.md` e `plan.md` (feature `001-app-ecommerce`, atualizada em 2026-06). Itens em desenvolvimento (ex.: PBM, confirmação por CVV) estão sinalizados como tal e podem mudar até o lançamento.*
+
+---
+
+## Pontos a discutir com a squad App (2026-07-16)
+
+Cruzando este FAQ com o mapeamento do Portal, surgiram os pontos abaixo. Conteúdo do documento **não foi alterado** — ficam só registrados aqui até serem validados com a squad App e, se confirmados, incorporados ao texto oficial.
+
+- **"Limitador de oferta" (seção Ofertas):** o texto diz "quantidade máxima **por cliente**". Verificar com o time de Portal: hoje o app não trava esse limite por CPF — ele vale por cesta/pedido. Se confirmado, o mesmo cliente pode criar vários pedidos diferentes para repetir o desconto da mesma oferta.
+- **Validade da ativação de oferta (seção Ofertas):** o texto menciona "a duração da oferta no card" (campos internos "Duração"/"Renovar em"). Time de Portal e App combinaram uma mudança: a oferta ativada passaria a valer só dentro do período de vigência da própria promoção, sem tempo de uso/renovação separado. Confirmar se essa mudança já está em produção antes de atualizar o texto.
+- **Submenu "Nossas Farmácias":** existe, fora do fluxo de onboarding e do checkout, um menu que lista as lojas da Rede só por proximidade geográfica (sem considerar módulo/serviço da loja). Não está descrito na seção "Onboarding e seleção de loja" nem em "Checkout — entrega e retirada" — avaliar se vale um item próprio.
+- **Loja pausada durante a navegação:** quando a loja em que o cliente está fica indisponível (pausada no Portal) enquanto ele já está nela, a Home fica em branco sem nenhum aviso explícito — cenário diferente do já documentado "nenhuma loja atende a região" (que é no onboarding). Avaliar se merece uma entrada própria e se há plano de melhorar essa UX.
+- **Raio de entrega parcial:** o documento cobre o cenário "nenhuma loja atende a região" (onboarding). Não cobre o cenário de o cliente já estar numa loja específica cujo raio de entrega não alcança o endereço dele — nesse caso, hoje só aparece "Retirada em loja" e o checkout segue normalmente. Confirmar se é isso mesmo e, se sim, incluir como um caso distinto.
+- **Estorno de pedido cancelado pela loja:** a seção "Checkout — pagamento" documenta o estorno automático do Pix expirado. Não documenta o caso de a loja cancelar um pedido já pago pelo Portal — segundo o time de Portal, esse caso não tem estorno automatizado nem status visível no app (é tratado manualmente, fora do sistema). Confirmar e, se for o caso, adicionar como uma distinção clara dos dois cenários.

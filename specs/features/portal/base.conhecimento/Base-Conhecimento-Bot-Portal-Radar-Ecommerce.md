@@ -378,14 +378,14 @@ Use o ícone "Solicitar produto" na barra de ferramentas da tela Estoque. No for
 ## Pedidos
 
 **O que significam as colunas do quadro de Pedidos?**
-- **Na fila**: pedido novo, ainda aguardando início do atendimento.
+- **Na fila**: pedido novo, ainda aguardando início do atendimento. Assim que o pedido cai, o sistema dispara um WhatsApp direto pro número cadastrado da loja (`Configurações > Dados da Loja`), avisando o responsável. Do lado do consumidor, ele recebe push notification a cada mudança de status e também acompanha pelo detalhe do pedido no próprio App.
 - **Em separação**: pedido sendo preparado/separado na loja.
 - **Liberados**: pedido pronto, liberado para entrega ou retirada.
 - **Concluídos**: pedido já entregue/retirado com sucesso.
 - **Cancelados**: pedido cancelado, seja pela loja ou pelo consumidor.
 
 **O que significa a etiqueta "Preço loja" / "Preço PEC" num item do pedido?**
-Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja"** é o preço padrão cadastrado no Estoque; **"Preço PEC"** vem do sistema PEC (base de clientes/preços da rede). Também pode aparecer **"Sem estoque"**, um alerta de que o item foi vendido sem estoque confirmado disponível — merece atenção redobrada na separação.
+Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja"** é o preço padrão cadastrado no Estoque; **"Preço PEC"** vem do sistema PEC (base de clientes/preços da rede). Também pode aparecer **"Sem estoque"** — uma tag gerada automaticamente pelo sistema (não é o balconista quem marca; o Portal não permite editar estoque) quando o item foi vendido com estoque baixo/não confirmado. **Importante:** não existe estorno parcial de item — se um produto do pedido está em falta, a única solução é cancelar o pedido inteiro.
 
 **Como funciona o troco quando o pagamento é em dinheiro?**
 O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido, exibidos no painel de detalhe do pedido.
@@ -394,7 +394,7 @@ O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no 
 Ao cancelar, abre o modal "Cancelar pedido #[número]", pedindo o motivo: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, ou Sem estoque. Pede confirmação e não pode ser desfeito.
 
 **O pedido que vou cancelar já foi pago online. Muda alguma coisa?**
-Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso. O cancelamento em si não dispara um estorno automático nessa tela — é um lembrete para o atendente tratar o reembolso separadamente.
+Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso. O cancelamento em si não dispara um estorno automático — **hoje isso é tratado inteiramente fora do sistema** (manualmente pela equipe), e o App do consumidor não mostra nenhum status de reembolso. É por isso que o modal pede pro atendente avisar o cliente diretamente.
 
 **Meus pedidos estão travados na fase "Liberados" e não mudam de status. O que fazer?**
 Isso indica instabilidade na comunicação de status entre os sistemas — não é algo que o associado resolve sozinho pelo Portal. Anote os números dos pedidos afetados e tire prints das telas, e acione o suporte Farmarcas o quanto antes para que o time técnico analise e destrave o fluxo.
@@ -672,11 +672,8 @@ Essa chave (API Key) é enviada automaticamente por um job tanto para o ERP quan
 **Recebi um e-mail dizendo que minha loja foi desconectada do ERP e saiu do aplicativo. É normal?**
 Sim, é o comportamento esperado: depois de mais de 3 dias sem enviar atualização de preço/estoque, a loja é removida temporariamente do app até a comunicação com o ERP ser restabelecida — quando reconectar, um segundo e-mail confirma que a comunicação foi restabelecida e a loja volta a aparecer automaticamente. A ação recomendada é abrir chamado com o suporte do próprio ERP.
 
-**O que é o Pedbot?**
-É a integração direta com a Meta (WhatsApp Business) que avisa a loja por WhatsApp toda vez que chega um pedido novo no módulo Vendas — é assim que o atendente sabe que precisa começar a separação. Substituiu o serviço antigo de notificação de pedido por WhatsApp.
-
-**Recebi um e-mail sobre o WhatsApp da loja ter desconectado. O que fazer?**
-Acesse o portal do Pedbot, clique em "Autenticar no WhatsApp", solicite o QR Code e escaneie com o WhatsApp da loja para reconectar. Enquanto estiver desconectado, a loja não recebe as notificações de pedido novo por WhatsApp. Um segundo e-mail confirma quando a conexão for reestabelecida.
+**Como funciona a notificação de pedido novo por WhatsApp?**
+Toda vez que cai um pedido novo no módulo Vendas, o sistema dispara uma mensagem de WhatsApp **direto** para o número cadastrado em `Configurações > Dados da Loja > Informações da loja` (campo WhatsApp — na prática, muitas vezes é o número do Gestor de Loja). Não existe hoje nenhuma etapa separada de conexão/autenticação — o disparo é direto pro número cadastrado.
 
 **Preenchi um formulário de interesse (Braspag, integração de estoque, ou como lead) — quem recebe esse e-mail, chega para mim?**
 Não chega para o lojista. Esses formulários geram e-mails internos: para o contato comercial da Braspag (quando é sobre antifraude/pagamento online), e para os times de CS Farmarcas e/ou Implantação ERP (quando é sobre leads ou interesse em integrar estoque) — servem para o time interno dar sequência ao atendimento.
@@ -686,7 +683,7 @@ Não chega para o lojista. Esses formulários geram e-mails internos: para o con
 ## Notificações, instabilidades e contingência
 
 **Paramos de receber notificação de pedido novo via WhatsApp depois de uma atualização do Portal. O que houve?**
-O serviço antigo de notificação via WhatsApp foi descontinuado e substituído pelo **Pedbot** — integração direta com a Meta (WhatsApp Business) que já está em produção e cumpre a mesma função: avisar a loja por WhatsApp a cada pedido novo (ver "E-mails automáticos do sistema" para o fluxo de conexão/reconexão).
+O serviço antigo de notificação via WhatsApp foi descontinuado. Hoje o disparo é direto pro número de WhatsApp cadastrado em `Configurações > Dados da Loja` — sem nenhuma etapa de conexão/autenticação separada (ver "Como funciona a notificação de pedido novo por WhatsApp?" na seção acima).
 
 **O Portal ou o app estão fora do ar / não consigo logar. Existe um link alternativo?**
 Sim, em caso de suspeita de instabilidade na URL principal, há um link de contingência: `https://admin-ecomm.radarfarmarcas.com.br/network/list`.
