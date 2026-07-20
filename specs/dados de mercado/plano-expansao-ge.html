@@ -1,0 +1,504 @@
+<title>Plano de Expansão — Radar App por Grupo Econômico</title>
+<style>
+  :root{
+    color-scheme: light;
+    --page:      #f9f9f7;
+    --surface:   #fcfcfb;
+    --ink:       #0b0b0b;
+    --ink2:      #52514e;
+    --muted:     #898781;
+    --line:      #e1e0d9;
+    --border:    rgba(11,11,11,0.10);
+    --growth:    #1baf7a;
+    --consolid:  #c98500;
+    --good:      #0ca30c;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])){
+      color-scheme: dark;
+      --page:      #0d0d0d;
+      --surface:   #1a1a19;
+      --ink:       #ffffff;
+      --ink2:      #c3c2b7;
+      --muted:     #898781;
+      --line:      #2c2c2a;
+      --border:    rgba(255,255,255,0.10);
+      --growth:    #199e70;
+      --consolid:  #c98500;
+      --good:      #0ca30c;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:      #0d0d0d;
+    --surface:   #1a1a19;
+    --ink:       #ffffff;
+    --ink2:      #c3c2b7;
+    --muted:     #898781;
+    --line:      #2c2c2a;
+    --border:    rgba(255,255,255,0.10);
+    --growth:    #199e70;
+    --consolid:  #c98500;
+    --good:      #0ca30c;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--page);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:56px 28px 96px;}
+
+  h1,h2,h3{
+    font-family:Iowan Old Style,Sitka Text,Georgia,Cambria,"Times New Roman",serif;
+    font-weight:600;
+    text-wrap:balance;
+    margin:0;
+  }
+  .eyebrow{
+    font-size:12.5px; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--muted); font-weight:600; margin:0 0 10px;
+  }
+  h1{font-size:clamp(28px,4vw,40px); line-height:1.15; letter-spacing:-.01em;}
+  .subtitle{font-size:16.5px; color:var(--ink2); margin-top:14px; max-width:680px; line-height:1.55;}
+  .meta{margin-top:22px; display:flex; gap:22px; flex-wrap:wrap; font-size:13px; color:var(--muted);}
+  .meta b{color:var(--ink2); font-weight:600;}
+
+  header.masthead{border-bottom:1px solid var(--line); padding-bottom:32px; margin-bottom:40px;}
+
+  section{margin:56px 0;}
+  section > h2{font-size:23px; margin-bottom:6px;}
+  .section-note{color:var(--ink2); font-size:14.5px; max-width:720px; line-height:1.6; margin-top:8px; margin-bottom:24px;}
+
+  /* stat band */
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .stat{background:var(--surface); padding:20px 18px;}
+  .stat .label{font-size:12px; color:var(--muted); letter-spacing:.03em;}
+  .stat .value{font-family:Iowan Old Style,Sitka Text,Georgia,serif; font-size:26px; margin-top:8px; letter-spacing:-.01em;}
+  .stat .sub{font-size:12.5px; color:var(--ink2); margin-top:4px;}
+  @media (max-width:820px){ .stats{grid-template-columns:repeat(2,1fr);} }
+
+  /* chart */
+  .chart-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 24px 8px;}
+  .chart-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:4px;}
+  .chart-title{font-size:15px; font-weight:600;}
+  .legend{display:flex; gap:18px; flex-wrap:wrap; font-size:12.5px; color:var(--ink2);}
+  .legend .sw{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .chart-scroll{overflow-x:auto;}
+  svg#scatter{display:block; width:100%; height:auto;}
+  .axis-label{font-size:11px; fill:var(--muted);}
+  .grid-line{stroke:var(--line); stroke-width:1;}
+  .quad-line{stroke:var(--line); stroke-width:1; stroke-dasharray:3 4;}
+  .quad-label{font-size:10.5px; fill:var(--muted); letter-spacing:.02em;}
+  .dot-outros{fill:var(--muted); opacity:.38;}
+  .dot-top10{fill:var(--growth);}
+  .dot{cursor:pointer; stroke:var(--surface); stroke-width:1;}
+  .dot:hover, .dot.hi{stroke-width:1.5; filter:brightness(1.08);}
+  #tooltip{
+    position:absolute; pointer-events:none; background:var(--ink); color:var(--page);
+    font-size:12.5px; padding:8px 10px; border-radius:6px; line-height:1.45;
+    transform:translate(-50%,-100%); margin-top:-10px; white-space:nowrap; opacity:0; transition:opacity .08s;
+    z-index:5;
+  }
+  #tooltip b{font-weight:700;}
+
+  /* tables */
+  .table-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 20px 6px; overflow-x:auto;}
+  .table-card .desc{font-size:13px; color:var(--ink2); margin:6px 0 16px; line-height:1.5;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:600; padding:8px 6px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  td{padding:9px 6px; border-bottom:1px solid var(--line); color:var(--ink2); white-space:nowrap;}
+  td.emph{color:var(--ink); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  th.num,td.num{text-align:right;}
+  th.ctx{font-style:italic;}
+
+  /* timeline */
+  .timeline{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  @media (max-width:820px){ .timeline{grid-template-columns:1fr;} }
+  .phase{background:var(--surface); padding:22px 20px;}
+  .phase .when{font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600;}
+  .phase h4{font-family:Iowan Old Style,Sitka Text,Georgia,serif; font-size:18px; font-weight:600; margin:8px 0 10px;}
+  .phase p{font-size:13.5px; color:var(--ink2); line-height:1.55; margin:0 0 10px;}
+  .phase ul{margin:0; padding-left:18px; font-size:13.5px; color:var(--ink2); line-height:1.6;}
+  .phase .kpi{margin-top:14px; padding-top:12px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink);}
+  .phase .kpi b{color:var(--good);}
+
+  .callout{background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--muted); border-radius:0 var(--radius) var(--radius) 0; padding:16px 20px; font-size:13.5px; color:var(--ink2); line-height:1.65;}
+  .callout b{color:var(--ink);}
+  .callout ul{margin:8px 0 0; padding-left:18px;}
+  .callout.pending{border-left-color:var(--consolid);}
+
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Radar E-commerce · Squad App</p>
+    <h1>Plano de expansão do Radar por Grupo Econômico</h1>
+    <p class="subtitle">Versão com <b style="color:var(--ink)">gap real de ativação</b>: cruzamos a base de mercado (IQVIA + faturamento interno) com o status real do Radar por loja (<code>sales_module.Status</code> no Postgres, via CNPJ) para ranquear os 10 Grupos Econômicos com maior oportunidade de ativação — medida em nº de lojas ainda sem o Radar, não em potencial de mercado presumido.</p>
+    <div class="meta">
+      <span><b>Fontes:</b> specs/dados de mercado/farmarcas_datalake_1.db + Postgres (sales_module)</span>
+      <span><b>Janela:</b> faturamento ago/25–jul/26 · mercado IQVIA MAT mai/26</span>
+      <span><b>Responsável:</b> Daniel (PO, Squad App)</span>
+    </div>
+  </header>
+
+  <section id="resumo">
+    <h2>Panorama real de ativação</h2>
+    <p class="section-note">A rede Farmarcas tem 1.789 lojas ativas em 483 Grupos Econômicos. Cruzando com <code>sales_module</code> (Status = 63 = todas as etapas de onboarding do Radar concluídas), a penetração real do Radar hoje é de 46,7% — bem diferente do indicador desatualizado (NMT = 7) que constava na documentação do produto.</p>
+    <div class="stats">
+      <div class="stat"><div class="label">Lojas ativas na rede Farmarcas</div><div class="value">1.789</div><div class="sub">483 GEs mapeados</div></div>
+      <div class="stat"><div class="label">Já ativas no Radar hoje</div><div class="value">836</div><div class="sub">46,7% de penetração</div></div>
+      <div class="stat"><div class="label">Lojas no gap (sem Radar)</div><div class="value">953</div><div class="sub">53,3% da base ainda fora</div></div>
+      <div class="stat"><div class="label">Gap coberto pelo Top 10</div><div class="value">292 lojas</div><div class="sub">30,6% do gap nacional</div></div>
+    </div>
+  </section>
+
+  <section id="mapa">
+    <h2>Mapa de ativação por Grupo Econômico</h2>
+    <p class="section-note">Cada ponto é um GE. Eixo horizontal: nº de lojas ainda sem Radar (gap absoluto). Eixo vertical: penetração do Radar dentro do GE (% de lojas já ativas). Tamanho: nº total de lojas ativas na franquia. Quanto mais para a direita e mais para baixo, maior a prioridade de ativação.</p>
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="chart-title">483 Grupos Econômicos · gap de lojas × penetração do Radar</div>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--growth)"></i>Top 10 prioritário</span>
+          <span><i class="sw" style="background:var(--muted);opacity:.5"></i>Demais GEs</span>
+        </div>
+      </div>
+      <div class="chart-scroll">
+        <svg id="scatter" viewBox="0 0 1040 520" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="listas">
+    <h2>Top 10 Grupos Econômicos — prioridade por gap real</h2>
+    <p class="section-note">Score = <b style="color:var(--ink)">70% nº de lojas no gap</b> (único critério que não depende de suposição sobre o efeito do app — é só contagem de lojas sem Radar) + 15% faturamento das lojas do gap + 15% whitespace de mercado (IQVIA). Estas duas últimas são <b style="color:var(--ink)">sinais de tamanho/contexto, não estimativa do que o app geraria</b> — não temos, ainda, dado de uplift real (ver limitações).</p>
+    <div class="table-card">
+      <table>
+        <thead><tr>
+          <th>#</th><th>GE</th><th>Responsável</th><th>Bandeira / Estados</th>
+          <th class="num">Já no Radar</th><th class="num">Gap</th><th class="num">Penetração</th>
+          <th class="num ctx">Faturamento do gap*</th><th class="num ctx">Mercado local (IQVIA)*</th>
+        </tr></thead>
+        <tbody id="tbl-top10"></tbody>
+      </table>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin-top:8px;">*Contexto de tamanho/mercado — não é estimativa de receita gerada pela ativação do Radar.</p>
+    <div class="callout" style="margin-top:20px;">
+      <b>Por que cada um entrou:</b>
+      <ul>
+        <li><b>#8</b> — de longe o maior gap absoluto: 101 lojas na franquia, só 4 no Radar (4% de penetração). Sozinho, quase 1/3 das lojas do gap do top 10 inteiro.</li>
+        <li><b>#247</b> — 0% de penetração: as 43 lojas do GE inteiro ainda estão fora do Radar. Greenfield total.</li>
+        <li><b>#461</b> — penetração intermediária (53,5%), mas ainda restam 33 lojas de um GE grande (71 lojas ativas) — relação já mais avançada, boa alavancagem pra fechar o restante.</li>
+        <li><b>#185</b> — já é o mais avançado dos GEs grandes (75,3% penetrado), mas as 24 lojas restantes ainda são um gap relevante em termos absolutos.</li>
+        <li><b>#10</b> — praticamente intacto (5,3% penetrado): 18 das 19 lojas ainda fora.</li>
+        <li><b>#25</b> — 0% de penetração, 19 lojas — nenhuma relação com o Radar ainda nesse GE.</li>
+        <li><b>#192</b> — 22,2% penetrado, ainda 14 lojas fora em São Paulo.</li>
+        <li><b>#346</b> — 47,2% penetrado, 19 lojas restantes no Acre — mercado geograficamente isolado.</li>
+        <li><b>#31</b> — já avançado (69,2%), só 12 lojas restantes — perto de completar o GE inteiro.</li>
+        <li><b>#135</b> — meio do caminho (50% penetrado), 13 lojas restantes em Mato Grosso.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="fases">
+    <h2>Fases de rollout</h2>
+    <p class="section-note">Agrupado por tamanho do gap absoluto — não por faturamento, para não repetir o viés de tratar receita como causada pelo app.</p>
+    <div class="timeline">
+      <div class="phase">
+        <div class="when">Fase 1 · maior gap absoluto</div>
+        <h4>#8, #247, #461</h4>
+        <p>Os 3 GEs com mais lojas fora do Radar. #247 é greenfield total (0%); #8 e #461 já têm alguma relação, o que facilita a conversa comercial para o restante.</p>
+        <ul>
+          <li>173 lojas no gap endereçadas nesta fase</li>
+          <li>Validar checkout (Deeplink) e onboarding PBM ponta a ponta nas primeiras ativações</li>
+        </ul>
+        <div class="kpi">Lojas a ativar: <b>173</b></div>
+      </div>
+      <div class="phase">
+        <div class="when">Fase 2 · gap médio-alto</div>
+        <h4>#185, #10, #25</h4>
+        <p>Mistura de GE quase completo (#185, só falta fechar) com GEs intocados (#10, #25) — diversifica o tipo de esforço comercial necessário.</p>
+        <ul>
+          <li>61 lojas no gap endereçadas nesta fase</li>
+          <li>PBM já integrado — usar como gancho comercial</li>
+        </ul>
+        <div class="kpi">Lojas a ativar: <b>61</b></div>
+      </div>
+      <div class="phase">
+        <div class="when">Fase 3 · completa o top 10</div>
+        <h4>#192, #346, #31, #135</h4>
+        <p>Fecha o ranking. Todos já com penetração parcial (22–69%) — esforço de "fechar o GE" mais do que abrir relação nova.</p>
+        <ul>
+          <li>58 lojas no gap endereçadas nesta fase</li>
+          <li>Reavaliar ranking com dado de uplift real quando a base de vendas estiver conectada</li>
+        </ul>
+        <div class="kpi">Lojas a ativar: <b>58</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="notas">
+    <h2>Limitações e próximos passos</h2>
+    <div class="callout pending">
+      <b>Pendente (em andamento pelo PO):</b> conectar a base de vendas/transações do Radar para medir o <b>uplift real</b> — comparar faturamento das lojas antes e depois de <code>Enabled_At</code> em <code>sales_module</code>. Isso substituiria os sinais de "tamanho" (faturamento do gap, whitespace) por uma estimativa causal de quanto o app de fato move o faturamento/NSM. Enquanto isso não chega, o ranking abaixo usa apenas nº de lojas no gap como critério primário.
+    </div>
+    <div class="callout" style="margin-top:16px;">
+      <ul>
+        <li><b>Faturamento do gap e whitespace de mercado não são estimativas do impacto do app</b> — são sinais de tamanho/materialidade comercial e de mercado local. Uma loja sem Radar já fatura o que fatura hoje (físico + outros canais); não há evidência de que esse valor seria "capturado" pelo app.</li>
+        <li><code>sales_module.Status = 63</code> equivale a <code>111111</code> em binário — todas as 6 etapas de habilitação (produto, pagamento, envio, loja pronta etc.) concluídas. Cruzado por CNPJ com <code>dim_lojas</code>: 1.013 de 1.015 lojas com Status=63 (99,8%) foram encontradas na base do estudo.</li>
+        <li>Nomes dos responsáveis incluídos a pedido do PO para viabilizar contato comercial direto — contêm dado pessoal + faturamento por indivíduo: tratar como confidencial, não redistribuir fora do time.</li>
+        <li>Dado de mercado IQVIA é licenciado — tratar como confidencial e não redistribuir fora do time.</li>
+        <li>"Penetração" é sobre lojas ativas na franquia hoje; 177 lojas com Status=63 já estão desativadas na franquia (contrato encerrado) e foram excluídas do cálculo.</li>
+        <li>Pesos do score (70/15/15) são uma escolha de priorização do PO — sensíveis a mudar o ranking se reponderados.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>Radar E-commerce · Spec Kit — gerado a partir de specs/dados de mercado/farmarcas_datalake_1.db + Postgres (sales_module)</span>
+    <span>20 jul 2026</span>
+  </footer>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const POINTS = [[3,5,0,5,"outros"],[5,2,0,2,"outros"],[6,5,0,5,"outros"],[7,0,100,1,"outros"],[8,97,4,101,"top10"],[10,18,5.3,19,"top10"],[11,1,0,1,"outros"],[13,2,50,4,"outros"],[14,0,100,3,"outros"],[15,0,100,3,"outros"],[16,0,100,3,"outros"],[17,0,100,1,"outros"],[19,3,0,3,"outros"],[20,4,0,4,"outros"],[21,2,0,2,"outros"],[22,0,100,1,"outros"],[23,3,0,3,"outros"],[24,1,0,1,"outros"],[25,19,0,19,"top10"],[27,10,0,10,"outros"],[29,1,50,2,"outros"],[30,6,14.3,7,"outros"],[31,12,69.2,39,"top10"],[33,0,100,1,"outros"],[34,1,0,1,"outros"],[36,0,100,3,"outros"],[37,0,100,1,"outros"],[38,0,100,1,"outros"],[39,3,72.7,11,"outros"],[40,0,100,1,"outros"],[41,1,50,2,"outros"],[42,0,100,6,"outros"],[43,1,50,2,"outros"],[44,0,100,1,"outros"],[47,2,0,2,"outros"],[48,3,50,6,"outros"],[49,1,0,1,"outros"],[50,0,100,1,"outros"],[51,0,100,1,"outros"],[52,2,0,2,"outros"],[53,2,0,2,"outros"],[54,1,0,1,"outros"],[55,0,100,2,"outros"],[56,7,68.2,22,"outros"],[58,2,66.7,6,"outros"],[59,0,100,1,"outros"],[61,0,100,3,"outros"],[63,1,50,2,"outros"],[64,3,40,5,"outros"],[66,1,0,1,"outros"],[67,5,0,5,"outros"],[69,1,0,1,"outros"],[71,0,100,2,"outros"],[72,1,85.7,7,"outros"],[73,0,100,1,"outros"],[74,0,100,1,"outros"],[75,0,100,1,"outros"],[76,7,0,7,"outros"],[78,1,0,1,"outros"],[79,2,75,8,"outros"],[80,2,0,2,"outros"],[82,0,100,1,"outros"],[83,0,100,11,"outros"],[84,1,66.7,3,"outros"],[85,12,0,12,"outros"],[88,3,0,3,"outros"],[89,0,100,3,"outros"],[90,0,100,2,"outros"],[91,6,0,6,"outros"],[92,5,0,5,"outros"],[94,2,60,5,"outros"],[95,1,0,1,"outros"],[96,1,0,1,"outros"],[98,0,100,2,"outros"],[100,4,69.2,13,"outros"],[101,2,0,2,"outros"],[102,0,100,1,"outros"],[106,0,100,4,"outros"],[107,0,100,1,"outros"],[110,4,0,4,"outros"],[112,0,100,2,"outros"],[115,0,100,1,"outros"],[116,1,0,1,"outros"],[117,10,9.1,11,"outros"],[118,0,100,1,"outros"],[121,0,100,2,"outros"],[123,0,100,2,"outros"],[125,0,100,1,"outros"],[126,0,100,3,"outros"],[127,3,0,3,"outros"],[130,0,100,1,"outros"],[133,1,83.3,6,"outros"],[134,3,0,3,"outros"],[135,13,50,26,"top10"],[137,0,100,1,"outros"],[138,0,100,2,"outros"],[140,1,0,1,"outros"],[142,2,86.7,15,"outros"],[144,2,0,2,"outros"],[147,2,0,2,"outros"],[148,1,0,1,"outros"],[149,1,66.7,3,"outros"],[152,1,0,1,"outros"],[153,2,33.3,3,"outros"],[154,0,100,1,"outros"],[155,2,0,2,"outros"],[158,1,50,2,"outros"],[159,1,0,1,"outros"],[161,0,100,5,"outros"],[162,1,50,2,"outros"],[163,0,100,1,"outros"],[164,1,0,1,"outros"],[165,1,0,1,"outros"],[168,2,0,2,"outros"],[170,0,100,1,"outros"],[173,1,66.7,3,"outros"],[174,0,100,1,"outros"],[176,0,100,1,"outros"],[177,0,100,1,"outros"],[178,3,0,3,"outros"],[180,3,40,5,"outros"],[181,0,100,1,"outros"],[182,0,100,2,"outros"],[183,3,0,3,"outros"],[184,0,100,1,"outros"],[185,24,75.3,97,"top10"],[186,0,100,1,"outros"],[189,3,40,5,"outros"],[190,1,0,1,"outros"],[191,0,100,2,"outros"],[192,14,22.2,18,"top10"],[193,1,0,1,"outros"],[195,0,100,1,"outros"],[196,0,100,1,"outros"],[197,0,100,1,"outros"],[198,3,0,3,"outros"],[200,1,0,1,"outros"],[203,0,100,4,"outros"],[205,0,100,1,"outros"],[210,1,0,1,"outros"],[211,0,100,2,"outros"],[213,2,0,2,"outros"],[216,1,97.3,37,"outros"],[217,1,0,1,"outros"],[218,1,66.7,3,"outros"],[219,1,0,1,"outros"],[220,5,16.7,6,"outros"],[221,3,0,3,"outros"],[222,0,100,1,"outros"],[224,5,0,5,"outros"],[225,2,0,2,"outros"],[229,10,28.6,14,"outros"],[230,1,0,1,"outros"],[231,0,100,7,"outros"],[234,12,0,12,"outros"],[235,2,50,4,"outros"],[236,0,100,2,"outros"],[237,1,0,1,"outros"],[238,2,0,2,"outros"],[239,8,0,8,"outros"],[242,1,92.9,14,"outros"],[243,1,50,2,"outros"],[244,7,0,7,"outros"],[245,0,100,1,"outros"],[246,0,100,3,"outros"],[247,43,0,43,"top10"],[248,1,50,2,"outros"],[250,0,100,1,"outros"],[251,0,100,1,"outros"],[252,2,66.7,6,"outros"],[254,3,0,3,"outros"],[255,0,100,1,"outros"],[258,1,0,1,"outros"],[259,0,100,1,"outros"],[260,8,0,8,"outros"],[263,0,100,1,"outros"],[264,1,50,2,"outros"],[265,1,50,2,"outros"],[267,1,50,2,"outros"],[268,2,50,4,"outros"],[269,1,0,1,"outros"],[270,0,100,3,"outros"],[271,9,18.2,11,"outros"],[272,2,50,4,"outros"],[273,0,100,1,"outros"],[276,0,100,12,"outros"],[278,7,0,7,"outros"],[280,1,0,1,"outros"],[281,1,0,1,"outros"],[282,0,100,9,"outros"],[283,0,100,1,"outros"],[285,0,100,1,"outros"],[286,1,0,1,"outros"],[287,1,0,1,"outros"],[289,2,0,2,"outros"],[290,0,100,2,"outros"],[293,0,100,1,"outros"],[294,0,100,1,"outros"],[298,3,66.7,9,"outros"],[299,0,100,3,"outros"],[300,0,100,1,"outros"],[303,0,100,2,"outros"],[305,1,50,2,"outros"],[306,0,100,1,"outros"],[307,2,0,2,"outros"],[308,3,0,3,"outros"],[309,0,100,1,"outros"],[310,4,0,4,"outros"],[312,0,100,1,"outros"],[313,0,100,1,"outros"],[315,1,0,1,"outros"],[316,1,0,1,"outros"],[317,2,0,2,"outros"],[318,0,100,1,"outros"],[319,1,50,2,"outros"],[321,1,0,1,"outros"],[322,1,0,1,"outros"],[325,4,0,4,"outros"],[326,0,100,2,"outros"],[328,3,0,3,"outros"],[331,0,100,2,"outros"],[332,1,0,1,"outros"],[333,1,0,1,"outros"],[335,1,0,1,"outros"],[336,2,0,2,"outros"],[338,0,100,1,"outros"],[339,0,100,1,"outros"],[340,2,33.3,3,"outros"],[341,6,0,6,"outros"],[342,3,0,3,"outros"],[343,4,33.3,6,"outros"],[345,0,100,2,"outros"],[346,19,47.2,36,"top10"],[347,0,100,2,"outros"],[348,1,50,2,"outros"],[349,0,100,2,"outros"],[350,1,0,1,"outros"],[351,1,0,1,"outros"],[352,0,100,8,"outros"],[353,3,0,3,"outros"],[356,1,93.3,15,"outros"],[357,3,0,3,"outros"],[364,3,25,4,"outros"],[365,2,0,2,"outros"],[366,1,0,1,"outros"],[367,1,0,1,"outros"],[368,1,88.9,9,"outros"],[369,2,0,2,"outros"],[378,1,0,1,"outros"],[379,1,50,2,"outros"],[380,0,100,2,"outros"],[381,1,50,2,"outros"],[383,1,0,1,"outros"],[386,2,0,2,"outros"],[388,1,93.8,16,"outros"],[389,1,0,1,"outros"],[390,1,66.7,3,"outros"],[392,2,0,2,"outros"],[393,3,0,3,"outros"],[399,1,0,1,"outros"],[400,1,0,1,"outros"],[404,0,100,5,"outros"],[409,0,100,1,"outros"],[410,0,100,1,"outros"],[411,0,100,1,"outros"],[412,1,66.7,3,"outros"],[413,0,100,1,"outros"],[415,0,100,1,"outros"],[418,1,0,1,"outros"],[420,1,0,1,"outros"],[421,1,0,1,"outros"],[424,0,100,1,"outros"],[425,0,100,1,"outros"],[426,0,100,4,"outros"],[427,0,100,1,"outros"],[428,1,0,1,"outros"],[429,0,100,1,"outros"],[430,1,50,2,"outros"],[431,0,100,1,"outros"],[432,0,100,1,"outros"],[433,3,40,5,"outros"],[436,0,100,1,"outros"],[439,2,0,2,"outros"],[440,0,100,2,"outros"],[441,4,20,5,"outros"],[443,1,0,1,"outros"],[445,0,100,1,"outros"],[448,4,20,5,"outros"],[450,1,0,1,"outros"],[452,1,50,2,"outros"],[456,1,0,1,"outros"],[458,0,100,1,"outros"],[459,1,0,1,"outros"],[461,33,53.5,71,"top10"],[462,0,100,2,"outros"],[464,0,100,1,"outros"],[465,2,0,2,"outros"],[468,0,100,1,"outros"],[470,0,100,2,"outros"],[473,0,100,4,"outros"],[474,0,100,1,"outros"],[475,1,0,1,"outros"],[481,1,80,5,"outros"],[482,0,100,1,"outros"],[483,0,100,3,"outros"],[493,2,0,2,"outros"],[497,0,100,1,"outros"],[499,1,75,4,"outros"],[502,1,66.7,3,"outros"],[506,1,50,2,"outros"],[509,0,100,1,"outros"],[510,2,0,2,"outros"],[513,0,100,1,"outros"],[514,1,0,1,"outros"],[518,0,100,1,"outros"],[519,5,16.7,6,"outros"],[520,4,20,5,"outros"],[521,1,0,1,"outros"],[522,0,100,1,"outros"],[527,0,100,2,"outros"],[529,0,100,1,"outros"],[530,1,50,2,"outros"],[531,1,66.7,3,"outros"],[532,0,100,1,"outros"],[535,0,100,1,"outros"],[536,0,100,2,"outros"],[537,1,0,1,"outros"],[541,4,0,4,"outros"],[542,6,40,10,"outros"],[543,0,100,1,"outros"],[546,3,0,3,"outros"],[550,1,0,1,"outros"],[552,0,100,1,"outros"],[553,0,100,1,"outros"],[554,3,0,3,"outros"],[555,1,0,1,"outros"],[557,1,50,2,"outros"],[558,2,0,2,"outros"],[560,1,0,1,"outros"],[561,1,0,1,"outros"],[562,0,100,14,"outros"],[563,0,100,5,"outros"],[564,0,100,2,"outros"],[565,0,100,1,"outros"],[566,0,100,2,"outros"],[567,0,100,1,"outros"],[569,0,100,3,"outros"],[570,1,0,1,"outros"],[571,0,100,1,"outros"],[573,0,100,1,"outros"],[576,8,0,8,"outros"],[577,1,0,1,"outros"],[578,1,0,1,"outros"],[586,0,100,2,"outros"],[587,0,100,4,"outros"],[589,1,0,1,"outros"],[590,2,88.2,17,"outros"],[591,7,12.5,8,"outros"],[594,2,66.7,6,"outros"],[595,0,100,1,"outros"],[597,1,66.7,3,"outros"],[601,1,50,2,"outros"],[602,1,50,2,"outros"],[604,0,100,5,"outros"],[606,0,100,1,"outros"],[607,1,0,1,"outros"],[608,0,100,1,"outros"],[609,1,0,1,"outros"],[611,0,100,1,"outros"],[612,1,0,1,"outros"],[619,0,100,3,"outros"],[621,3,0,3,"outros"],[623,1,50,2,"outros"],[624,0,100,1,"outros"],[625,3,0,3,"outros"],[628,1,85.7,7,"outros"],[629,1,0,1,"outros"],[630,1,0,1,"outros"],[631,1,0,1,"outros"],[637,1,0,1,"outros"],[641,1,50,2,"outros"],[642,2,33.3,3,"outros"],[643,0,100,4,"outros"],[644,0,100,1,"outros"],[645,1,0,1,"outros"],[647,4,0,4,"outros"],[649,0,100,1,"outros"],[652,0,100,1,"outros"],[654,1,0,1,"outros"],[655,3,50,6,"outros"],[656,0,100,1,"outros"],[657,3,0,3,"outros"],[658,3,25,4,"outros"],[659,1,0,1,"outros"],[660,2,66.7,6,"outros"],[662,0,100,1,"outros"],[667,1,50,2,"outros"],[668,0,100,1,"outros"],[670,1,50,2,"outros"],[673,0,100,1,"outros"],[674,0,100,1,"outros"],[676,0,100,1,"outros"],[678,2,0,2,"outros"],[679,1,80,5,"outros"],[680,0,100,3,"outros"],[682,2,33.3,3,"outros"],[683,3,25,4,"outros"],[685,12,14.3,14,"outros"],[687,1,0,1,"outros"],[688,1,0,1,"outros"],[689,1,0,1,"outros"],[690,0,100,1,"outros"],[691,0,100,1,"outros"],[693,1,50,2,"outros"],[694,1,0,1,"outros"],[695,1,0,1,"outros"],[696,0,100,1,"outros"],[700,0,100,1,"outros"],[702,0,100,1,"outros"],[704,2,0,2,"outros"],[705,1,0,1,"outros"],[706,2,0,2,"outros"],[707,3,0,3,"outros"],[708,0,100,1,"outros"],[711,2,0,2,"outros"],[716,0,100,1,"outros"],[717,2,0,2,"outros"],[720,2,33.3,3,"outros"],[722,1,0,1,"outros"],[723,0,100,2,"outros"],[724,5,0,5,"outros"],[725,0,100,5,"outros"],[726,2,0,2,"outros"],[727,10,0,10,"outros"],[729,0,100,1,"outros"],[734,0,100,1,"outros"],[737,0,100,1,"outros"],[738,0,100,3,"outros"],[739,1,66.7,3,"outros"],[741,1,0,1,"outros"],[742,0,100,1,"outros"],[743,2,0,2,"outros"],[744,0,100,2,"outros"],[745,3,0,3,"outros"],[747,0,100,1,"outros"],[748,0,100,2,"outros"],[749,6,14.3,7,"outros"],[750,1,0,1,"outros"],[752,0,100,1,"outros"],[753,2,0,2,"outros"],[754,0,100,1,"outros"],[755,1,0,1,"outros"],[756,10,0,10,"outros"],[757,1,0,1,"outros"],[758,1,0,1,"outros"],[759,1,0,1,"outros"],[760,0,100,1,"outros"],[761,1,0,1,"outros"],[762,6,0,6,"outros"],[765,3,0,3,"outros"],[771,10,41.2,17,"outros"],[772,1,0,1,"outros"],[773,1,0,1,"outros"],[774,1,0,1,"outros"],[775,1,0,1,"outros"],[776,12,0,12,"outros"],[777,0,100,1,"outros"],[778,0,100,1,"outros"],[779,0,100,1,"outros"],[780,1,0,1,"outros"],[781,1,0,1,"outros"],[782,1,0,1,"outros"],[783,0,100,1,"outros"],[786,2,0,2,"outros"],[787,1,0,1,"outros"],[788,0,100,1,"outros"],[789,1,0,1,"outros"],[790,1,0,1,"outros"],[794,1,0,1,"outros"],[795,1,0,1,"outros"],[797,0,100,1,"outros"],[798,1,0,1,"outros"],[804,1,0,1,"outros"]]; // [id, lojas_gap, penetracao_pct, lojas_ativas, cat]
+const HI = [
+ {
+  "id": 8,
+  "resp": "Fabio Rodrigues Silva",
+  "bandeira": "Conectadas",
+  "ufs": "BA, GO, MA, PA, PE, PI",
+  "lojas_ativas": 101,
+  "lojas_radar": 4,
+  "lojas_gap": 97,
+  "penetracao": 4,
+  "fat_gap": 569000151.2899958,
+  "whitespace": 480157611.4,
+  "score": 1
+ },
+ {
+  "id": 247,
+  "resp": "Aristides Daniel Ortiz",
+  "bandeira": "Conectadas",
+  "ufs": "AM, AP, MT, PA",
+  "lojas_ativas": 43,
+  "lojas_radar": 0,
+  "lojas_gap": 43,
+  "penetracao": 0,
+  "fat_gap": 235780783.11999828,
+  "whitespace": 112807758.14,
+  "score": 0.39355724190289987
+ },
+ {
+  "id": 461,
+  "resp": "Eduardo Da Silva Thomaz",
+  "bandeira": "Bigfort",
+  "ufs": "MA, PA, TO",
+  "lojas_ativas": 71,
+  "lojas_radar": 38,
+  "lojas_gap": 33,
+  "penetracao": 53.5,
+  "fat_gap": 282239866.6899926,
+  "whitespace": 199702457.35,
+  "score": 0.35882098210490976
+ },
+ {
+  "id": 185,
+  "resp": "Natanael Cesar Acco Modena",
+  "bandeira": "Conectadas",
+  "ufs": "AM, PA, RO",
+  "lojas_ativas": 97,
+  "lojas_radar": 73,
+  "lojas_gap": 24,
+  "penetracao": 75.3,
+  "fat_gap": 149709669.32999662,
+  "whitespace": 394302137.64,
+  "score": 0.31792655605913656
+ },
+ {
+  "id": 10,
+  "resp": "Nelson Vieira De Azevedo Neto",
+  "bandeira": "Conectadas",
+  "ufs": "PE",
+  "lojas_ativas": 19,
+  "lojas_radar": 1,
+  "lojas_gap": 18,
+  "penetracao": 5.3,
+  "fat_gap": 66518791.65999974,
+  "whitespace": 181814392.52,
+  "score": 0.18416882590117262
+ },
+ {
+  "id": 25,
+  "resp": "Gilberto Santana Junior",
+  "bandeira": "Ultra Popular",
+  "ufs": "GO, MG",
+  "lojas_ativas": 19,
+  "lojas_radar": 0,
+  "lojas_gap": 19,
+  "penetracao": 0,
+  "fat_gap": 96003734.26999924,
+  "whitespace": 129163211.2,
+  "score": 0.18285366406639536
+ },
+ {
+  "id": 192,
+  "resp": "Marcos Alexandre Rocco De Paula",
+  "bandeira": "Conectadas",
+  "ufs": "SP",
+  "lojas_ativas": 18,
+  "lojas_radar": 4,
+  "lojas_gap": 14,
+  "penetracao": 22.2,
+  "fat_gap": 46146459.94,
+  "whitespace": 191943940.3,
+  "score": 0.15216194729130647
+ },
+ {
+  "id": 346,
+  "resp": "Edson José De Oliveira Cruz",
+  "bandeira": "Conectadas",
+  "ufs": "AC",
+  "lojas_ativas": 36,
+  "lojas_radar": 17,
+  "lojas_gap": 19,
+  "penetracao": 47.2,
+  "fat_gap": 77430913.90999916,
+  "whitespace": 45960969.29,
+  "score": 0.15169437936185595
+ },
+ {
+  "id": 31,
+  "resp": "Bruno Barbosa Oliveira",
+  "bandeira": "Conectadas",
+  "ufs": "CE",
+  "lojas_ativas": 39,
+  "lojas_radar": 27,
+  "lojas_gap": 12,
+  "penetracao": 69.2,
+  "fat_gap": 40875501.59999962,
+  "whitespace": 204610245.16,
+  "score": 0.13986032363251444
+ },
+ {
+  "id": 135,
+  "resp": "Marcos Vinicius Nunes Pagnussat",
+  "bandeira": "Conectadas",
+  "ufs": "MT",
+  "lojas_ativas": 26,
+  "lojas_radar": 13,
+  "lojas_gap": 13,
+  "penetracao": 50,
+  "fat_gap": 93245486.60999921,
+  "whitespace": 100089024.78999999,
+  "score": 0.1282759721210112
+ }
+];
+
+const svg = document.getElementById('scatter');
+const W = 1040, H = 520;
+const M = {top: 26, right: 24, bottom: 46, left: 54};
+const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+
+const xMax = 100, yMax = 100;
+function xPos(gap){ return M.left + Math.min(gap,xMax)/xMax*plotW; }
+function yPos(penet){ return M.top + plotH - Math.min(penet,yMax)/yMax*plotH; }
+function rPos(lojas){ return Math.max(3, Math.min(22, Math.sqrt(lojas)*2.1)); }
+
+function svgEl(tag, attrs){
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+// gridlines
+const xTicks = [0, 20, 40, 60, 80, 100];
+xTicks.forEach(t=>{
+  const x = xPos(t);
+  svg.appendChild(svgEl('line', {class:'grid-line', x1:x, x2:x, y1:M.top, y2:M.top+plotH}));
+  const lab = svgEl('text', {class:'axis-label', x, y:H-14, 'text-anchor':'middle'});
+  lab.textContent = t;
+  svg.appendChild(lab);
+});
+[0,20,40,60,80,100].forEach(t=>{
+  const y = yPos(t);
+  svg.appendChild(svgEl('line', {class:'grid-line', x1:M.left, x2:M.left+plotW, y1:y, y2:y}));
+  const lab = svgEl('text', {class:'axis-label', x:M.left-10, y:y+3, 'text-anchor':'end'});
+  lab.textContent = t+'%';
+  svg.appendChild(lab);
+});
+const yAxisTitle = svgEl('text', {class:'axis-label', x:M.left, y:16});
+yAxisTitle.textContent = 'Penetração do Radar no GE ↑';
+svg.appendChild(yAxisTitle);
+const xAxisTitle = svgEl('text', {class:'axis-label', x:M.left+plotW, y:H-14, 'text-anchor':'end'});
+xAxisTitle.textContent = 'Nº de lojas no gap (sem Radar) →';
+svg.appendChild(xAxisTitle);
+
+// quadrant guide lines
+const gapMid = 10, penetMid = 50;
+svg.appendChild(svgEl('line', {class:'quad-line', x1:xPos(gapMid), x2:xPos(gapMid), y1:M.top, y2:M.top+plotH}));
+svg.appendChild(svgEl('line', {class:'quad-line', x1:M.left, x2:M.left+plotW, y1:yPos(penetMid), y2:yPos(penetMid)}));
+
+const tooltip = document.getElementById('tooltip');
+const wrapEl = document.querySelector('.chart-scroll');
+
+const order = {outros:0, top10:1};
+const sorted = [...POINTS].sort((a,b)=>(order[a[4]]||0)-(order[b[4]]||0));
+
+sorted.forEach(p=>{
+  const [id, gap, penet, lojas, cat] = p;
+  const c = svgEl('circle', {
+    class: 'dot dot-'+cat,
+    cx: xPos(gap), cy: yPos(penet), r: rPos(lojas),
+    'data-id': id
+  });
+  c.addEventListener('mousemove', (e)=>{
+    const rect = wrapEl.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - wrapEl.getBoundingClientRect().left + wrapEl.scrollLeft) + 'px';
+    tooltip.style.top = (e.clientY - rect.top) + 'px';
+    tooltip.style.opacity = 1;
+    tooltip.innerHTML = '<b>GE #'+id+'</b><br>Gap: '+gap+' lojas<br>Penetração: '+penet+'%<br>Lojas ativas: '+lojas;
+  });
+  c.addEventListener('mouseleave', ()=>{ tooltip.style.opacity = 0; });
+  svg.appendChild(c);
+});
+
+function qLabel(x,y,text,anchor){
+  const t = svgEl('text', {class:'quad-label', x, y, 'text-anchor':anchor||'start'});
+  t.textContent = text;
+  svg.appendChild(t);
+}
+qLabel(M.left+plotW-6, M.top+14, 'grande porte · quase completo', 'end');
+qLabel(M.left+6, M.top+14, 'pequeno porte · quase completo', 'start');
+qLabel(M.left+plotW-6, M.top+plotH-6, 'grande porte · baixa penetração (prioridade)', 'end');
+qLabel(M.left+6, M.top+plotH-6, 'pequeno porte · baixa penetração', 'start');
+
+// ---- table ----
+function fmtBRL(v){ return 'R$ ' + (v/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1}) + 'M'; }
+
+const tblTop10 = document.getElementById('tbl-top10');
+[...HI].sort((a,b)=>b.score-a.score).forEach((h,i)=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td class="emph">'+(i+1)+'</td>'+
+    '<td class="emph">#'+h.id+'</td>'+
+    '<td>'+h.resp+'</td>'+
+    '<td>'+h.bandeira+' — '+h.ufs+'</td>'+
+    '<td class="num">'+h.lojas_radar+'</td>'+
+    '<td class="num emph">'+h.lojas_gap+'</td>'+
+    '<td class="num">'+h.penetracao+'%</td>'+
+    '<td class="num">'+fmtBRL(h.fat_gap)+'</td>'+
+    '<td class="num">'+fmtBRL(h.whitespace)+'</td>';
+  tblTop10.appendChild(tr);
+});
+</script>
