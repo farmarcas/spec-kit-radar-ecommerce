@@ -42,6 +42,8 @@ Farmarcas (dona da plataforma)
 
 Ao entrar no Portal, o usuário escolhe (ou já está vinculado a) uma Rede e, dentro dela, uma Loja específica. O cabeçalho do Portal sempre mostra esse contexto (ex: `ACFARMA > Acfarma - Centro`), com um seletor (▾) para trocar de loja sem precisar sair e logar de novo.
 
+> **Importante — a Rede não é um ponto de suporte:** essa hierarquia é só organizacional/comercial (bandeira/franquia), não uma cadeia de suporte. Cada Grupo de lojas (GE) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo Grupo de lojas responde **diretamente à Farmarcas**, nunca à Rede. Ou seja: o ponto de suporte de qualquer associado é sempre a **Farmarcas** — nunca oriente um lojista a buscar suporte "com a Rede" (ex: "fale com a Ultra Popular").
+
 ---
 
 ## 2. Perfis de acesso
@@ -477,6 +479,10 @@ Ao convidar/editar um usuário, defina o **Perfil de acesso** (ver [seção 2](#
 
 **Um mesmo e-mail não pode ser convidado duas vezes.** O Portal bloqueia o convite se o e-mail já existir no sistema (mensagem "Parece que o usuário já existe em nosso sistema", com opção de voltar ou editar o usuário existente) — não é possível, por exemplo, dar a uma pessoa um segundo login para acumular acesso a outra Rede/loja; o vínculo adicional precisa ser feito editando a mesma conta.
 
+**Como removo o acesso de alguém que saiu da farmácia?** Dentro da entidade "usuário", no contexto da loja, existe o botão **Desativar**. Não é uma exclusão — o cadastro do usuário continua existindo, só o acesso dele fica bloqueado.
+
+**A Chave de integração do ERP foi comprometida ou perdida — dá para gerar uma nova pelo Portal?** Não, hoje não existe self-service para isso. É preciso abrir chamado com o suporte para gerar uma nova chave.
+
 **Não existe uma função para mudar um usuário/loja de GE (Grupo Econômico).** Se uma loja é removida do Portal, todos os usuários vinculados a ela perdem esse vínculo automaticamente:
 - Um usuário **Contato cliente** (vinculado só àquela loja) continua conseguindo logar, mas passa a ver uma **tela em branco**, sem lojas para trabalhar.
 - Os demais perfis (Gestor de Loja/Rede/Admin), se tiverem acesso a outras lojas, simplesmente deixam de ver os dados da loja removida e continuam vendo as demais normalmente.
@@ -686,7 +692,7 @@ Esses e-mails **não vão para o associado** — são direcionados ao time inter
 - **Resolvido:** Rede = bandeira/franquia (ex: ACFARMA, Ultra Popular); GE (Grupo Econômico) = conjunto de lojas do mesmo empresário dentro de uma Rede — conceito de negócio por trás da funcionalidade Grupo de lojas.
 - **Resolvido:** o fluxo de Solicitação de produto pelo Associado foi identificado (ícone na tela Estoque) — ver seção 7.
 - **Resolvido:** independentemente do tipo de estoque (Espelhado/Integrado/Independente), o Grupo de lojas sempre centraliza o atendimento de pedidos na loja principal — ver seção 4.
-- **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados.
+- **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados. O associado tem o contato direto do Anjo via WhatsApp, e também pode abrir chamado via Salesforce. O suporte é sempre com a Farmarcas — nunca com a Rede (ver seção 1).
 - **Resolvido:** o bug do modal de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
 - **Templates de e-mail descartados/desconsiderados** (existem no centralizador de comunicação, mas não devem ser documentados/usados como referência — ver seção 14): "Aplicativo conectado ao ERP." (duplicado de "comunicação... restabelecida"), "Confira a lista de lojas com mais de 2 horas de atraso na integração" (será descontinuado), "Nova solicitação disponível" (não existe mais), "O relatório de lojas desativadas já está disponível" (não será utilizado), e o e-mail de falha de comunicação na integração com detalhe técnico do erro (será descontinuado).
 - Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-15; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
