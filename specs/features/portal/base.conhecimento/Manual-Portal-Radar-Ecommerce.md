@@ -292,7 +292,7 @@ O ERP de cada loja envia **EAN, quantidade e preço** para o Portal. Para cada E
 - Se o EAN **existe no catálogo oficial** (ver [Catálogo](#12-catálogo-admin)), o produto entra na lista de Estoque da loja.
 - Se o EAN **não existe** no catálogo, o produto é **desprezado** — não aparece em lugar nenhum, sem erro ou aviso.
 
-**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez.
+**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez. **Cadência:** essa sincronização de estoque e preço ocorre a cada **15 minutos**.
 
 **De onde vem o preço "R$ App"?** O ERP envia **dois preços** por produto — um **"preço bruto" (full price)** e um **"preço de venda" (price)**. O Portal sempre exibe o **menor dos dois** recebidos, porque o associado pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP — o ecommerce sempre reflete o preço mais vantajoso que o ERP informou.
 
@@ -386,6 +386,10 @@ O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**�
 ---
 
 ## 9. Promoções
+
+**Existem duas formas de gerenciar ofertas, não só pelo Portal:**
+1. **Criando a promoção direto no Portal** (esta tela) — gera uma seção própria no aplicativo (ex: "Ofertas em destaque").
+2. **Subindo um "caderno de ofertas" pelo próprio ERP** — o associado classifica um caderno de ofertas como e-commerce no ERP, e o preço promocional é refletido no app pela sincronização normal de estoque/preço (a cada 15 minutos, ver seção 7). Essa via permite agendar promoções diárias direto pelo ERP, sem precisar abrir o Portal, desde que o caderno esteja classificado corretamente para o e-commerce.
 
 A tela **Promoções** tem duas visões, cada uma em sua aba:
 

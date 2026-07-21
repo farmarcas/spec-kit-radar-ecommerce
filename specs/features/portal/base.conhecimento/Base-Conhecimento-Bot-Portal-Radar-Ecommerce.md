@@ -423,7 +423,7 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e um toggle "Exibir preço" que controla se o produto aparece com preço visível no app.
 
 **Como o estoque da minha loja é montado?**
-O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso. A comunicação é **passiva e incremental**: o Portal só recebe o que o ERP manda, e o ERP manda só o que mudou (preço ou estoque) desde o último envio — não é uma base completa a cada vez.
+O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso. A comunicação é **passiva e incremental**: o Portal só recebe o que o ERP manda, e o ERP manda só o que mudou (preço ou estoque) desde o último envio — não é uma base completa a cada vez. Essa sincronização ocorre **a cada 15 minutos**.
 
 **O estoque (quantidade) pode ser editado no Portal?**
 Não — só o **preço** pode ser ajustado manualmente (ver abaixo). A quantidade em estoque sempre reflete exatamente o que o ERP envia.
@@ -525,6 +525,9 @@ Sim, o ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747) (refinad
 ---
 
 ## Promoções
+
+**Só dá pra criar promoção pelo Portal?**
+Não, existem duas formas: (1) criar a promoção direto no Portal (tela Promoções, gera uma seção própria no app, ex: "Ofertas em destaque"), ou (2) subir um **"caderno de ofertas" pelo próprio ERP**, classificado como e-commerce — o preço promocional reflete no app pela sincronização normal de estoque/preço (a cada 15 minutos), permitindo agendar promoções diárias direto pelo ERP sem precisar abrir o Portal.
 
 **Qual a diferença entre promoção "Individual" e "Por grupo"?**
 **Individual** é uma promoção aplicada a um único produto. **Por grupo** é aplicada a um conjunto de produtos relacionados (um "Grupo de produtos", por exemplo uma linha inteira de uma marca) de uma vez só.
