@@ -42,7 +42,7 @@ Farmarcas (dona da plataforma)
 
 Ao entrar no Portal, o usuário escolhe (ou já está vinculado a) uma Rede e, dentro dela, uma Loja específica. O cabeçalho do Portal sempre mostra esse contexto (ex: `ACFARMA > Acfarma - Centro`), com um seletor (▾) para trocar de loja sem precisar sair e logar de novo.
 
-> **Importante — a Rede não é um ponto de suporte:** essa hierarquia é só organizacional/comercial (bandeira/franquia), não uma cadeia de suporte. Cada Grupo de lojas (GE) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo Grupo de lojas responde **diretamente à Farmarcas**, nunca à Rede. Ou seja: o ponto de suporte de qualquer associado é sempre a **Farmarcas** — nunca oriente um lojista a buscar suporte "com a Rede" (ex: "fale com a Ultra Popular").
+> **Importante — a Rede não é um ponto de suporte:** essa hierarquia é só organizacional/comercial (bandeira/franquia), não uma cadeia de suporte. Cada Grupo de lojas (GE) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo Grupo de lojas responde **diretamente à Farmarcas**, nunca à Rede. Os únicos dois pontos de suporte possíveis são o **suporte do próprio ERP** (problemas de preço/estoque) ou a **Farmarcas** (Anjo via WhatsApp, ou chamado via Salesforce, para o resto) — nunca oriente um lojista a buscar suporte "com a Rede" (ex: "fale com a Ultra Popular"); isso já apareceu descrito assim em outro material e está incorreto.
 
 ---
 
@@ -292,7 +292,7 @@ O ERP de cada loja envia **EAN, quantidade e preço** para o Portal. Para cada E
 - Se o EAN **existe no catálogo oficial** (ver [Catálogo](#12-catálogo-admin)), o produto entra na lista de Estoque da loja.
 - Se o EAN **não existe** no catálogo, o produto é **desprezado** — não aparece em lugar nenhum, sem erro ou aviso.
 
-**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez. **Cadência:** essa sincronização de estoque e preço ocorre a cada **15 minutos**.
+**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez. **Cadência:** essa sincronização de estoque e preço ocorre a cada **15 minutos**. ⚠️ Vale reforçar porque já apareceu descrito ao contrário em outro material: quem inicia o envio é sempre o **ERP** (push) — o Portal nunca consulta/extrai dados via API própria.
 
 **De onde vem o preço "R$ App"?** O ERP envia **dois preços** por produto — um **"preço bruto" (full price)** e um **"preço de venda" (price)**. O Portal sempre exibe o **menor dos dois** recebidos, porque o associado pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP — o ecommerce sempre reflete o preço mais vantajoso que o ERP informou.
 

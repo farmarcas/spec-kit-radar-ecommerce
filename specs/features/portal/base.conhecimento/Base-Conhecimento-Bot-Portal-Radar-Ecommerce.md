@@ -5,6 +5,8 @@
 > **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 15 de julho de 2026.
 >
 > **Regra para o bot:** se a dúvida do associado não estiver coberta aqui, o bot deve admitir que não sabe e direcionar para o suporte humano (Farmarcas/N1) — nunca inventar um caminho de tela que não está descrito neste documento. A seção final "Perguntas sem resposta confirmada" lista o que ainda não foi mapeado.
+>
+> **Prioridade em caso de conflito:** este documento é a **fonte de verdade prioritária** para dúvidas de associados sobre o Portal. Se qualquer outro material (ex: FAQ de outro time, documentação legada do App) disser algo diferente do que está aqui, **este documento prevalece** — nunca responda com a versão divergente. A seção "Conflitos conhecidos com outros materiais" logo abaixo lista os casos já identificados e resolvidos.
 
 ---
 
@@ -28,7 +30,26 @@
 - [Meios de pagamento (Braspag, Cielo, Rede, Antifraude)](#meios-de-pagamento-braspag-cielo-rede-antifraude)
 - [E-mails automáticos do sistema](#e-mails-automáticos-do-sistema)
 - [Notificações, instabilidades e contingência](#notificações-instabilidades-e-contingência)
+- [Conflitos conhecidos com outros materiais](#conflitos-conhecidos-com-outros-materiais) *(consultar sempre que outra fonte parecer contradizer este documento)*
 - [Perguntas sem resposta confirmada](#perguntas-sem-resposta-confirmada)
+
+---
+
+## Conflitos conhecidos com outros materiais
+
+Esta seção existe porque **já identificamos casos reais** de outro material (ex: FAQ de outro time, documentação legada da squad App) afirmando algo diferente deste documento. Nesses 3 casos, **já foi confirmado diretamente com o time de produto do Portal** qual versão é a correta — o bot deve sempre responder com a versão marcada como ✅ abaixo, mesmo que tenha "visto" a versão ❌ em outro lugar.
+
+**1. Suporte é só pela Farmarcas, nunca pela Rede**
+- ❌ Errado (já visto em outro material): "acione o suporte da Rede" / "fale com a rede X".
+- ✅ Correto: não existe suporte prestado pela Rede — é só uma categoria organizacional/comercial. Os dois únicos pontos de suporte são: **suporte do ERP** (problemas de preço/estoque) ou **Farmarcas** (Anjo via WhatsApp, ou chamado via Salesforce, para tudo mais). Ver seção "Redes, Grupos e Lojas".
+
+**2. Limite de oferta é por cesta/pedido, não por CPF**
+- ❌ Errado (já visto em mais de um material, incluindo documentação da própria squad App): "o Limitador de oferta trava por cliente/CPF".
+- ✅ Correto: o campo **Limite por compra** vale por cesta/pedido. O app hoje **não tem** trava por CPF — o mesmo cliente pode criar vários pedidos diferentes e repetir o desconto da mesma oferta. É uma limitação técnica conhecida, sem previsão de mudança confirmada. Ver seção "Promoções".
+
+**3. O ERP empurra os dados pro Portal — o Portal não puxa via API**
+- ❌ Errado (já visto em outro material): "o preço é extraído via API do sistema ERP" (dando a entender que o Portal consulta/puxa o ERP ativamente).
+- ✅ Correto: a comunicação é **passiva do lado do Portal** — o ERP envia (push) os dados a cada 15 minutos, de forma incremental (só o que mudou). O Portal nunca "puxa" ou consulta o ERP por conta própria. Ver seção "Estoque".
 
 ---
 
@@ -230,7 +251,13 @@ Na tela `Usuários`, existe um botão para convidar/criar novo usuário — lá 
 É o nível mais alto de organização no Portal, abaixo apenas da Farmarcas — representa uma bandeira/franqueadora (ex: ACFARMA, Ultra Popular, Super Popular). Dentro de uma Rede existem lojas de vários GEs (empresários) diferentes.
 
 **A Rede dá suporte para as lojas/GEs dela?**
-**Não.** Isso é um ponto importante: a Rede é só uma categoria organizacional/comercial (bandeira), não uma cadeia de suporte. Cada GE (Grupo Econômico) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo GE responde **diretamente à Farmarcas**, nunca à Rede. O ponto de suporte de qualquer associado é sempre a **Farmarcas** — nunca direcione um lojista para "falar com a Rede" (ex: "fale com a Ultra Popular").
+**Não — e isso NÃO tem exceção.** ⚠️ Se você ler em algum outro material (ex: FAQ de outro time) a frase "acione o suporte da rede", **isso está incorreto** — não existe suporte prestado pela Rede. A Rede é só uma categoria organizacional/comercial (bandeira), não uma cadeia de suporte. Cada GE (Grupo Econômico) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo GE responde **diretamente à Farmarcas**, nunca à Rede.
+
+**Então quem eu devo acionar quando tenho um problema?** Só existem dois pontos de suporte possíveis:
+1. **Suporte do sistema ERP** (do próprio associado) — para problemas de preço/estoque não refletindo corretamente, falha de sincronização, etc.
+2. **Farmarcas** (Anjo via WhatsApp, ou chamado via Salesforce) — para qualquer outra questão do Portal/App.
+
+Nunca direcione um lojista para "falar com a Rede" (ex: "fale com a Ultra Popular") — isso é sempre errado.
 
 **Cada Rede tem o próprio aplicativo? O app tem nome diferente para cada uma?**
 Sim. Hoje existem 12 Redes na plataforma, e cada uma tem seu próprio app, com nome/marca própria (whitelabel) — por exemplo, a Rede Ultra tem o app "Ultra Popular". Todos os apps compartilham exatamente as mesmas funcionalidades; só a marca muda. Dentro do app existe o contexto de loja: o cliente vê o estoque de uma loja específica por vez, mas pode trocar de loja dentro do próprio app.
@@ -423,7 +450,9 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e um toggle "Exibir preço" que controla se o produto aparece com preço visível no app.
 
 **Como o estoque da minha loja é montado?**
-O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso. A comunicação é **passiva e incremental**: o Portal só recebe o que o ERP manda, e o ERP manda só o que mudou (preço ou estoque) desde o último envio — não é uma base completa a cada vez. Essa sincronização ocorre **a cada 15 minutos**.
+O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso.
+
+**Quem inicia essa comunicação, o Portal ou o ERP?** ⚠️ É o **ERP** — a comunicação é **passiva e incremental do lado do Portal**: o ERP empurra (push) os dados pro Portal a cada 15 minutos, só o que mudou (preço ou estoque) desde o último envio, não uma base completa a cada vez. O Portal **não consulta/puxa dados via API própria** — se algum material disser "o Portal extrai o preço via API do ERP", essa descrição está invertida: quem envia é sempre o ERP.
 
 **O estoque (quantidade) pode ser editado no Portal?**
 Não — só o **preço** pode ser ajustado manualmente (ver abaixo). A quantidade em estoque sempre reflete exatamente o que o ERP envia.
@@ -537,7 +566,7 @@ No botão "Nova promoção", siga os 5 passos do formulário:
 1. Escolha **o que promover** — Um produto ou Grupo de produtos — e o tipo de desconto (ex: Desconto % ou Preço fixo).
 2. Escolha **em quais lojas** a promoção vale.
 3. Defina **quando** ela fica ativa — data de início/fim e dias da semana.
-4. Configure as **regras de uso** — hoje só existe o campo **Limite por compra** (os campos "tempo para uso" e "novo uso da oferta" foram removidos da tela; o sistema aplica por padrão 1 dia de uso e "não renovar", sem mostrar isso na interface).
+4. Configure as **regras de uso** — hoje só existe o campo **Limite por compra** (os campos "tempo para uso" e "novo uso da oferta" foram removidos da tela). Uma oferta ativada pelo cliente só pode ser usada dentro do período de vigência da própria promoção (data de início/fim do passo 3) — não existe mais tempo de uso/renovação separado. ⚠️ **O Limite por compra vale por cesta/pedido, não por CPF** — mesmo que outro material diga "por cliente", isso está incorreto: o app não trava por CPF hoje, então o mesmo cliente pode criar vários pedidos pra repetir a promoção.
 5. Escolha **os produtos**: busque por nome/EAN (ou por grupo, se escolheu "Grupo de produtos" no passo 1), ajuste o desconto individualmente ou aplique um "Desconto geral" de uma vez para todos os produtos selecionados.
 
 **Dá pra cadastrar vários produtos de uma vez numa promoção?**
