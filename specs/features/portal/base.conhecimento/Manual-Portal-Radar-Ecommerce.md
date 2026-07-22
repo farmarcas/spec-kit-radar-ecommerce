@@ -225,14 +225,16 @@ Alguns cards da Home baixam um relatório em Excel (.xlsx) com o detalhe por tr�
 
 ## 6. Configurações da Loja
 
-Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções. Um widget **"Seu progresso"** no canto inferior acompanha quantas dessas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nesse checklist de onboarding são:
+Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções.
+
+**Como migrar do módulo Ofertas para o módulo Vendas:** o botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto (não é preciso completar nada antes). Ao clicar nele, libera-se o widget **"Seu progresso"** no canto inferior de Configurações, que acompanha quantas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nesse checklist são:
 
 1. Informações da Loja
 2. Endereço Comercial
 3. Horário de atendimento
 4. Criação de oferta
 
-Ao concluir essas etapas, o Portal mostra a opção **"Faça Upgrade"**, convidando o associado a ativar o **módulo de Vendas** (checkout completo pelo app, em vez do módulo Ofertas) — com um botão "Acompanhar solicitação" para ver o status desse pedido.
+Depois de solicitado o upgrade, um botão **"Acompanhar solicitação"** mostra o status desse pedido de migração.
 
 **Fluxo de migração de Ofertas para Vendas (liberação da Chave de integração/API):**
 1. O associado solicita a migração de Ofertas para o módulo Vendas pelo Portal.

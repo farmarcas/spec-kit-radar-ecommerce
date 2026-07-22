@@ -393,16 +393,17 @@ Pelo botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição
 **O que tem dentro de Configurações?**
 Três grandes seções, no menu lateral: **Dados da Loja**, **Formas de Entrega** e **Pagamentos**. Um indicador "Seu progresso" no canto inferior mostra quantas configurações essenciais já foram concluídas.
 
-**Quais são as etapas do checklist "Seu progresso"?**
+**Como eu migro pro módulo de Vendas?**
+O botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto — não precisa completar nada antes. Ao clicar nele, é que se libera o widget **"Seu progresso"**, dentro de Configurações, pra você ajustar o checklist de onboarding:
 1. Informações da Loja
 2. Endereço Comercial
 3. Horário de atendimento
 4. Criação de oferta
 
-Ao concluir essas etapas, aparece a opção **"Faça Upgrade"**, para solicitar a ativação do **módulo de Vendas** (veja a próxima pergunta).
+Depois de solicitado o upgrade, um botão **"Acompanhar solicitação"** mostra o status desse pedido.
 
 **Como funciona a migração do módulo Ofertas para o módulo Vendas (e a liberação da Chave API)?**
-1. O associado solicita a migração pelo Portal (via "Faça Upgrade", depois de concluir o checklist de onboarding).
+1. O associado clica em "Faça upgrade para o módulo Vendas", solicitando a migração pelo Portal.
 2. A Chave de integração do ERP (API) é liberada e deve ser inserida no sistema ERP da loja.
 3. A ativação do módulo de Vendas e o espelhamento do estoque acontecem **separadamente** — pode levar um tempo até o estoque aparecer no app mesmo com o módulo já ativo.
 4. Se a solicitação ficar travada em "Aguardando" por muito tempo, ou o estoque demorar demais para aparecer, o associado deve acionar o suporte do próprio ERP para validar a integração do lado deles.
