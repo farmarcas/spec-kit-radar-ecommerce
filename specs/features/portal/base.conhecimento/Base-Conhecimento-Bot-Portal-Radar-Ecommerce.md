@@ -5,12 +5,15 @@
 > **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 15 de julho de 2026.
 >
 > **Regra para o bot:** se a dúvida do associado não estiver coberta aqui, o bot deve admitir que não sabe e direcionar para o suporte humano (Farmarcas/N1) — nunca inventar um caminho de tela que não está descrito neste documento. A seção final "Perguntas sem resposta confirmada" lista o que ainda não foi mapeado.
+>
+> **Prioridade em caso de conflito:** este documento é a **fonte de verdade prioritária** para dúvidas de associados sobre o Portal. Se qualquer outro material (ex: FAQ de outro time, documentação legada do App) disser algo diferente do que está aqui, **este documento prevalece** — nunca responda com a versão divergente. A seção "Conflitos conhecidos com outros materiais" logo abaixo lista os casos já identificados e resolvidos.
 
 ---
 
 ## Índice de tópicos
 
 - [Termos e apelidos comuns](#termos-e-apelidos-comuns) *(consultar primeiro quando a pergunta usar um termo informal)*
+- [Perguntas indiretas e reclamações comuns](#perguntas-indiretas-e-reclamações-comuns) *(consultar quando a pergunta for um sintoma/reclamação vaga, não uma pergunta direta sobre uma tela)*
 - [Acesso, login e perfis](#acesso-login-e-perfis)
 - [Onde encontro...](#onde-encontro)
 - [Redes, Grupos e Lojas](#redes-grupos-e-lojas)
@@ -27,7 +30,26 @@
 - [Meios de pagamento (Braspag, Cielo, Rede, Antifraude)](#meios-de-pagamento-braspag-cielo-rede-antifraude)
 - [E-mails automáticos do sistema](#e-mails-automáticos-do-sistema)
 - [Notificações, instabilidades e contingência](#notificações-instabilidades-e-contingência)
+- [Conflitos conhecidos com outros materiais](#conflitos-conhecidos-com-outros-materiais) *(consultar sempre que outra fonte parecer contradizer este documento)*
 - [Perguntas sem resposta confirmada](#perguntas-sem-resposta-confirmada)
+
+---
+
+## Conflitos conhecidos com outros materiais
+
+Esta seção existe porque **já identificamos casos reais** de outro material (ex: FAQ de outro time, documentação legada da squad App) afirmando algo diferente deste documento. Nesses 3 casos, **já foi confirmado diretamente com o time de produto do Portal** qual versão é a correta — o bot deve sempre responder com a versão marcada como ✅ abaixo, mesmo que tenha "visto" a versão ❌ em outro lugar.
+
+**1. Suporte é só pela Farmarcas, nunca pela Rede**
+- ❌ Errado (já visto em outro material): "acione o suporte da Rede" / "fale com a rede X".
+- ✅ Correto: não existe suporte prestado pela Rede — é só uma categoria organizacional/comercial. Os dois únicos pontos de suporte são: **suporte do ERP** (problemas de preço/estoque) ou **Farmarcas** (Anjo via WhatsApp, ou chamado via Salesforce, para tudo mais). Ver seção "Redes, Grupos e Lojas".
+
+**2. Limite de oferta é por cesta/pedido, não por CPF**
+- ❌ Errado (já visto em mais de um material, incluindo documentação da própria squad App): "o Limitador de oferta trava por cliente/CPF".
+- ✅ Correto: o campo **Limite por compra** vale por cesta/pedido. O app hoje **não tem** trava por CPF — o mesmo cliente pode criar vários pedidos diferentes e repetir o desconto da mesma oferta. É uma limitação técnica conhecida, sem previsão de mudança confirmada. Ver seção "Promoções".
+
+**3. O ERP empurra os dados pro Portal — o Portal não puxa via API**
+- ❌ Errado (já visto em outro material): "o preço é extraído via API do sistema ERP" (dando a entender que o Portal consulta/puxa o ERP ativamente).
+- ✅ Correto: a comunicação é **passiva do lado do Portal** — o ERP envia (push) os dados a cada 15 minutos, de forma incremental (só o que mudou). O Portal nunca "puxa" ou consulta o ERP por conta própria. Ver seção "Estoque".
 
 ---
 
@@ -51,6 +73,103 @@ Associados nem sempre usam o nome exato do campo/tela do Portal. Esta tabela aju
 | "Anjo" | Profissional do time de **Operações internas da Farmarcas** que dá suporte ao associado (termo interno) | — |
 | "Sistema BIG", "Alfa 7"/"Alpha7", "Soft", "TRIER" | Sistemas de **ERP** usados pelas farmácias, integrados ao Portal via API | Fora do Portal — são os sistemas de gestão do próprio associado |
 | "E-Delivery" | Nome antigo/alternativo do próprio **Portal Radar E-commerce** — mesma ferramenta, sem diferença de funcionalidade | — |
+
+---
+
+## Perguntas indiretas e reclamações comuns
+
+Associados nem sempre fazem uma pergunta direta — muitas vezes descrevem um sintoma, uma reclamação de cliente, ou um pedido vago. Esta tabela ajuda o bot a traduzir isso para o conceito/tela real do Portal antes de responder. **Padrão de resposta:** confirme o que entendeu, depois explique onde resolver (ex.: "Ah, entendi! Isso é o campo [X], em [tela Y]...").
+
+**Confusões básicas (App vs. Portal, contas, primeiros passos)**
+
+Essas são as mais fundamentais — geralmente de quem está começando agora ou nunca usou o Portal. Vêm antes das outras porque, se o associado não entende essa separação básica, qualquer resposta mais específica vai confundir ainda mais.
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "Recebi um pedido no app mas não sei onde acessar" | Confundiu **App** (onde o cliente compra) com **Portal** (onde o associado gerencia) — são coisas diferentes | Os pedidos aparecem pra você na tela **Pedidos**, dentro do **Portal** (não no app) — na coluna "Na fila" do quadro. Você recebe um aviso por WhatsApp quando cai um pedido novo (ver seção de notificações). |
+| "Tem um app do Portal pra eu usar no celular?" | Achar que existe uma versão mobile/app do Portal | Não — o Portal é **só web**, acessado pelo navegador, normalmente num computador/notebook. Não existe app do Portal. |
+| "Sou cliente da minha própria farmácia e tenho conta no app — isso me dá acesso ao Portal?" | Confundir a conta de **consumidor no App** com a conta de **equipe no Portal** | Não, são contas completamente separadas. A conta do App é pra compra (login por e-mail ou CPF); a conta do Portal é de equipe/gestão, criada só por convite, com e-mail + senha e um Perfil de acesso definido. |
+| "Meu funcionário quer acessar o Portal, ele pode criar uma conta sozinho?" | Achar que existe cadastro livre/self-service no Portal, como no App | Não existe cadastro aberto no Portal — o único jeito de entrar é receber um **convite** de alguém que já tem acesso (Gestor de Loja/Rede/Admin), pela tela Usuários. |
+| "Configurei uma promoção/produto no Portal, preciso fazer alguma coisa no app também?" | Achar que precisa replicar manualmente a configuração no app | Não — você só configura pelo **Portal**; o App do consumidor reflete automaticamente, sem nenhuma ação adicional do seu lado. |
+| "Como eu troco de loja dentro do Portal?" | Não achou o seletor de loja/rede | Use o seletor (▾) no cabeçalho, ao lado do nome da Rede/Loja atual — troca sem precisar sair e logar de novo. |
+| "O cliente diz que não encontra minha loja no app" | Pode ser um de vários motivos: loja pausada (toggle Disponível), ERP sem sincronizar há mais de 72h, ou o cliente abriu o app de **outra bandeira** | Cheque primeiro a tela Estoque (alerta de comunicação com o ERP) e o toggle Disponível; se os dois estiverem OK, confirme com o cliente se ele baixou o app da Rede/bandeira certa (cada Rede tem seu próprio app, ver whitelabel). |
+| "Baixei o app mas não é o nome da minha farmácia" | Confusão de whitelabel — cada Rede tem seu próprio app com nome de marca (ex: Ultra Popular) | Confirme qual Rede/bandeira a loja pertence e oriente a baixar o app com esse nome específico — não existe um app único "Radar E-commerce" para o consumidor final. |
+| "Como eu sei em qual módulo minha loja está?" | Dúvida entre módulo Ofertas e Vendas | Coluna **"Módulo ativado"** na tela `Lojas` (nível Rede). |
+| "Como eu vejo minha loja no app, quero conferir se está tudo certo?" | Achar que existe um modo de pré-visualização/preview | Não existe preview — a única forma é abrir o próprio app e navegar como um cliente comum faria. |
+| "Preciso de ajuda urgente, quem eu chamo?" | Buscar suporte direto | Contato direto com o **Anjo** via WhatsApp, ou abrir chamado pelo **Salesforce**. O suporte é sempre com a **Farmarcas** — nunca com a Rede (ver "Redes, Grupos e Lojas"). |
+
+**Dados da loja / cadastro**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "O nome do meu farmacêutico está errado", "preciso atualizar o CRF" | Corrigir o campo **Farmacêutico responsável** ou **CRF** | `Configurações > Dados da Loja > Informações da loja` — campo editável normalmente. |
+| "O telefone da loja mudou", "quero atualizar o e-mail de contato" | Atualizar **Telefone** ou **E-mail** da loja | Mesma tela, `Configurações > Dados da Loja > Informações da loja`. |
+| "Quero mudar o nome que aparece pro cliente no app" | Alterar o **Nome da loja no app** | Mesma tela — é um campo separado da Razão social. |
+| "O CNPJ está errado no sistema" | Corrigir o CNPJ cadastrado | **Não é possível pelo Portal** — o CNPJ não é editável. Precisa abrir chamado com o suporte. |
+| "Perdi minha API key", "não sei mais qual é minha chave de integração" | Consultar a **Chave de integração do ERP** | É só consulta (campo somente leitura) em `Configurações > Dados da Loja > Informações da loja`. Se foi comprometida e precisa de uma **nova** chave, não existe self-service — precisa abrir chamado com o suporte. |
+| "Quero trocar o WhatsApp que recebe aviso de pedido novo" | Atualizar o campo **WhatsApp** da loja | Mesma tela — é esse número que recebe a notificação automática de pedido novo (ver "E-mails automáticos do sistema" para o funcionamento do disparo). |
+| "Funcionário saiu, quero tirar o acesso dele" | **Desativar** o acesso de um usuário | Dentro da entidade "usuário", no contexto da loja, existe o botão **Desativar** (não é exclusão do cadastro) — ver seção Usuários. |
+
+**Horários, entrega e frete**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "O app mostra que a loja tá fechada, mas a gente tá aberto" | O **Horário de Atendimento** está errado | `Configurações > Dados da Loja` — é o horário que o consumidor vê ao buscar a loja no app. |
+| "Cliente não consegue marcar entrega/retirada no horário certo" | **Horário de Entrega** ou **Horário de Retirada** desalinhados do Horário de Atendimento geral | `Configurações > Formas de Entrega` — são 3 horários independentes; checar qual dos três está errado. |
+| "O app tá dizendo que não entrega mais pro bairro do cliente" | Endereço fora do **Raio de atendimento** configurado | `Configurações > Formas de Entrega > Receber em casa` — revisar as faixas de Alcance × Taxa. |
+| "Quero cobrar menos pra entregas mais longe", "cliente reclama que o frete tá caro" | Ajustar a tabela de **Alcance (km) × Taxa de Entrega** | Mesma tela — é possível cadastrar quantas faixas forem necessárias (lembrar de clicar no "+" antes de Salvar). |
+| "Quero dar entrega de graça pra quem compra mais de R$X" | Configurar **Frete Grátis** | `Configurações > Formas de Entrega > Receber em casa`. |
+| "Cliente falou que só apareceu 'Retirada em loja', sem opção de entrega" | Endereço do cliente fora do raio de entrega **daquela loja específica** | Comportamento esperado do app — a entrega some e só retirada fica disponível; o checkout segue normalmente. |
+| "A retirada tá demorando/rápido demais no app" | Ajustar o **Tempo de retirada** | `Configurações > Formas de Entrega > Retirada na loja`. |
+
+**Pagamento**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "Cliente não conseguiu pagar na entrega" | Checar se o pagamento na entrega está ativado | `Configurações > Pagamentos` — pergunta "Deseja ativar o pagamento na entrega?" |
+| "Não aparece Pix/dinheiro na maquininha" | Meio de pagamento "Outros" não habilitado | `Configurações > Pagamentos` — Dinheiro e Pix ficam em "Outros". |
+| "Cliente reclama que não aceita o cartão dele" | Bandeira específica não selecionada | `Configurações > Pagamentos` — checar lista de bandeiras Débito/Crédito (tem atalho "Selecionar todas"). |
+| "Quem processa o pagamento online da loja?" | Identificar o gateway | **Braspag** — precisa de dados da credenciadora/adquirente pra ativar (ver Meios de pagamento). |
+
+**Estoque e preço**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "Esse produto não aparece no app, mas eu tenho em estoque" | Ou o EAN não existe no catálogo oficial (é descartado silenciosamente), ou o toggle "Exibir preço" está desligado, ou o ERP não está sincronizando | Checar as três hipóteses na tela `Estoque` — ver seção 7 do Manual. |
+| "O preço no app tá diferente do que eu mando pro ERP" | Dúvida sobre a regra do preço exibido | O Portal sempre mostra o **menor** entre "preço bruto" e "preço de venda" enviados pelo ERP — ver seção Estoque/Preço. |
+| "A quantidade no app tá errada" | Achar que dá pra corrigir estoque no Portal | **Não dá** — o Portal não permite editar quantidade, só preço (R$ customizado). O número reflete só o que o ERP envia; checar sincronização. |
+| "Minha loja desapareceu do aplicativo" | Toggle "Disponível" desligado, ou loja pausada automaticamente por falha de comunicação com o ERP (72h) | Checar `Estoque` — ver alerta de comunicação com ERP. |
+| "Quero vender um produto que não existe no sistema" | Fazer uma **Solicitação de produto** | Ícone "Solicitar produto" na tela `Estoque` — depende de aprovação do Admin (Catálogo). |
+| "Por que não posso colocar desconto nesse medicamento controlado?" | Regra regulatória de controlados | Controlados não entram em promoção — já aparecem desabilitados na criação da oferta. |
+| "Quero escoltar um produto com preço errado sem perder o cadastro" | Ocultar temporariamente sem excluir | Desmarcar **"Exibir preço"** na linha do produto, em `Estoque`. |
+
+**Pedidos**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "O pedido não sai da tela, travou em Liberados" | Pedido meio de entrega/retirada não confirmado pelo cliente | Ver Q&A "Meus pedidos estão travados na fase Liberados". |
+| "Cliente pagou e quer cancelar — o que eu faço com o dinheiro?" | Dúvida sobre estorno | Estorno/reembolso é tratado **inteiramente fora do sistema** — o app não mostra status pro cliente; avise-o diretamente. |
+| "Não sei qual motivo de cancelamento escolher" | Lista de motivos do modal de cancelamento | Ver seção "Como cancelo um pedido" — 9 motivos fixos. |
+| "Parei de receber aviso de pedido no WhatsApp" | Número de WhatsApp errado/desatualizado na config da loja | Checar campo **WhatsApp** em `Configurações > Dados da Loja`. |
+| "Um item do pedido não tem estoque, o que eu faço?" | Achar que dá pra remover só aquele item | **Não dá estorno parcial** — a tag "Sem estoque" é automática; a única solução é cancelar o pedido inteiro. |
+
+**Promoções**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "Criei a oferta mas não aparece produto pra escolher" | Produto é medicamento controlado | Controlados aparecem desabilitados na seleção — regra regulatória, não é bug. |
+| "Cliente ativou a oferta e não conseguiu usar" | Promoção fora do período de vigência | A oferta ativada só vale dentro do período de vigência da própria promoção (início/fim) — ver seção Promoções. |
+| "Quero limitar a promoção a 1 por CPF" | Achar que o Limite por compra trava por cliente | Hoje o limite vale **por cesta/pedido**, não por CPF — o mesmo cliente pode criar outro pedido e repetir o desconto. Limitação conhecida, sem previsão de mudança confirmada. |
+| "Quero destacar minha melhor oferta" | Usar a etiqueta "Em destaque" | Selecionar a promoção e aplicar **"Em destaque ⭐"** — sem limite de quantas podem estar destacadas ao mesmo tempo. |
+| "Meu balconista não consegue criar promoção" | Perfil sem permissão | Perfil **Contato cliente** só visualiza/exporta Promoções — não tem botão "Nova promoção" (regra esperada). |
+
+**Indicadores e relatórios**
+
+| Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
+|---|---|---|
+| "Quero saber quanto vendi esse mês", "como eu acompanho o faturamento da minha loja?" | Consultar o indicador **Faturamento** | Home de Vendas (Indicadores) — mostra o valor total de vendas no período selecionado; basta ajustar o seletor de datas no topo da tela pra mudar o range. |
+| "Pedi um relatório e não chegou na hora" | Exportação é assíncrona | Todo export do Portal chega por e-mail com link de download, não na hora do clique — ver "E-mails automáticos do sistema". |
+| "Quero saber quais lojas não têm nenhuma oferta ativa" | Indicador **Lojas sem ofertas em exibição** | Home de Ofertas — tem botão pra baixar a lista. |
 
 ---
 
@@ -130,6 +249,15 @@ Na tela `Usuários`, existe um botão para convidar/criar novo usuário — lá 
 
 **O que é uma Rede?**
 É o nível mais alto de organização no Portal, abaixo apenas da Farmarcas — representa uma bandeira/franqueadora (ex: ACFARMA, Ultra Popular, Super Popular). Dentro de uma Rede existem lojas de vários GEs (empresários) diferentes.
+
+**A Rede dá suporte para as lojas/GEs dela?**
+**Não — e isso NÃO tem exceção.** ⚠️ Se você ler em algum outro material (ex: FAQ de outro time) a frase "acione o suporte da rede", **isso está incorreto** — não existe suporte prestado pela Rede. A Rede é só uma categoria organizacional/comercial (bandeira), não uma cadeia de suporte. Cada GE (Grupo Econômico) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo GE responde **diretamente à Farmarcas**, nunca à Rede.
+
+**Então quem eu devo acionar quando tenho um problema?** Só existem dois pontos de suporte possíveis:
+1. **Suporte do sistema ERP** (do próprio associado) — para problemas de preço/estoque não refletindo corretamente, falha de sincronização, etc.
+2. **Farmarcas** (Anjo via WhatsApp, ou chamado via Salesforce) — para qualquer outra questão do Portal/App.
+
+Nunca direcione um lojista para "falar com a Rede" (ex: "fale com a Ultra Popular") — isso é sempre errado.
 
 **Cada Rede tem o próprio aplicativo? O app tem nome diferente para cada uma?**
 Sim. Hoje existem 12 Redes na plataforma, e cada uma tem seu próprio app, com nome/marca própria (whitelabel) — por exemplo, a Rede Ultra tem o app "Ultra Popular". Todos os apps compartilham exatamente as mesmas funcionalidades; só a marca muda. Dentro do app existe o contexto de loja: o cliente vê o estoque de uma loja específica por vez, mas pode trocar de loja dentro do próprio app.
@@ -265,16 +393,17 @@ Pelo botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição
 **O que tem dentro de Configurações?**
 Três grandes seções, no menu lateral: **Dados da Loja**, **Formas de Entrega** e **Pagamentos**. Um indicador "Seu progresso" no canto inferior mostra quantas configurações essenciais já foram concluídas.
 
-**Quais são as etapas do checklist "Seu progresso"?**
+**Como eu migro pro módulo de Vendas?**
+O botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto — não precisa completar nada antes. Ao clicar nele, é que se libera o widget **"Seu progresso"**, dentro de Configurações, pra você ajustar o checklist de onboarding:
 1. Informações da Loja
 2. Endereço Comercial
 3. Horário de atendimento
 4. Criação de oferta
 
-Ao concluir essas etapas, aparece a opção **"Faça Upgrade"**, para solicitar a ativação do **módulo de Vendas** (veja a próxima pergunta).
+Depois de solicitado o upgrade, um botão **"Acompanhar solicitação"** mostra o status desse pedido.
 
 **Como funciona a migração do módulo Ofertas para o módulo Vendas (e a liberação da Chave API)?**
-1. O associado solicita a migração pelo Portal (via "Faça Upgrade", depois de concluir o checklist de onboarding).
+1. O associado clica em "Faça upgrade para o módulo Vendas", solicitando a migração pelo Portal.
 2. A Chave de integração do ERP (API) é liberada e deve ser inserida no sistema ERP da loja.
 3. A ativação do módulo de Vendas e o espelhamento do estoque acontecem **separadamente** — pode levar um tempo até o estoque aparecer no app mesmo com o módulo já ativo.
 4. Se a solicitação ficar travada em "Aguardando" por muito tempo, ou o estoque demorar demais para aparecer, o associado deve acionar o suporte do próprio ERP para validar a integração do lado deles.
@@ -322,7 +451,9 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e um toggle "Exibir preço" que controla se o produto aparece com preço visível no app.
 
 **Como o estoque da minha loja é montado?**
-O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso. A comunicação é **passiva e incremental**: o Portal só recebe o que o ERP manda, e o ERP manda só o que mudou (preço ou estoque) desde o último envio — não é uma base completa a cada vez.
+O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso.
+
+**Quem inicia essa comunicação, o Portal ou o ERP?** ⚠️ É o **ERP** — a comunicação é **passiva e incremental do lado do Portal**: o ERP empurra (push) os dados pro Portal a cada 15 minutos, só o que mudou (preço ou estoque) desde o último envio, não uma base completa a cada vez. O Portal **não consulta/puxa dados via API própria** — se algum material disser "o Portal extrai o preço via API do ERP", essa descrição está invertida: quem envia é sempre o ERP.
 
 **O estoque (quantidade) pode ser editado no Portal?**
 Não — só o **preço** pode ser ajustado manualmente (ver abaixo). A quantidade em estoque sempre reflete exatamente o que o ERP envia.
@@ -425,6 +556,9 @@ Sim, o ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747) (refinad
 
 ## Promoções
 
+**Só dá pra criar promoção pelo Portal?**
+Não, existem duas formas: (1) criar a promoção direto no Portal (tela Promoções, gera uma seção própria no app, ex: "Ofertas em destaque"), ou (2) subir um **"caderno de ofertas" pelo próprio ERP**, classificado como e-commerce — o preço promocional reflete no app pela sincronização normal de estoque/preço (a cada 15 minutos), permitindo agendar promoções diárias direto pelo ERP sem precisar abrir o Portal.
+
 **Qual a diferença entre promoção "Individual" e "Por grupo"?**
 **Individual** é uma promoção aplicada a um único produto. **Por grupo** é aplicada a um conjunto de produtos relacionados (um "Grupo de produtos", por exemplo uma linha inteira de uma marca) de uma vez só.
 
@@ -433,7 +567,7 @@ No botão "Nova promoção", siga os 5 passos do formulário:
 1. Escolha **o que promover** — Um produto ou Grupo de produtos — e o tipo de desconto (ex: Desconto % ou Preço fixo).
 2. Escolha **em quais lojas** a promoção vale.
 3. Defina **quando** ela fica ativa — data de início/fim e dias da semana.
-4. Configure as **regras de uso** — hoje só existe o campo **Limite por compra** (os campos "tempo para uso" e "novo uso da oferta" foram removidos da tela; o sistema aplica por padrão 1 dia de uso e "não renovar", sem mostrar isso na interface).
+4. Configure as **regras de uso** — hoje só existe o campo **Limite por compra** (os campos "tempo para uso" e "novo uso da oferta" foram removidos da tela). Uma oferta ativada pelo cliente só pode ser usada dentro do período de vigência da própria promoção (data de início/fim do passo 3) — não existe mais tempo de uso/renovação separado. ⚠️ **O Limite por compra vale por cesta/pedido, não por CPF** — mesmo que outro material diga "por cliente", isso está incorreto: o app não trava por CPF hoje, então o mesmo cliente pode criar vários pedidos pra repetir a promoção.
 5. Escolha **os produtos**: busque por nome/EAN (ou por grupo, se escolheu "Grupo de produtos" no passo 1), ajuste o desconto individualmente ou aplique um "Desconto geral" de uma vez para todos os produtos selecionados.
 
 **Dá pra cadastrar vários produtos de uma vez numa promoção?**
@@ -501,8 +635,11 @@ Não — dá para marcar **"Banner permanente"** em vez de definir uma data de t
 **Como convido uma pessoa nova para acessar o Portal?**
 Na tela `Usuários`, use a opção de convidar/criar usuário. O modal de convite é simples: apenas o **e-mail** do convidado (com validação, bloqueando duplicados), o **Perfil de acesso** dele (Contato cliente, Gestor de Loja, Gestor de Rede ou Admin — ver seção "Acesso, login e perfis") e o vínculo à loja, lojas ou rede correspondente. Não há campos adicionais (nome, telefone etc.) nesse momento — quem preenche esses dados é o próprio convidado, no fluxo de "Complete seu cadastro" (ver "Acesso, login e perfis").
 
-**Posso remover o acesso de alguém?**
-Sim, na listagem de Usuários existe uma ação para desvincular/remover um usuário — mas usuários com perfil Contato cliente não têm essa ação disponível para eles mesmos (não conseguem remover outros usuários).
+**Posso remover o acesso de alguém que saiu da farmácia?**
+Sim — dentro da entidade "usuário", no contexto da loja, existe o botão **Desativar**. Não é uma exclusão: o cadastro continua existindo, só o acesso dele fica bloqueado. Usuários com perfil Contato cliente não têm essa ação disponível para eles mesmos (não conseguem desativar outros usuários).
+
+**A Chave de integração do ERP foi comprometida ou perdida — dá para gerar uma nova pelo Portal?**
+Não, hoje não existe self-service para isso. É preciso abrir chamado com o suporte para gerar uma nova chave.
 
 **Consigo convidar a mesma pessoa/e-mail para dar acesso a outra loja ou rede?**
 Não com o mesmo e-mail. O Portal bloqueia o convite se aquele e-mail já existir no sistema (aparece a mensagem "Parece que o usuário já existe em nosso sistema", com opção de "Voltar" ou "Editar usuário"). Para dar acesso adicional a alguém, edite o cadastro existente em vez de tentar criar um segundo login.

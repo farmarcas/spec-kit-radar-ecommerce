@@ -42,6 +42,8 @@ Farmarcas (dona da plataforma)
 
 Ao entrar no Portal, o usuário escolhe (ou já está vinculado a) uma Rede e, dentro dela, uma Loja específica. O cabeçalho do Portal sempre mostra esse contexto (ex: `ACFARMA > Acfarma - Centro`), com um seletor (▾) para trocar de loja sem precisar sair e logar de novo.
 
+> **Importante — a Rede não é um ponto de suporte:** essa hierarquia é só organizacional/comercial (bandeira/franquia), não uma cadeia de suporte. Cada Grupo de lojas (GE) é um associado/empresário **independente**, com suas próprias lojas — GEs diferentes não têm relação entre si, mesmo estando na mesma Rede. Todo Grupo de lojas responde **diretamente à Farmarcas**, nunca à Rede. Os únicos dois pontos de suporte possíveis são o **suporte do próprio ERP** (problemas de preço/estoque) ou a **Farmarcas** (Anjo via WhatsApp, ou chamado via Salesforce, para o resto) — nunca oriente um lojista a buscar suporte "com a Rede" (ex: "fale com a Ultra Popular"); isso já apareceu descrito assim em outro material e está incorreto.
+
 ---
 
 ## 2. Perfis de acesso
@@ -223,14 +225,16 @@ Alguns cards da Home baixam um relatório em Excel (.xlsx) com o detalhe por tr�
 
 ## 6. Configurações da Loja
 
-Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções. Um widget **"Seu progresso"** no canto inferior acompanha quantas dessas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nesse checklist de onboarding são:
+Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções.
+
+**Como migrar do módulo Ofertas para o módulo Vendas:** o botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto (não é preciso completar nada antes). Ao clicar nele, libera-se o widget **"Seu progresso"** no canto inferior de Configurações, que acompanha quantas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nesse checklist são:
 
 1. Informações da Loja
 2. Endereço Comercial
 3. Horário de atendimento
 4. Criação de oferta
 
-Ao concluir essas etapas, o Portal mostra a opção **"Faça Upgrade"**, convidando o associado a ativar o **módulo de Vendas** (checkout completo pelo app, em vez do módulo Ofertas) — com um botão "Acompanhar solicitação" para ver o status desse pedido.
+Depois de solicitado o upgrade, um botão **"Acompanhar solicitação"** mostra o status desse pedido de migração.
 
 **Fluxo de migração de Ofertas para Vendas (liberação da Chave de integração/API):**
 1. O associado solicita a migração de Ofertas para o módulo Vendas pelo Portal.
@@ -290,7 +294,7 @@ O ERP de cada loja envia **EAN, quantidade e preço** para o Portal. Para cada E
 - Se o EAN **existe no catálogo oficial** (ver [Catálogo](#12-catálogo-admin)), o produto entra na lista de Estoque da loja.
 - Se o EAN **não existe** no catálogo, o produto é **desprezado** — não aparece em lugar nenhum, sem erro ou aviso.
 
-**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez.
+**A comunicação com o ERP é passiva e incremental:** o Portal só recebe e exibe o que o ERP manda — não temos como "puxar" dados por conta própria. E o ERP manda de forma incremental: só os EANs que tiveram alguma mudança (de preço ou de estoque) desde o último envio, não uma base completa a cada vez. **Cadência:** essa sincronização de estoque e preço ocorre a cada **15 minutos**. ⚠️ Vale reforçar porque já apareceu descrito ao contrário em outro material: quem inicia o envio é sempre o **ERP** (push) — o Portal nunca consulta/extrai dados via API própria.
 
 **De onde vem o preço "R$ App"?** O ERP envia **dois preços** por produto — um **"preço bruto" (full price)** e um **"preço de venda" (price)**. O Portal sempre exibe o **menor dos dois** recebidos, porque o associado pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP — o ecommerce sempre reflete o preço mais vantajoso que o ERP informou.
 
@@ -385,6 +389,10 @@ O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**�
 
 ## 9. Promoções
 
+**Existem duas formas de gerenciar ofertas, não só pelo Portal:**
+1. **Criando a promoção direto no Portal** (esta tela) — gera uma seção própria no aplicativo (ex: "Ofertas em destaque").
+2. **Subindo um "caderno de ofertas" pelo próprio ERP** — o associado classifica um caderno de ofertas como e-commerce no ERP, e o preço promocional é refletido no app pela sincronização normal de estoque/preço (a cada 15 minutos, ver seção 7). Essa via permite agendar promoções diárias direto pelo ERP, sem precisar abrir o Portal, desde que o caderno esteja classificado corretamente para o e-commerce.
+
 A tela **Promoções** tem duas visões, cada uma em sua aba:
 
 - **Individuais**: promoções aplicadas a um produto específico.
@@ -476,6 +484,10 @@ A tela **Usuários** lista as pessoas com acesso ao Portal (nome, Perfil de aces
 Ao convidar/editar um usuário, defina o **Perfil de acesso** (ver [seção 2](#2-perfis-de-acesso)) e, dependendo do perfil escolhido, vincule-o a uma loja específica (Contato cliente), a uma ou mais lojas (Gestor de Loja) ou a uma ou mais Redes (Gestor de Rede).
 
 **Um mesmo e-mail não pode ser convidado duas vezes.** O Portal bloqueia o convite se o e-mail já existir no sistema (mensagem "Parece que o usuário já existe em nosso sistema", com opção de voltar ou editar o usuário existente) — não é possível, por exemplo, dar a uma pessoa um segundo login para acumular acesso a outra Rede/loja; o vínculo adicional precisa ser feito editando a mesma conta.
+
+**Como removo o acesso de alguém que saiu da farmácia?** Dentro da entidade "usuário", no contexto da loja, existe o botão **Desativar**. Não é uma exclusão — o cadastro do usuário continua existindo, só o acesso dele fica bloqueado.
+
+**A Chave de integração do ERP foi comprometida ou perdida — dá para gerar uma nova pelo Portal?** Não, hoje não existe self-service para isso. É preciso abrir chamado com o suporte para gerar uma nova chave.
 
 **Não existe uma função para mudar um usuário/loja de GE (Grupo Econômico).** Se uma loja é removida do Portal, todos os usuários vinculados a ela perdem esse vínculo automaticamente:
 - Um usuário **Contato cliente** (vinculado só àquela loja) continua conseguindo logar, mas passa a ver uma **tela em branco**, sem lojas para trabalhar.
@@ -686,7 +698,7 @@ Esses e-mails **não vão para o associado** — são direcionados ao time inter
 - **Resolvido:** Rede = bandeira/franquia (ex: ACFARMA, Ultra Popular); GE (Grupo Econômico) = conjunto de lojas do mesmo empresário dentro de uma Rede — conceito de negócio por trás da funcionalidade Grupo de lojas.
 - **Resolvido:** o fluxo de Solicitação de produto pelo Associado foi identificado (ícone na tela Estoque) — ver seção 7.
 - **Resolvido:** independentemente do tipo de estoque (Espelhado/Integrado/Independente), o Grupo de lojas sempre centraliza o atendimento de pedidos na loja principal — ver seção 4.
-- **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados.
+- **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados. O associado tem o contato direto do Anjo via WhatsApp, e também pode abrir chamado via Salesforce. O suporte é sempre com a Farmarcas — nunca com a Rede (ver seção 1).
 - **Resolvido:** o bug do modal de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
 - **Templates de e-mail descartados/desconsiderados** (existem no centralizador de comunicação, mas não devem ser documentados/usados como referência — ver seção 14): "Aplicativo conectado ao ERP." (duplicado de "comunicação... restabelecida"), "Confira a lista de lojas com mais de 2 horas de atraso na integração" (será descontinuado), "Nova solicitação disponível" (não existe mais), "O relatório de lojas desativadas já está disponível" (não será utilizado), e o e-mail de falha de comunicação na integração com detalhe técnico do erro (será descontinuado).
 - Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-15; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
