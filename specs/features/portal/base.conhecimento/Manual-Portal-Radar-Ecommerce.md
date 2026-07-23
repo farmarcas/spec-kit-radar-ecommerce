@@ -338,6 +338,8 @@ A tela **Pedidos** é onde o dia a dia operacional acontece — é a tela princi
 
 Sempre que um pedido novo chega, o sistema dispara uma notificação por WhatsApp direto para o número cadastrado da loja (ver seção 14.4), avisando o responsável para iniciar o atendimento. Do lado do consumidor, ele recebe uma **push notification a cada mudança de status** do pedido e também pode acompanhar esse status a qualquer momento pela tela de detalhes do pedido, dentro do próprio App (comportamento do App documentado em `FAQ-App-Radar-Ecommerce.md`, seção "Notificações").
 
+**Como encontrar o pedido de um cliente específico:** a tela tem um campo de busca que encontra pedidos pelo **Número do pedido** ou pelo **CPF** do cliente. Busca por **nome ainda não existe**.
+
 Os pedidos são organizados num quadro (kanban) por status, cada um com contador:
 
 | Status no Portal | O que significa |
