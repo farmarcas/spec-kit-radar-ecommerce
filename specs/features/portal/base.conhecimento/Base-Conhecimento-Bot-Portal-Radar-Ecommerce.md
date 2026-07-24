@@ -508,6 +508,9 @@ Use o ícone "Solicitar produto" na barra de ferramentas da tela Estoque. No for
 
 ## Pedidos
 
+**Como eu acho o pedido/ID de um cliente específico?**
+A tela Pedidos tem um campo de busca que encontra pedidos pelo **Número do pedido** ou pelo **CPF** do cliente. Busca por **nome ainda não existe**. Se você não tem nenhum dos dois em mãos, também dá pra baixar o Relatório de Pedidos (Exportar), que traz Número do pedido, CPF e Nome do cliente juntos numa planilha.
+
 **O que significam as colunas do quadro de Pedidos?**
 - **Na fila**: pedido novo, ainda aguardando início do atendimento. Assim que o pedido cai, o sistema dispara um WhatsApp direto pro número cadastrado da loja (`Configurações > Dados da Loja`), avisando o responsável. Do lado do consumidor, ele recebe push notification a cada mudança de status e também acompanha pelo detalhe do pedido no próprio App.
 - **Em separação**: pedido sendo preparado/separado na loja.
@@ -604,6 +607,9 @@ Botão "Exportar" → painel "Relatório de ofertas" → escolha um intervalo (d
 
 **Por que o relatório de ofertas tem colunas de "Gênero" e "Faixa etária"? Consigo segmentar por público?**
 Não mais — essas colunas são resquício de uma segmentação de público que existia numa versão antiga da tela de criação de promoção. O aplicativo **nunca respeitou** essa segmentação, mesmo antes da tela ser refatorada — é um dado morto. Estão sendo removidas do relatório ([ECP-1062](https://farmarcas.atlassian.net/browse/ECP-1062)) e das telas do Portal ([ECP-1063](https://farmarcas.atlassian.net/browse/ECP-1063)). A coluna "Média" do relatório também está sendo removida (cálculo não está claro nem para o time de produto).
+
+**Consigo ver quantas vezes um cliente específico usou (ativou) minha promoção?**
+**Não diretamente.** Os indicadores e relatórios de Promoções são sempre agregados por oferta/produto (quantas ativações no total, quais produtos mais ativados, etc — ver Home de Ofertas) — não existe uma consulta pronta por CPF/cliente específico. **Indireto, dá pra descobrir:** baixe o **Relatório de Pedidos** (tela Pedidos, botão Exportar — ver seção Pedidos) e cruze manualmente o CPF do cliente com os produtos comprados; como o relatório traz CPF e o item/EAN de cada pedido, dá pra montar esse histórico na mão.
 
 ---
 
