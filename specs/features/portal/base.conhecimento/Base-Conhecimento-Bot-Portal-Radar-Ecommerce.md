@@ -148,7 +148,7 @@ Essas são as mais fundamentais — geralmente de quem está começando agora ou
 | Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
 |---|---|---|
 | "O pedido não sai da tela, travou em Liberados" | Pedido meio de entrega/retirada não confirmado pelo cliente | Ver Q&A "Meus pedidos estão travados na fase Liberados". |
-| "Cliente pagou e quer cancelar — o que eu faço com o dinheiro?" | Dúvida sobre estorno | Estorno/reembolso é tratado **inteiramente fora do sistema** — o app não mostra status pro cliente; avise-o diretamente. |
+| "Cliente pagou e quer cancelar — o que eu faço com o dinheiro?" | Dúvida sobre estorno | Depende da modalidade: offline não tem estorno (nunca foi pago antes); crédito online estorna automático pela Braspag; Pix estorna automático **só se houver saldo na conta Cielo** — senão, é manual. Ver seção "Cancelando um pedido". |
 | "Não sei qual motivo de cancelamento escolher" | Lista de motivos do modal de cancelamento | Ver seção "Como cancelo um pedido" — 9 motivos fixos. |
 | "Parei de receber aviso de pedido no WhatsApp" | Número de WhatsApp errado/desatualizado na config da loja | Checar campo **WhatsApp** em `Configurações > Dados da Loja`. |
 | "Um item do pedido não tem estoque, o que eu faço?" | Achar que dá pra remover só aquele item | **Não dá estorno parcial** — a tag "Sem estoque" é automática; a única solução é cancelar o pedido inteiro. |
@@ -528,7 +528,17 @@ O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no 
 Ao cancelar, abre o modal "Cancelar pedido #[número]", pedindo o motivo: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, ou Sem estoque. Pede confirmação e não pode ser desfeito.
 
 **O pedido que vou cancelar já foi pago online. Muda alguma coisa?**
-Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso. O cancelamento em si não dispara um estorno automático — **hoje isso é tratado inteiramente fora do sistema** (manualmente pela equipe), e o App do consumidor não mostra nenhum status de reembolso. É por isso que o modal pede pro atendente avisar o cliente diretamente.
+Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso.
+
+**Como o estorno realmente acontece?**
+Não depende de quem cancela (Portal ou ERP) — depende da **modalidade de pagamento**:
+- **Offline** (maquininha, na entrega ou na retirada): não há estorno — o cliente não pagou nada na criação do pedido, o pagamento só acontece fisicamente depois.
+- **Online, cartão de crédito**: estorno **automático**, pela Braspag, pelo valor integral.
+- **Online, Pix**: estorno também automático, mas só **se houver saldo disponível na conta da loja na Cielo** (é a Cielo quem opera o Pix, dentro da contratação com a Braspag — são camadas da mesma integração, não concorrentes). Por padrão a Cielo transfere o saldo automaticamente pra outra conta da loja; se o cancelamento vier depois dessa transferência, não há saldo pra estornar automaticamente, e o associado precisa estornar manualmente. Dá pra configurar até 4 horários fixos de transferência no portal da Cielo — recomendação: deixar sempre uma transferência no **final do dia**, pra garantir saldo pra estornos do mesmo dia.
+
+⚠️ **Importante:** é responsabilidade do associado acompanhar o **portal da Cielo** pra configurar corretamente os horários de transferência e pra confirmar se cada estorno de Pix foi realizado com sucesso. Se o estorno automático não ocorrer (saldo já transferido), o estorno **precisa ser feito manualmente** — deixar de acompanhar isso pode gerar problema direto com o cliente.
+
+Em qualquer caso online, o portal da Braspag/Cielo avisa se o estorno foi concluído ou não — vale acompanhar por lá.
 
 **Meus pedidos estão travados na fase "Liberados" e não mudam de status. O que fazer?**
 Isso indica instabilidade na comunicação de status entre os sistemas — não é algo que o associado resolve sozinho pelo Portal. Anote os números dos pedidos afetados e tire prints das telas, e acione o suporte Farmarcas o quanto antes para que o time técnico analise e destrave o fluxo.
@@ -762,6 +772,14 @@ A equipe de tecnologia da Farmarcas já está em contato com o time da Alpha7 pa
 ---
 
 ## Meios de pagamento (Braspag, Cielo, Rede, Antifraude)
+
+**Qual a relação entre Braspag e Cielo? São integrações concorrentes?**
+Não — são camadas da **mesma contratação**. O associado contrata pagamento online com a **Braspag**; se quiser a modalidade Pix também, essa contratação continua sendo com a Braspag, mas a empresa que efetivamente **opera o Pix** é a **Cielo**.
+
+**Existe alguma configuração de horário relacionada ao Pix que eu deveria conhecer?**
+Sim — o **portal da Cielo** (fora do Radar) permite configurar horários de transferência do saldo recebido em Pix para outra conta da loja. Por padrão, a transferência é automática assim que o valor cai na Cielo. Isso é importante pro estorno: se um pedido pago em Pix for cancelado **depois** que o saldo já foi transferido, o estorno automático não acontece — o associado precisa estornar manualmente. Dá pra configurar até **4 horários fixos** de transferência; a recomendação é manter pelo menos uma transferência programada para o **final do dia**, garantindo saldo suficiente pra cobrir estornos de pedidos feitos no mesmo dia.
+
+⚠️ É responsabilidade do associado **acompanhar o portal da Cielo** — tanto pra configurar corretamente esses horários de transferência (automática ou por agendamento) quanto pra confirmar se cada estorno de Pix foi realizado com sucesso. Sem esse acompanhamento, um estorno que precisava ser feito manualmente pode passar batido e gerar problema com o cliente. Ver também "Como o estorno realmente acontece?" na seção Pedidos.
 
 **Como contrato a Braspag? Tem mensalidade ou taxa inicial?**
 A contratação é **100% self-service pelo próprio Portal**, em `Configurações > Pagamentos` — não precisa (e não deve) abrir chamado de suporte para isso.

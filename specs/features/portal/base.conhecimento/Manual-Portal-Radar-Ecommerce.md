@@ -363,7 +363,16 @@ Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a
 
 Ao cancelar um pedido, abre o modal **"Cancelar pedido #[número]"**, pedindo para **selecionar o motivo da recusa**: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. A ação exige confirmação e **não pode ser desfeita**.
 
-Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"** — o cancelamento em si não dispara um estorno automático. **Hoje o estorno/reembolso é tratado inteiramente fora do sistema** (manualmente, pela equipe) — o App do consumidor não mostra nenhum status de reembolso; é por isso que o modal pede pro atendente avisar o cliente diretamente.
+Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"**.
+
+**Como o estorno realmente funciona:** não depende de quem cancela (Portal ou ERP) — depende da **modalidade de pagamento** do pedido:
+- **Pagamento offline** (maquininha, na entrega ou na retirada): não há estorno, porque o cliente não pagou nada no momento da criação do pedido — o pagamento só acontece fisicamente depois.
+- **Pagamento online por cartão de crédito**: o estorno é **automático**, feito pela Braspag, pelo valor integral do pedido.
+- **Pagamento online por Pix**: o estorno também é automático, mas com uma particularidade — só acontece **se houver saldo disponível na conta da loja na Cielo** (é a Cielo quem opera o Pix, dentro da própria contratação feita com a Braspag — não são integrações concorrentes, são camadas da mesma contratação). Por padrão, a Cielo transfere automaticamente o saldo recebido para outra conta da loja; se o cancelamento vier **depois** dessa transferência, o estorno automático não acontece, e o associado precisa estornar manualmente. O portal da Cielo permite configurar até 4 horários fixos de transferência — a recomendação é sempre deixar pelo menos uma transferência no **final do dia**, garantindo saldo suficiente para estornos de pedidos feitos no mesmo dia.
+
+> ⚠️ **Importante:** é responsabilidade do associado acompanhar o **portal da Cielo** para (1) configurar corretamente os horários de transferência automática (ou manter no padrão, se preferir) e (2) acompanhar se cada estorno de Pix foi realizado com sucesso. Se o estorno automático não ocorrer — porque o saldo já foi transferido —, o estorno **precisa ser feito manualmente** pelo associado; deixar de acompanhar isso pode gerar problema direto com o cliente.
+
+Em qualquer um dos dois casos online, o portal da Braspag/Cielo informa se o estorno foi concluído com sucesso ou não — vale acompanhar por lá para evitar problemas com o cliente.
 
 ### Relatório de Pedidos (Exportar)
 
