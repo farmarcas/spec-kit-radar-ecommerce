@@ -40,17 +40,57 @@ Este plano cruza cada dor/cenário levantado no [estudo-busca-miro.md](estudo-bu
 ## 4. Decisões da reunião a formalizar
 
 - **Segurança**: a reunião apontou a necessidade de um proxy reverso entre front-end e Typesense. Com **Scoped API Keys**, parte dessa necessidade é mitigada (a chave já limita o que o cliente pode consultar), mas ainda é recomendado que o **backend emita a chave escopada por sessão** (login/seleção de loja) em vez de embutir qualquer chave estática no app — isso também viabiliza rotação de chaves.
-- **Hospedagem**: decisão pendente entre self-hosted (Docker + EC2 32GB, conforme demonstrado) vs. Typesense Cloud (dashboard administrativo, CDN, alta disponibilidade, replicação geográfica). Cabe ao parecer do Wellington considerando custo x operação.
+- **Hospedagem**: decisão pendente entre self-hosted (Docker + EC2 32GB, conforme demonstrado) vs. Typesense Cloud (dashboard administrativo, CDN, alta disponibilidade, replicação geográfica). Cabe ao parecer do Wellington considerando custo x operação — ver comparação detalhada na seção 5.
 - **Atualização do catálogo**: duas opções discutidas — carga em lote diária ou `upsert` em tempo real via POST. Recomenda-se iniciar em lote (menor risco) e evoluir para tempo real na Fase 5 (abaixo).
 - **Convivência com Elasticsearch e PBM/Interplayers**: manter o desenvolvimento da integração PBM em paralelo — a adoção do Typesense é aditiva e não bloqueia a sprint de Interplayers.
 
-## 5. Gaps que o Typesense não resolve por si só
+## 5. Infra própria vs. Typesense Cloud
+
+Comparação para subsidiar a decisão de hospedagem apontada na seção 4.
+
+### Infra própria (self-hosted — Docker + EC2, como demonstrado na reunião)
+
+**Prós**
+- Controle total sobre custo de infraestrutura — paga só o EC2 (ex.: instância 32GB já testada), sem markup do serviço gerenciado.
+- Dados ficam inteiramente dentro da própria AWS da Farmarcas — pode simplificar compliance/LGPD ao não depender de um terceiro processando o catálogo.
+- Já existe know-how demonstrado (Gabriel Costa validou o protótipo em Docker/EC2 na reunião).
+- Sem lock-in comercial com um fornecedor SaaS.
+
+**Contras**
+- Alta disponibilidade exige mínimo de 3 nós com consenso Raft configurado manualmente (peering privado, arquivo de config de nós) — 1 nó só não tolera falha nenhuma.
+- Toda a operação fica com o time: monitorar `/health`, `/metrics.json`, `/stats.json`; gerenciar TLS/certificados; aplicar patches e upgrades de versão; dimensionar RAM/CPU (manter RAM <85%, CPU <90%).
+- Backup/disaster recovery não é coberto de forma pronta pela documentação — precisa ser desenhado pelo time (snapshots, rotina de restore).
+- Recuperação de quórum perdido ou outage prolongado pode exigir intervenção manual.
+- Squad App é pequena (1 dev back-end pleno) — esse é overhead operacional recorrente, competindo com a entrega de PBM e demais prioridades do Q3.
+- Reforça a necessidade do proxy reverso discutido na reunião como camada de segurança adicional (self-hosted não tem isso pronto).
+
+### Typesense Cloud (infra da plataforma/parceiro)
+
+**Prós**
+- Elimina o trabalho operacional acima: HA, balanceamento, recuperação de falhas, TLS e monitoramento já vêm geridos pelo fornecedor.
+- Tem região em São Paulo — latência baixa para o público-alvo (consumidores no Brasil), sem precisar gerenciar isso.
+- Dashboard administrativo incluso (visualizar/ajustar buscas sem precisar de chamadas de API manuais).
+- Segurança e compliance prontos: criptografia de disco, SOC 2 Type 2, HIPAA — relevante dado que o catálogo envolve medicamentos.
+- Billing por hora, sem custo por busca/registro — escala para cima ou para baixo conforme demanda, sem precisar prever capacidade com antecedência.
+- Suporte direto dos criadores da ferramenta.
+
+**Contras**
+- Custo recorrente de um serviço terceirizado, adicional ao que já se paga por Elasticsearch/infra atual até a migração ser concluída.
+- Dependência de um fornecedor externo — indisponibilidade do serviço impacta diretamente a busca (e por consequência a conversão, que é KPI direto do NSM).
+- Menos controle fino sobre a infraestrutura subjacente (versões, tuning de baixo nível) comparado a rodar você mesmo.
+- Ainda existe uma decisão de "onde processar catálogo de medicamentos" fora do perímetro AWS da empresa — vale confirmar se isso levanta alguma restrição de segurança/dados internos da Farmarcas.
+
+### Recomendação
+
+Dado que a Squad App é pequena e o objetivo do Q3 é justamente não desviar esforço de PBM, a rota que reduz risco operacional é começar com **Typesense Cloud** (região São Paulo) nas Fases 1–2 do plano (seção 7) — isso testa a ferramenta em produção sem exigir que o time monte e opere um cluster HA do zero. Se o custo por hora crescer com o volume ou surgir uma restrição de compliance para dados fora da AWS própria, migrar para self-hosted depois é possível sem reescrever a integração (mesma API). Essa é uma decisão que cabe ao parecer técnico do Wellington considerar formalmente.
+
+## 6. Gaps que o Typesense não resolve por si só
 
 - **Campo "classe terapêutica" (Anvisa)** e **campo de contexto de vida** ainda não existem no cadastro. A busca semântica (seção 2, cenários 5 e 6) reduz o impacto da ausência desses campos, mas o cadastro formal continua sendo uma melhoria de dados recomendada a médio prazo.
 - **Distinção "produto existe no catálogo nacional mas nunca foi vendido nesta loja" vs. "produto não existe no catálogo nacional"** exige que o schema do índice carregue esse dado explicitamente — não é algo que o motor de busca infere.
 - **Dúvida aberta do estudo — "como rankear produtos sem histórico de compra/busca"**: sugerido usar `_text_match` puro como fallback quando o campo de popularidade for zero/nulo (estratégia de cold start), a ser validada com o time de dados.
 
-## 6. Plano de fases
+## 7. Plano de fases
 
 | Fase | Escopo | Cenários resolvidos |
 |---|---|---|
@@ -61,6 +101,6 @@ Este plano cruza cada dor/cenário levantado no [estudo-busca-miro.md](estudo-bu
 | **4 — Autocomplete & UX** | Federated multi-search (sugestões + cards), filtros pós-busca na UI, histórico pessoal (App) | pontos de atenção: autocomplete, filtros, histórico |
 | **5 — Tempo real & descomissionamento** | Upsert em tempo real, monitoramento/observabilidade, migração final saindo do Elasticsearch | — |
 
-## 7. Próximo passo imediato
+## 8. Próximo passo imediato
 
 Aguardar o parecer técnico do Wellington (reunião de acompanhamento agendada para o dia seguinte, 9h30–10h) e garantir que o schema de índice proposto na **Fase 1** já contemple os campos necessários para os cenários 1–9, evitando retrabalho de reindexação nas fases seguintes.
