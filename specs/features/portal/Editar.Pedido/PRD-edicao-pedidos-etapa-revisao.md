@@ -4,11 +4,13 @@
 **Squad:** E-commerce
 **Autor:** Matheus (PO/PM)
 **Status:** Em refinamento — base para geração de tarefas via Claude Code
-**Versão:** 2.0
+**Versão:** 2.1
 
 ---
 
 ## 0. Changelog
+
+**v2.1 (2026-08-11)** — Adicionada a regra de Troco (seção 8.2), validada no protótipo `troco-conferencia.html` (projeto claude.ai/design "Validação de ideias"). Gap identificado: o documento cobria estorno (pagamento no app) e "atualização do valor a cobrar" (pagamento offline), mas não descrevia como o troco em si deveria se comportar durante a edição. Card correspondente: [ECP-1260](https://farmarcas.atlassian.net/browse/ECP-1260).
 
 **v2.0 (2026-07-31)** — Atualização com base nas discussões de refinamento e nos protótipos Figma atualizados (node `4566:7522` e `5295:3266`):
 
@@ -163,12 +165,26 @@ Regras por forma de pagamento:
 
 Copy final das notificações e o protótipo da indicação de "pedido editado" na tela de detalhe do pedido do app do cliente são **dependências de UX**, não bloqueantes para o desenvolvimento da lógica de backend/tracking.
 
-## 8. Estorno
+## 8. Estorno e Troco
+
+### 8.1 Estorno (pagamento no app)
 
 - Estorno **automático** via integração com **Braspag**, aplicado apenas a pedidos com pagamento feito no app.
 - Valor do estorno = diferença de subtotal gerada pela edição/remoção do item (campo "Ajustes de itens" já existente no bloco financeiro).
 - **Item com split promocional (seção 6.7):** a diferença não pode ser calculada como "quantidade removida × preço unitário original" — o preço efetivo por unidade muda conforme quantas unidades ficam dentro do limite promocional após a edição. O estorno deve refletir a diferença real entre o subtotal cobrado originalmente (composição promo/excedente de então) e o subtotal recalculado (nova composição).
-- Pedidos pagos offline não geram chamada de estorno — apenas atualizam o valor "a cobrar do cliente" na entrega e disparam a notificação de alerta de valor alterado.
+- Pedidos pagos offline não geram chamada de estorno — apenas atualizam o valor "a cobrar do cliente" na entrega e disparam a notificação de alerta de valor alterado (ver 8.2 para o caso de pagamento em dinheiro).
+
+### 8.2 Troco (pagamento em dinheiro na entrega)
+
+Corner case identificado durante a validação do protótipo `troco-conferencia.html` (fora do escopo original da v2.0): o bloco financeiro hoje mostra só o resultado ("Troco"), sem revelar de onde ele vem, e esse cálculo nunca havia sido pensado junto com a edição de itens.
+
+- Aplica-se **apenas** a pedidos com pagamento em dinheiro na entrega ("pago offline"). Não se aplica a pedidos pagos no app (crédito/débito/PIX) — esses seguem a regra de estorno da seção 8.1.
+- O bloco financeiro passa a exibir a linha **"Cliente vai pagar com: R$ X"** — valor informado pelo cliente no app no momento da compra. Esse valor **não muda** com a edição do pedido.
+- **Troco = valor informado pelo cliente − subtotal atual** (após os "Ajustes de itens").
+- Como a Conferência só pode reduzir o subtotal (nunca aumentar), o **troco só pode subir, nunca fica negativo**.
+- Ao editar/remover item, o troco é recalculado em tempo real e exibe um indicador de variação (ex.: "↑ R$ 89,90") comparado ao valor de troco antes da edição.
+- Segue o modelo de Rascunho da seção 6.6: o recálculo é visual/dinâmico em Conferência, só persiste no commit ("Liberar para fila").
+- Card correspondente: [ECP-1260](https://farmarcas.atlassian.net/browse/ECP-1260).
 
 ## 9. Trilha de Auditoria
 
@@ -245,6 +261,7 @@ Ainda que o dashboard de indicadores não seja construído nesta versão, o back
 | Operador tenta sair da tela com edição não confirmada | Modal "Sair e descartar rascunho?" |
 | Produto com "Limite por compra" tem quantidade reduzida/restaurada | Recalcular split promo/excedente priorizando manter unidades no preço promocional (ver 6.7) |
 | Produto com "Limite por compra" é removido por completo | Remove as duas linhas (promo + excedente) juntas; sem cancelamento parcial de uma só linha |
+| Pedido pago em dinheiro na entrega com item editado/removido | Troco recalculado em tempo real (valor informado pelo cliente − subtotal atual), sempre ≥ 0, com indicador de variação (ver 8.2) |
 
 ## 14. Critérios de aceite (exemplos, formato Given/When/Then)
 
@@ -297,6 +314,11 @@ Ainda que o dashboard de indicadores não seja construído nesta versão, o back
 - Dado um pedido pago offline com um item removido,
 - Quando a liberação é confirmada,
 - Então o cliente recebe apenas a notificação de alerta de valor alterado, sem chamada de estorno.
+
+**Recálculo de troco — pago em dinheiro na entrega**
+- Dado um pedido pago em dinheiro com "Cliente vai pagar com: R$ 600,00" e subtotal R$ 564,25 (troco R$ 35,75),
+- Quando o operador remove um item de R$ 89,90,
+- Então o subtotal recalcula para R$ 474,35 e o troco passa a R$ 125,65, exibindo o indicador "↑ R$ 89,90".
 
 ## 15. Dependências e itens abertos
 
