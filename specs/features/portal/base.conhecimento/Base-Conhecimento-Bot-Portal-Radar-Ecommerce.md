@@ -92,10 +92,10 @@ Essas são as mais fundamentais — geralmente de quem está começando agora ou
 | "Meu funcionário quer acessar o Portal, ele pode criar uma conta sozinho?" | Achar que existe cadastro livre/self-service no Portal, como no App | Não existe cadastro aberto no Portal — o único jeito de entrar é receber um **convite** de alguém que já tem acesso (Gestor de Loja/Rede/Admin), pela tela Usuários. |
 | "Configurei uma promoção/produto no Portal, preciso fazer alguma coisa no app também?" | Achar que precisa replicar manualmente a configuração no app | Não — você só configura pelo **Portal**; o App do consumidor reflete automaticamente, sem nenhuma ação adicional do seu lado. |
 | "Como eu troco de loja dentro do Portal?" | Não achou o seletor de loja/rede | Use o seletor (▾) no cabeçalho, ao lado do nome da Rede/Loja atual — troca sem precisar sair e logar de novo. |
-| "O cliente diz que não encontra minha loja no app" | Pode ser um de vários motivos: loja pausada (toggle Disponível), ERP sem sincronizar há mais de 72h, ou o cliente abriu o app de **outra bandeira** | Cheque primeiro a tela Estoque (alerta de comunicação com o ERP) e o toggle Disponível; se os dois estiverem OK, confirme com o cliente se ele baixou o app da Rede/bandeira certa (cada Rede tem seu próprio app, ver whitelabel). |
+| "O cliente diz que não encontra minha loja no app" | Pode ser um de vários motivos: loja pausada (chave Disponível), ERP sem sincronizar há mais de 72h, ou o cliente abriu o app de **outra bandeira** | Cheque primeiro a tela Estoque (alerta de comunicação com o ERP) e a chave Disponível; se os dois estiverem OK, confirme com o cliente se ele baixou o app da Rede/bandeira certa (cada Rede tem seu próprio app, ver whitelabel). |
 | "Baixei o app mas não é o nome da minha farmácia" | Confusão de whitelabel — cada Rede tem seu próprio app com nome de marca (ex: Ultra Popular) | Confirme qual Rede/bandeira a loja pertence e oriente a baixar o app com esse nome específico — não existe um app único "Radar E-commerce" para o consumidor final. |
 | "Como eu sei em qual módulo minha loja está?" | Dúvida entre módulo Ofertas e Vendas | Coluna **"Módulo ativado"** na tela `Lojas` (nível Rede). |
-| "Como eu vejo minha loja no app, quero conferir se está tudo certo?" | Achar que existe um modo de pré-visualização/preview | Não existe preview — a única forma é abrir o próprio app e navegar como um cliente comum faria. |
+| "Como eu vejo minha loja no app, quero conferir se está tudo certo?" | Achar que existe um modo de pré-visualização | Não existe pré-visualização — a única forma é abrir o próprio app e navegar como um cliente comum faria. |
 | "Preciso de ajuda urgente, quem eu chamo?" | Buscar suporte direto | Contato direto com o **Anjo** via WhatsApp, ou abrir chamado pelo **Salesforce**. O suporte é sempre com a **Farmarcas** — nunca com a Rede (ver "Redes, Grupos e Lojas"). |
 
 **Dados da loja / cadastro**
@@ -135,10 +135,10 @@ Essas são as mais fundamentais — geralmente de quem está começando agora ou
 
 | Se o associado disser algo como... | Ele quer dizer... | Resposta / onde está |
 |---|---|---|
-| "Esse produto não aparece no app, mas eu tenho em estoque" | Ou o EAN não existe no catálogo oficial (é descartado silenciosamente), ou o toggle "Exibir preço" está desligado, ou o ERP não está sincronizando | Checar as três hipóteses na tela `Estoque` — ver seção 7 do Manual. |
+| "Esse produto não aparece no app, mas eu tenho em estoque" | Ou o EAN não existe no catálogo oficial (é descartado silenciosamente), ou a chave "Exibir preço" está desligada, ou o ERP não está sincronizando | Checar as três hipóteses na tela `Estoque` — ver seção 7 do Manual. |
 | "O preço no app tá diferente do que eu mando pro ERP" | Dúvida sobre a regra do preço exibido | O Portal sempre mostra o **menor** entre "preço bruto" e "preço de venda" enviados pelo ERP — ver seção Estoque/Preço. |
 | "A quantidade no app tá errada" | Achar que dá pra corrigir estoque no Portal | **Não dá** — o Portal não permite editar quantidade, só preço (R$ customizado). O número reflete só o que o ERP envia; checar sincronização. |
-| "Minha loja desapareceu do aplicativo" | Toggle "Disponível" desligado, ou loja pausada automaticamente por falha de comunicação com o ERP (72h) | Checar `Estoque` — ver alerta de comunicação com ERP. |
+| "Minha loja desapareceu do aplicativo" | Chave "Disponível" desligado, ou loja pausada automaticamente por falha de comunicação com o ERP (72h) | Checar `Estoque` — ver alerta de comunicação com ERP. |
 | "Quero vender um produto que não existe no sistema" | Fazer uma **Solicitação de produto** | Ícone "Solicitar produto" na tela `Estoque` — depende de aprovação do Admin (Catálogo). |
 | "Por que não posso colocar desconto nesse medicamento controlado?" | Regra regulatória de controlados | Controlados não entram em promoção — já aparecem desabilitados na criação da oferta. |
 | "Quero escoltar um produto com preço errado sem perder o cadastro" | Ocultar temporariamente sem excluir | Desmarcar **"Exibir preço"** na linha do produto, em `Estoque`. |
@@ -149,7 +149,7 @@ Essas são as mais fundamentais — geralmente de quem está começando agora ou
 |---|---|---|
 | "O pedido não sai da tela, travou em Liberados" | Pedido meio de entrega/retirada não confirmado pelo cliente | Ver Q&A "Meus pedidos estão travados na fase Liberados". |
 | "Cliente pagou e quer cancelar — o que eu faço com o dinheiro?" | Dúvida sobre estorno | Depende da modalidade: offline não tem estorno (nunca foi pago antes); crédito online estorna automático pela Braspag; Pix estorna automático **só se houver saldo na conta Cielo** — senão, é manual. Ver seção "Cancelando um pedido". |
-| "Não sei qual motivo de cancelamento escolher" | Lista de motivos do modal de cancelamento | Ver seção "Como cancelo um pedido" — 9 motivos fixos. |
+| "Não sei qual motivo de cancelamento escolher" | Lista de motivos da janela de cancelamento | Ver seção "Como cancelo um pedido" — 9 motivos fixos. |
 | "Parei de receber aviso de pedido no WhatsApp" | Número de WhatsApp errado/desatualizado na config da loja | Checar campo **WhatsApp** em `Configurações > Dados da Loja`. |
 | "Um item do pedido não tem estoque, o que eu faço?" | Achar que dá pra remover só aquele item | **Não dá estorno parcial** — a tag "Sem estoque" é automática; a única solução é cancelar o pedido inteiro. |
 
@@ -176,7 +176,7 @@ Essas são as mais fundamentais — geralmente de quem está começando agora ou
 ## Acesso, login e perfis
 
 **Como eu entro no Portal?**
-Tela "Bem-vindo — Faça login para acessar sua conta", com campos E-mail e Senha (ícone de olho pra mostrar/ocultar), checkbox "Lembrar senha" e botão "Entrar".
+Tela "Bem-vindo — Faça login para acessar sua conta", com campos E-mail e Senha (ícone de olho pra mostrar/ocultar), a opção marcável "Lembrar senha" e botão "Entrar".
 
 **Esqueci minha senha do Portal, o que fazer?**
 Clique em "Esqueceu a senha?" na tela de login, informe seu e-mail cadastrado e clique em "Enviar". Você recebe uma tela de confirmação ("E-mail enviado") e um link por e-mail para redefinir a senha (confira a caixa de spam se não chegar). **Atenção:** isso é diferente do app do consumidor final, onde a redefinição é feita por CPF, não por e-mail — não confundir os dois fluxos.
@@ -229,7 +229,7 @@ Em `Pedidos`, o quadro mostra colunas por status (Na fila, Em separação, Liber
 Na tela `Indicadores`, logo no topo aparece o **Faturamento** do período selecionado, junto com um gráfico por dia da semana. Dá pra trocar o período de análise no seletor no topo (ex: "Últimos 7 dias").
 
 **Onde ativo/desativo o pagamento online (cartão pela internet)?**
-Em `Configurações > Pagamentos > Online`. É preciso preencher os dados da integração com a Braspag (Adquirente, MerchantId, MerchantKey, ClientID, ClientSecret) antes de conseguir ativar o toggle.
+Em `Configurações > Pagamentos > Online`. É preciso preencher os dados da integração com a Braspag (Adquirente, MerchantId, MerchantKey, ClientID, ClientSecret) antes de conseguir ativar a chave.
 
 **Onde configuro as bandeiras de cartão aceitas na maquininha?**
 Em `Configurações > Pagamentos > Com maquininha` — lá dá pra marcar quais bandeiras de Débito, Crédito e Outros (Dinheiro, Pix) a loja aceita, e se aceita pagamento na entrega e/ou na retirada.
@@ -359,7 +359,7 @@ Demais indicadores:
 
 ### Como os gráficos se comportam
 
-- Passar o mouse sobre um ponto/barra/fatia mostra o valor (em R$ nos gráficos de Faturamento/Ticket Médio; valor + % nos gráficos de rosca e no de Gênero). Nos gráficos de barra de Faixa etária/Região, o hover mostra só o valor bruto, sem tooltip customizado.
+- Passar o mouse sobre um ponto/barra/fatia mostra o valor (em R$ nos gráficos de Faturamento/Ticket Médio; valor + % nos gráficos de rosca e no de Gênero). Nos gráficos de barra de Faixa etária/Região, passar o mouse mostra só o valor bruto, sem nenhum texto explicativo a mais.
 - **Não existe clique para filtrar ou abrir detalhe** em nenhum gráfico da tela.
 - Nenhuma legenda é clicável — todas são listas estáticas de cor + rótulo, só para leitura.
 - Mudar o período recarrega a página inteira (uma chamada nova por card).
@@ -391,10 +391,10 @@ Pelo botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição
 ## Configurações da Loja
 
 **O que tem dentro de Configurações?**
-Três grandes seções, no menu lateral: **Dados da Loja**, **Formas de Entrega** e **Pagamentos**. Um indicador "Seu progresso" no canto inferior mostra quantas configurações essenciais já foram concluídas.
+Três grandes seções, no menu lateral: **Dados da Loja**, **Formas de Entrega** e **Pagamentos**. Um painel "Seu progresso" no canto inferior mostra quantas configurações essenciais já foram concluídas.
 
 **Como eu migro pro módulo de Vendas?**
-O botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto — não precisa completar nada antes. Ao clicar nele, é que se libera o widget **"Seu progresso"**, dentro de Configurações, pra você ajustar o checklist de onboarding:
+O botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto — não precisa completar nada antes. Ao clicar nele, é que se libera o painel **"Seu progresso"**, dentro de Configurações, pra você ajustar a lista de passos de configuração inicial:
 1. Informações da Loja
 2. Endereço Comercial
 3. Horário de atendimento
@@ -426,7 +426,7 @@ Geralmente é uma configuração pendente ou desalinhada entre os **3 tipos de h
 Os horários de Entrega e Retirada não aparecem diretamente na vitrine do app, mas alimentam o cálculo de quando o cliente pode escolher cada opção e a previsão de recebimento — por isso, se algo parecer errado, vale checar os três.
 
 **Como funciona "Receber em casa"?**
-Em `Configurações > Formas de Entrega > Receber em casa`, ative o toggle e configure: horário de funcionamento para entrega, o raio de atendimento (distância máxima, até 30 km, com faixas de Alcance × Taxa de Entrega × Tempo de Entrega — dá pra criar quantas faixas forem necessárias, cada uma exibida numa lista com ícone de excluir ao lado, então também dá pra remover uma faixa já criada) e, opcionalmente, frete grátis a partir de um valor mínimo de compra.
+Em `Configurações > Formas de Entrega > Receber em casa`, ative a chave e configure: horário de funcionamento para entrega, o raio de atendimento (distância máxima, até 30 km, com faixas de Alcance × Taxa de Entrega × Tempo de Entrega — dá pra criar quantas faixas forem necessárias, cada uma exibida numa lista com ícone de excluir ao lado, então também dá pra remover uma faixa já criada) e, opcionalmente, frete grátis a partir de um valor mínimo de compra.
 
 **Configurei as faixas de entrega mas elas não salvam. O que fazer?**
 Depois de preencher Alcance, Taxa e Tempo de uma faixa, é **obrigatório clicar no botão "+"** para adicionar aquela regra à listagem antes de clicar em Salvar. Se pular esse clique no "+", os dados somem. Se mesmo assim o problema persistir, é preciso acionar o suporte para inserir os dados manualmente.
@@ -435,10 +435,10 @@ Depois de preencher Alcance, Taxa e Tempo de uma faixa, é **obrigatório clicar
 Primeiro, confirme no Portal se o raio de entrega está configurado corretamente. Se estiver certo, o problema costuma ser do lado do cliente: ele pode ter digitado o CEP/endereço errado, ou até colocado o CEP da própria farmácia no campo de entrega por engano — peça um print da tela dele para confirmar.
 
 **Como funciona "Retirada na loja"?**
-Em `Configurações > Formas de Entrega > Retirada na loja`, ative o toggle e configure o horário em que a loja aceita retirada, e o "Tempo de retirada" — quantos minutos depois da confirmação do pedido o produto fica pronto para o cliente buscar (esse tempo aparece pro consumidor no app).
+Em `Configurações > Formas de Entrega > Retirada na loja`, ative a chave e configure o horário em que a loja aceita retirada, e o "Tempo de retirada" — quantos minutos depois da confirmação do pedido o produto fica pronto para o cliente buscar (esse tempo aparece pro consumidor no app).
 
 **Como ativo pagamento com maquininha?**
-Em `Configurações > Pagamentos > Com maquininha` não existe um interruptor geral — o controle é só pelas duas perguntas Sim/Não, "Deseja ativar o pagamento na entrega?" e "Deseja ativar o pagamento na retirada?" (a loja pode ter nenhum, um ou os dois habilitados), mais a seleção de bandeiras aceitas (tem atalho "Selecionar todas"): Débito (Banescard, Cabal, Elo, Hiper, Union Pay, Visa), Crédito (Alelo Pagamentos, Amex, Banescard, Cabal, Coopercard, Credz, Diners, Discovery Network, Elo, Hiper, Hipercard, JCB, Mais!, Mastercard, Sorocred, Union Pay, Visa), Outros (Dinheiro, Pix).
+Em `Configurações > Pagamentos > Com maquininha` não existe uma chave geral — o controle é só pelas duas perguntas Sim/Não, "Deseja ativar o pagamento na entrega?" e "Deseja ativar o pagamento na retirada?" (a loja pode ter nenhum, um ou os dois habilitados), mais a seleção de bandeiras aceitas (tem atalho "Selecionar todas"): Débito (Banescard, Cabal, Elo, Hiper, Union Pay, Visa), Crédito (Alelo Pagamentos, Amex, Banescard, Cabal, Coopercard, Credz, Diners, Discovery Network, Elo, Hiper, Hipercard, JCB, Mais!, Mastercard, Sorocred, Union Pay, Visa), Outros (Dinheiro, Pix).
 
 **Como ativo pagamento online (cartão pela internet)?**
 Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dados fornecidos pela credenciadora **Braspag** (Adquirente, se habilitou PIX, Nome na Fatura, MerchantId, MerchantKey, ClientID, ClientSecret). Os campos ficam bloqueados até a integração estar corretamente conectada.
@@ -448,7 +448,7 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 ## Estoque
 
 **O que mostra a tela de Estoque?**
-Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e um toggle "Exibir preço" que controla se o produto aparece com preço visível no app.
+Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e uma chave "Exibir preço" que controla se o produto aparece com preço visível no app.
 
 **Como o estoque da minha loja é montado?**
 O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso.
@@ -461,7 +461,7 @@ Não — só o **preço** pode ser ajustado manualmente (ver abaixo). A quantida
 **Minha loja não aparece no aplicativo. O que pode ser?**
 Dois motivos principais:
 1. **Perda de conexão com o ERP** — o sistema da loja parou de enviar dados para o Portal.
-2. **Desativação manual** — o estoque foi desabilitado propositalmente dentro do Portal (toggle "Disponível" desligado).
+2. **Desativação manual** — o estoque foi desabilitado propositalmente dentro do Portal (chave "Disponível" desligada).
 
 **Por que a loja é desativada automaticamente?**
 Se o Portal perder a comunicação com o ERP por mais de **72 horas (3 dias)**, a loja é desativada automaticamente — é uma medida de segurança para não vender produto com preço desatualizado ou sem estoque real.
@@ -475,13 +475,13 @@ Se o Portal perder a comunicação com o ERP por mais de **72 horas (3 dias)**, 
 O seu ERP envia **dois preços** por produto: um "preço bruto" (full price) e um "preço de venda" (price) — o Portal sempre exibe o **menor dos dois**, porque você pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP. Divergências também podem vir de atraso de sincronização entre o ERP e o Portal.
 
 **Consigo alterar o preço direto no Portal?**
-Sim — acesse `Estoque`, clique no ícone de lápis (editar) na linha do produto — abre o modal **"Alterar preço do produto"**, com o Preço App atual e um campo "Novo preço". Isso preenche o campo **R$ customizado**. Não existe validação sobre esse valor: fica valendo exatamente o que foi digitado até ser removido. **Isso só altera o preço — a quantidade em estoque não é editável pelo Portal.** Hoje esse recurso é exclusivo do perfil **Contato cliente** (balconista). Se vários produtos estiverem com valor errado ao mesmo tempo, o ideal é abrir chamado com o suporte do ERP pedindo uma atualização forçada da base em lote, em vez de corrigir um por um.
+Sim — acesse `Estoque`, clique no ícone de lápis (editar) na linha do produto — abre a janela **"Alterar preço do produto"**, com o Preço App atual e um campo "Novo preço". Isso preenche o campo **R$ customizado**. Não existe validação sobre esse valor: fica valendo exatamente o que foi digitado até ser removido. **Isso só altera o preço — a quantidade em estoque não é editável pelo Portal.** Hoje esse recurso é exclusivo do perfil **Contato cliente** (balconista). Se vários produtos estiverem com valor errado ao mesmo tempo, o ideal é abrir chamado com o suporte do ERP pedindo uma atualização forçada da base em lote, em vez de corrigir um por um.
 
 **Como oculto um produto com preço ou estoque errado, sem excluir o cadastro?**
-Acesse o produto na tela Estoque e desmarque a opção **"Exibir preço"**. Ele deixa de aparecer no app até a correção ser feita. Esse toggle funciona por produto; o toggle "Disponível" no topo da tela é o equivalente para a **loja inteira** (liga/desliga tudo de uma vez) — usado, por exemplo, quando o associado percebe muitos problemas de preço/estoque e prefere pausar a loja no app enquanto ajusta o ERP. É o mesmo campo que o sistema desliga sozinho após 72h sem comunicação com o ERP.
+Acesse o produto na tela Estoque e desmarque a opção **"Exibir preço"**. Ele deixa de aparecer no app até a correção ser feita. Essa chave funciona por produto; a chave "Disponível" no topo da tela é o equivalente para a **loja inteira** (liga/desliga tudo de uma vez) — usado, por exemplo, quando o associado percebe muitos problemas de preço/estoque e prefere pausar a loja no app enquanto ajusta o ERP. É o mesmo campo que o sistema desliga sozinho após 72h sem comunicação com o ERP.
 
 **O que é o ícone ⓘ ao lado do EAN de um produto?**
-Mostra em tooltip a última atualização de **estoque** e a última atualização de **preço** daquele EAN especificamente — podem ser datas diferentes, já que o ERP manda uma ou outra de forma independente.
+Ao passar o mouse, mostra um texto explicativo com a última atualização de **estoque** e a última atualização de **preço** daquele EAN especificamente — podem ser datas diferentes, já que o ERP manda uma ou outra de forma independente.
 
 **Como oculto medicamentos do aplicativo?**
 Duas formas: desabilitar o estoque geral daquele grupo de produtos, ou desativar item por item dentro do Estoque. **Não é possível** ocultar por categoria inteira de uma vez — tem que ser tudo ou um por um.
@@ -525,10 +525,10 @@ Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja
 O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido, exibidos no painel de detalhe do pedido.
 
 **Como cancelo um pedido, e quais motivos posso selecionar?**
-Ao cancelar, abre o modal "Cancelar pedido #[número]", pedindo o motivo: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, ou Sem estoque. Pede confirmação e não pode ser desfeito.
+Ao cancelar, abre a janela "Cancelar pedido #[número]", pedindo o motivo: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, ou Sem estoque. Pede confirmação e não pode ser desfeito.
 
 **O pedido que vou cancelar já foi pago online. Muda alguma coisa?**
-Sim — o modal mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso.
+Sim — a janela mostra um selo "Pedido pago" e um lembrete para informar ao cliente sobre as políticas de estorno e reembolso.
 
 **Como o estorno realmente acontece?**
 Não depende de quem cancela (Portal ou ERP) — depende da **modalidade de pagamento**:
@@ -561,7 +561,7 @@ Sim, o ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747) (refinad
 - Pedidos em status **final** (Concluídos/Cancelados) respeitam o período, mas pela data em que **entraram** nesse status, não pela data de criação.
 - Nova coluna **"Usuário Cancelamento"**: mostra quem cancelou/concluiu; se foi o próprio ERP, mostra "ERP".
 - Lojas que fazem parte de um Grupo: o relatório sempre traz pedidos de **todas as lojas do grupo**, ignorando filtro de loja aplicado pelo usuário.
-- Período menor que 6 meses: download direto na tela (toast de sucesso); maior que isso, mantém o fluxo atual.
+- Período menor que 6 meses: download direto na tela (com uma mensagem rápida de sucesso); maior que isso, mantém o fluxo atual.
 - "Status desconhecido" deixa de aparecer.
 - *(Ainda em discussão no ticket, não confirmado: substituir o envio por e-mail por download direto, e um limite de tamanho para esse download.)*
 
@@ -613,7 +613,7 @@ Não há limite de quantas promoções podem estar marcadas como destaque ao mes
 Sim — ele vê a listagem completa (individuais e por grupo, com todas as métricas) e pode exportar o relatório, mas **não tem o botão "Nova promoção"** — segue não podendo criar/cancelar promoções.
 
 **Como baixo o relatório de Promoções/Ofertas?**
-Botão "Exportar" → painel "Relatório de ofertas" → escolha um intervalo (dois calendários de mês lado a lado) → "Gerar relatório". **O relatório é filtrado pela data de criação da promoção**, não pela data de vigência/divulgação. Colunas: Item em oferta (Produto/Familia), Tipo oferta (aqui aparece "Preço fixo"/"Porcentagem %" — nome um pouco diferente do usado no wizard, "Desconto %"), Nome produto, Ean, Ativação, Vendas, Pdv ou App (formato "0/0" = vendas no PDV / vendas no App), Conversão, Início da divulgação, Fim da divulgação, Status, Criação.
+Botão "Exportar" → painel "Relatório de ofertas" → escolha um intervalo (dois calendários de mês lado a lado) → "Gerar relatório". **O relatório é filtrado pela data de criação da promoção**, não pela data de vigência/divulgação. Colunas: Item em oferta (Produto/Familia), Tipo oferta (aqui aparece "Preço fixo"/"Porcentagem %" — nome um pouco diferente do usado no formulário de criação, "Desconto %"), Nome produto, Ean, Ativação, Vendas, Pdv ou App (formato "0/0" = vendas no PDV / vendas no App), Conversão, Início da divulgação, Fim da divulgação, Status, Criação.
 
 **Por que o relatório de ofertas tem colunas de "Gênero" e "Faixa etária"? Consigo segmentar por público?**
 Não mais — essas colunas são resquício de uma segmentação de público que existia numa versão antiga da tela de criação de promoção. O aplicativo **nunca respeitou** essa segmentação, mesmo antes da tela ser refatorada — é um dado morto. Estão sendo removidas do relatório ([ECP-1062](https://farmarcas.atlassian.net/browse/ECP-1062)) e das telas do Portal ([ECP-1063](https://farmarcas.atlassian.net/browse/ECP-1063)). A coluna "Média" do relatório também está sendo removida (cálculo não está claro nem para o time de produto).
@@ -629,7 +629,7 @@ Não mais — essas colunas são resquício de uma segmentação de público que
 São os anúncios que aparecem no carrossel da home do aplicativo do consumidor. Cada banner tem posição (pode ser reordenado arrastando), imagem, destino do clique, métricas de exibições/cliques, período de divulgação e os estados (UFs) onde é exibido.
 
 **Como crio um novo banner?**
-Na tela `Banners`, use o botão **"Novo banner"** — abre um wizard de 4 passos: **Início → Espaços → Lojas → Configurações**.
+Na tela `Banners`, use o botão **"Novo banner"** — abre um formulário de 4 passos: **Início → Espaços → Lojas → Configurações**.
 1. **Início**: escolha "Inserir um banner" (única opção hoje).
 2. **Espaços**: escolha onde o banner aparece — hoje só **"No carrossel da home"** ("Em uma vitrine de produtos" está marcado "Em breve"). Specs: até **5 banners**, **320×220px**, até **1MB**, formatos **PNG/JPG**.
 3. **Lojas**: escolha "Todas as lojas" ou selecione por Estado (UF), podendo refinar por loja dentro do estado.
@@ -649,7 +649,7 @@ Não — dá para marcar **"Banner permanente"** em vez de definir uma data de t
 ## Usuários
 
 **Como convido uma pessoa nova para acessar o Portal?**
-Na tela `Usuários`, use a opção de convidar/criar usuário. O modal de convite é simples: apenas o **e-mail** do convidado (com validação, bloqueando duplicados), o **Perfil de acesso** dele (Contato cliente, Gestor de Loja, Gestor de Rede ou Admin — ver seção "Acesso, login e perfis") e o vínculo à loja, lojas ou rede correspondente. Não há campos adicionais (nome, telefone etc.) nesse momento — quem preenche esses dados é o próprio convidado, no fluxo de "Complete seu cadastro" (ver "Acesso, login e perfis").
+Na tela `Usuários`, use a opção de convidar/criar usuário. A janela de convite é simples: apenas o **e-mail** do convidado (com validação, bloqueando duplicados), o **Perfil de acesso** dele (Contato cliente, Gestor de Loja, Gestor de Rede ou Admin — ver seção "Acesso, login e perfis") e o vínculo à loja, lojas ou rede correspondente. Não há campos adicionais (nome, telefone etc.) nesse momento — quem preenche esses dados é o próprio convidado, no fluxo de "Complete seu cadastro" (ver "Acesso, login e perfis").
 
 **Posso remover o acesso de alguém que saiu da farmácia?**
 Sim — dentro da entidade "usuário", no contexto da loja, existe o botão **Desativar**. Não é uma exclusão: o cadastro continua existindo, só o acesso dele fica bloqueado. Usuários com perfil Contato cliente não têm essa ação disponível para eles mesmos (não conseguem desativar outros usuários).
@@ -707,7 +707,7 @@ Porque o estoque de cada loja é montado **a partir do Catálogo oficial**: o Po
 - **Tipo de cadastro** (Medicamento / Não Medicamento): obrigatório, e muda o resto do formulário —
   - **Medicamento**: exige **Registro MS** (número de registro na ANVISA) e **Tarja** (Sem tarja = venda livre / Tarja Vermelha = prescrição médica comum / Tarja Preta = controlado/psicotrópico com retenção de receita — os "Controlados" do glossário); o **Departamento** fica restrito a Farmacinha ou Medicamentos.
   - **Não Medicamento**: Registro MS aparece mas não é obrigatório; Tarja não aparece; Departamento libera as demais opções.
-- **Permitir promocionar** e **Genérico**: toggles, padrão "Não" (ver definições acima).
+- **Permitir promocionar** e **Genérico**: chaves, padrão "Não" (ver definições acima).
 - **Imagens do produto**: obrigatório, até 1 imagem (JPG/PNG, até 2MB).
 - **Princípios ativos**: obrigatório, um ou mais (campo de tags).
 - **Descrição curta**: obrigatória, até 650 caracteres.
@@ -855,4 +855,4 @@ Sim, em caso de suspeita de instabilidade na URL principal, há um link de conti
 
 - **`SessionPermissionGuard` desabilitado no front-end** (achado técnico da exploração de código, não é dúvida de associado) — sem confirmação se é proposital ou dívida técnica; sem impacto conhecido no dia a dia do Portal. Mantido só como registro para o time de engenharia, não para o bot responder a associados.
 
-Todos os demais pontos que estavam em aberto (atendimento de pedidos em Grupo de lojas, definição de "Anjo", bug do modal de cancelamento) já foram esclarecidos e incorporados ao conteúdo acima.
+Todos os demais pontos que estavam em aberto (atendimento de pedidos em Grupo de lojas, definição de "Anjo", bug da janela de cancelamento) já foram esclarecidos e incorporados ao conteúdo acima.

@@ -83,7 +83,7 @@ Ações disponíveis: **Nova loja** (cadastrar uma unidade), filtro por **Módul
 **Módulo Vendas x Módulo Ofertas — o que muda na prática?**
 - **Vendas**: a loja processa a compra completa dentro do próprio app — carrinho, checkout e pagamento acontecem no aplicativo.
 - **Ofertas**: não há compra pelo app. O associado cria as ofertas no Portal, elas são replicadas no aplicativo, e o consumidor final apenas **ativa** a oferta pelo app — a compra em si só é finalizada fisicamente na loja, quando o cliente informa o CPF e a oferta é vinculada a ele no momento do pagamento (é por isso que esse módulo não gera "Pedidos" no Portal).
-- Uma loja pode solicitar a migração de Ofertas para Vendas — ver [Configurações da Loja](#6-configurações-da-loja), onboarding e liberação da Chave de integração/API.
+- Uma loja pode solicitar a migração de Ofertas para Vendas — ver [Configurações da Loja](#6-configurações-da-loja), configuração inicial e liberação da Chave de integração/API.
 
 ### Tela "Redes" (nível Admin)
 
@@ -123,7 +123,7 @@ Lista os grupos com: nome, data de criação, quantidade de Lojas e Usuários vi
 
 ### Configurando o atendimento e o estoque do grupo
 
-Dentro do detalhe de um grupo, o botão **"Configurar atendimento e estoque"** abre um modal com 3 opções — escolha de acordo com como as lojas do grupo devem operar:
+Dentro do detalhe de um grupo, o botão **"Configurar atendimento e estoque"** abre uma janela com 3 opções — escolha de acordo com como as lojas do grupo devem operar:
 
 1. **Estoque Espelhado** — uma loja "mãe" (loja principal) recebe todos os pedidos do grupo, e o estoque dela é replicado (espelhado) para as demais unidades. É possível incluir uma loja secundária: nesse caso, os estoques das duas lojas são somados, exibindo a quantidade total no aplicativo.
 2. **Estoque Integrado** — o estoque é somado fisicamente entre todas as lojas do agrupamento.
@@ -154,7 +154,7 @@ Em todas as variações, o cabeçalho tem: aviso de **atualização automática 
 
 No topo, uma faixa com 3 abas (cada uma mostra um gráfico de linha/barra por dia dentro do período; trocar de aba **não** busca dados novos — as 3 já vêm carregadas, só alterna qual gráfico aparece):
 
-| Indicador | O que significa (tooltip) |
+| Indicador | O que significa (texto ao passar o mouse) |
 |---|---|
 | **Faturamento** | "Representa o valor total das vendas registradas no período selecionado." |
 | **Pedidos cancelados** | "Total de pedidos cancelados no período selecionado." |
@@ -166,17 +166,17 @@ Demais indicadores da Home de Vendas:
 
 | Indicador | O que significa |
 |---|---|
-| **Ticket Médio** | "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos." *(gráfico de barras, mesmo comportamento de hover em R$, sem clique/legenda)* |
+| **Ticket Médio** | "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos." *(gráfico de barras; passar o mouse mostra o valor em R$; sem clique/legenda)* |
 | **Total de Pedidos em Aberto** | "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." Tem um botão **"Visualizar pedidos"**. |
 | **Volume dos pedidos em aberto** | Soma em R$ de todos os pedidos ainda não finalizados (Na fila + Em separação + Liberados). |
-| **Pedidos em aberto por status** | Contagem de pedidos em cada status (Fila / Em separação / Liberados), exibida em %. *(gráfico de rosca; hover mostra "Status: quantidade (%)"; legenda é uma lista estática de cores com o percentual de cada status, sem interação)* ⚠️ Hoje esse indicador filtra incorretamente pelo período de datas selecionado — deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação. Correção já registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Pedidos em aberto por status** | Contagem de pedidos em cada status (Fila / Em separação / Liberados), exibida em %. *(gráfico de rosca; ao passar o mouse mostra "Status: quantidade (%)"; legenda é uma lista estática de cores com o percentual de cada status, sem interação)* ⚠️ Hoje esse indicador filtra incorretamente pelo período de datas selecionado — deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação. Correção já registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
 | **Tempo médio para iniciar primeiro atendimento** | Tempo entre o pedido entrar "Na fila" e ser concluído. Exibido em formato de duração (ex.: "9h e 37min"). |
 | **Tempo médio total de atendimento** | Também entendido como "Na fila" até "Concluído" — a definição exata implementada hoje ainda não está confirmada com engenharia; correção/checagem registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056) (inclusive a sobreposição de definição com o indicador acima). Exibido em formato de duração (ex.: "2 dias e 11h"). |
 | **Média de itens por cesta** | Média de itens por pedido, considerando todos os pedidos (concluídos ou não). |
 | **Volume dos pedidos cancelados** | Valor em R$ (não quantidade) que seria faturado pelos pedidos cancelados no período. ⚠️ A label atual do card não deixa isso claro — correção registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
-| **Faixa etária por gerações** | "Distribuição dos clientes que realizaram compras no período, agrupados por gerações." Faixas exibidas: 18–28 anos (Geração Z), 29–44 anos (Geração Millennials Y), 45–60 anos (Geração X), +60 anos (Baby Boomers). *(gráfico de barras; hover mostra só o valor bruto, sem tooltip customizado; sem clique/legenda)* |
+| **Faixa etária por gerações** | "Distribuição dos clientes que realizaram compras no período, agrupados por gerações." Faixas exibidas: 18–28 anos (Geração Z), 29–44 anos (Geração Millennials Y), 45–60 anos (Geração X), +60 anos (Baby Boomers). *(gráfico de barras; ao passar o mouse mostra só o valor bruto, sem texto explicativo a mais; sem clique/legenda)* |
 | **Região** *(só no painel de Rede)* | "Distribuição dos clientes que compraram no período, agrupados conforme a localização geográfica cadastrada." Categorias: Sudeste, Norte, Sul, Centro-Oeste, Nordeste e "Estado inválido" (quando o cadastro do cliente não tem estado válido). Não existe no painel por Loja. |
-| **Gênero** | "Distribuição dos clientes que realizaram compras no período, de acordo com a informação de gênero cadastrado." Categorias: Homem, Mulher, Indefinido. *(gráfico de pizza; hover mostra "Categoria: quantidade (%)"; legenda estática com % abaixo do gráfico; mostra um círculo vazio quando não há dados)* |
+| **Gênero** | "Distribuição dos clientes que realizaram compras no período, de acordo com a informação de gênero cadastrado." Categorias: Homem, Mulher, Indefinido. *(gráfico de pizza; ao passar o mouse mostra "Categoria: quantidade (%)"; legenda estática com % abaixo do gráfico; mostra um círculo vazio quando não há dados)* |
 | **Ranking das lojas** *(só no painel de Rede)* | "Classificação das lojas de acordo com o valor total vendido no período, da maior para a menor receita bruta." Exibido como pódio (1º, 2º, 3º lugar) com nome, CNPJ e valor de cada loja; não é um gráfico. Não encontrei opção de ver colocações além do 3º lugar. Não existe no painel por Loja. |
 | **Top produtos mais vendidos** | "Apresenta os produtos que tiveram o maior número de vendas no período, destacando os campeões de desempenho." Lista ranqueada (não é gráfico) — cada produto mostra nome, EAN, unidades vendidas e valor em R$. Botão "Baixar produtos" para exportar. |
 | **Formas de pagamento** | "Distribuição dos pedidos realizados no período, de acordo com o meio de pagamento utilizado." *(gráfico de rosca; legenda detalha Online → Crédito/Pix e Offline → Balcão/Na entrega, todos em %)* |
@@ -185,7 +185,7 @@ Demais indicadores da Home de Vendas:
 
 ### 5.2 Home de Ofertas
 
-| Indicador | O que significa (tooltip) |
+| Indicador | O que significa (texto ao passar o mouse) |
 |---|---|
 | **Total de ofertas criadas** | "Quantidade de ofertas cadastradas pelas lojas no período." |
 | **Ofertas ativadas** | "Quantidade de ofertas que os clientes finais ativaram no aplicativo durante o período." |
@@ -194,14 +194,14 @@ Demais indicadores da Home de Vendas:
 | **Quantidade de conversão em vendas** | "Total de pedidos finalizados como vendas no período selecionado." *(gráfico de barras com legenda PDV/Aplicativo)* |
 | **Faixa etária por gerações** | "Distribuição dos clientes que realizaram ativações no período, agrupados por gerações (ex.: Geração Z, Millennials, Geração X, Baby Boomers)." |
 | **Região** | "Distribuição dos clientes que realizaram ativações no período, agrupados conforme a localização geográfica cadastrada (ex.: Sudeste, Sul, Nordeste)." — aqui **existe** tanto no painel por Loja quanto por Rede (diferente da Home de Vendas). |
-| **Gênero** | Distribuição dos clientes que realizaram **ativações** no período, por gênero cadastrado. ⚠️ Hoje o tooltip do app mostra o mesmo texto da Home de Vendas ("realizaram compras") — é um erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
-| **Top produtos com mais ativações** | Produtos com maior número de **ativações** no período. ⚠️ Hoje o tooltip do app mostra o mesmo texto da Home de Vendas ("maior número de vendas") — erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Gênero** | Distribuição dos clientes que realizaram **ativações** no período, por gênero cadastrado. ⚠️ Hoje o texto explicativo do app mostra o mesmo texto da Home de Vendas ("realizaram compras") — é um erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Top produtos com mais ativações** | Produtos com maior número de **ativações** no período. ⚠️ Hoje o texto explicativo do app mostra o mesmo texto da Home de Vendas ("maior número de vendas") — erro de copy, já registrado em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
 | **Lojas sem ofertas em exibição** | "Apenas as lojas que não possuem nenhuma oferta ativa. Nessas condições, o app fica indisponível para os clientes até que novas ofertas sejam cadastradas." Fica logo abaixo de "Total de ofertas criadas"; tem um botão "Ver lojas sem ofertas" que baixa o Relatório de Lojas sem ofertas ativas (ver seção 5.4). |
 | **Aviso: Loja indisponível no app** *(só no painel por Loja, loja única)* | "Essa loja está indisponível para os clientes no app porque não há nenhuma oferta ativa." |
 
 ### 5.3 Comportamento geral dos gráficos
 
-- Todos os gráficos são feitos com a mesma biblioteca (Chart.js). Não existe nenhum gráfico com clique para filtrar ou "abrir detalhe" — a interação sempre para no hover.
+- Todos os gráficos são feitos com a mesma biblioteca (Chart.js). Não existe nenhum gráfico com clique para filtrar ou "abrir detalhe" — a interação sempre para ao passar o mouse.
 - Nenhuma legenda é clicável para esconder/mostrar uma série — todas as legendas são listas estáticas de cor + rótulo (e às vezes %), só para leitura.
 - Mudar o período no topo da tela **recarrega todos os cards da página** (uma nova chamada por card), não é um filtro local — por isso pode levar um instante para os cards atualizarem.
 - Nos gráficos de rosca e no gráfico de gênero, quando não há nenhum dado no período, aparece um círculo cinza vazio no lugar do gráfico. Já Faturamento, Ticket Médio, Faixa etária e Região não têm essa ilustração — se não houver dado, a área do gráfico aparece em branco.
@@ -227,7 +227,7 @@ Alguns cards da Home baixam um relatório em Excel (.xlsx) com o detalhe por tr�
 
 Dentro de uma loja, a aba **Configurações** tem um menu lateral com 3 grandes seções.
 
-**Como migrar do módulo Ofertas para o módulo Vendas:** o botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto (não é preciso completar nada antes). Ao clicar nele, libera-se o widget **"Seu progresso"** no canto inferior de Configurações, que acompanha quantas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nesse checklist são:
+**Como migrar do módulo Ofertas para o módulo Vendas:** o botão **"Faça upgrade para o módulo Vendas"** já fica disponível direto (não é preciso completar nada antes). Ao clicar nele, libera-se o painel **"Seu progresso"** no canto inferior de Configurações, que acompanha quantas configurações essenciais já foram concluídas, com atalho "Continuar configuração". As etapas contadas nessa lista são:
 
 1. Informações da Loja
 2. Endereço Comercial
@@ -259,18 +259,18 @@ Depois de solicitado o upgrade, um botão **"Acompanhar solicitação"** mostra 
 
 **O que é?** Define como o consumidor pode receber o pedido feito no App: em casa ou retirando na loja. As duas opções têm configuração independente.
 
-**Receber em casa** (toggle Ativado/Desativado):
+**Receber em casa** (chave Ativado/Desativado):
 - *Horário de funcionamento*: dias/horários em que a loja aceita pedidos para entrega (pode ser diferente do horário geral de atendimento da loja).
 - *Raio de atendimento*: define, num mapa, a distância máxima atendida (limite de até 30 km) e uma tabela de faixas de **Alcance (km) × Taxa de Entrega (R$) × Tempo de Entrega**. É possível cadastrar quantas faixas forem necessárias — elas aparecem como uma lista, cada uma com um ícone de excluir ao lado, então dá para remover uma faixa já criada a qualquer momento. **Atenção:** depois de preencher uma faixa, é obrigatório clicar no botão **"+"** para adicioná-la à listagem antes de Salvar — se pular esse clique, os dados somem sem aviso.
 - *Frete Grátis*: permite configurar frete grátis a partir de um valor mínimo de compra — uma estratégia para incentivar tickets maiores.
 
-**Retirada na loja** (toggle Ativado/Desativado):
+**Retirada na loja** (chave Ativado/Desativado):
 - *Horário de funcionamento*: dias/horários em que a loja aceita pedidos para retirada.
 - *Tempo de retirada*: quantos minutos, após a confirmação do pedido, o produto fica disponível para retirada (ex: "A partir de 45 mins"). Esse tempo aparece para o consumidor no App.
 
 ### 6.3 Pagamentos
 
-**Com maquininha**: não tem um interruptor geral — o controle é só pelas duas perguntas Sim/Não, "Deseja ativar o pagamento na entrega?" e "Deseja ativar o pagamento na retirada?" (a loja pode ter nenhum, um, ou os dois habilitados), mais a seleção de bandeiras aceitas (com atalho "Selecionar todas"):
+**Com maquininha**: não tem uma chave geral — o controle é só pelas duas perguntas Sim/Não, "Deseja ativar o pagamento na entrega?" e "Deseja ativar o pagamento na retirada?" (a loja pode ter nenhum, um, ou os dois habilitados), mais a seleção de bandeiras aceitas (com atalho "Selecionar todas"):
 - **Débito**: Banescard, Cabal, Elo, Hiper, Union Pay, Visa.
 - **Crédito**: Alelo Pagamentos, Amex, Banescard, Cabal, Coopercard, Credz, Diners, Discovery Network, Elo, Hiper, Hipercard, JCB, Mais!, Mastercard, Sorocred, Union Pay, Visa.
 - **Outros**: Dinheiro, Pix.
@@ -285,8 +285,8 @@ A tela **Estoque** mostra o catálogo de produtos daquela loja específica, com:
 
 - **Produto** (nome + EAN, com um ícone ⓘ — ver "Última atualização por produto" abaixo), **R$ App** (preço exibido no aplicativo) e **R$ customizado** (um preço específico, diferente do preço padrão do ERP, definido manualmente — pode ser removido para voltar ao preço original).
 - **Estoque loja**: quantidade disponível.
-- **Exibir preço**: toggle Sim/Não — controla se aquele produto aparece com preço visível no App.
-- Toggle geral **Disponível**, indicador **ERP atualizado** (data/hora da última sincronização) e filtro por **Grupo**.
+- **Exibir preço**: chave Sim/Não — controla se aquele produto aparece com preço visível no App.
+- Chave geral **Disponível**, indicador **ERP atualizado** (data/hora da última sincronização) e filtro por **Grupo**.
 
 ### Como o estoque da loja é montado
 
@@ -298,15 +298,15 @@ O ERP de cada loja envia **EAN, quantidade e preço** para o Portal. Para cada E
 
 **De onde vem o preço "R$ App"?** O ERP envia **dois preços** por produto — um **"preço bruto" (full price)** e um **"preço de venda" (price)**. O Portal sempre exibe o **menor dos dois** recebidos, porque o associado pode ter algum desconto ou caderno de ofertas vinculado no próprio ERP — o ecommerce sempre reflete o preço mais vantajoso que o ERP informou.
 
-**Como editar o preço manualmente:** clique no ícone de lápis (editar) na linha do produto — abre o modal **"Alterar preço do produto"**, mostrando o Preço App atual e um campo **"Novo preço"**. Não existe validação sobre esse valor: fica valendo exatamente o que for digitado, até ser removido; isso popula a coluna **R$ customizado**. **Importante: o estoque (quantidade) não é editável pelo Portal** — só o preço; a quantidade sempre reflete o que o ERP enviar. Hoje esse recurso é exclusivo do perfil **Contato cliente** (balconista). Se muitos produtos aparecerem com valor divergente ao mesmo tempo, o recomendado é abrir chamado com o suporte do ERP pedindo uma atualização forçada em lote, em vez de corrigir um por um manualmente.
+**Como editar o preço manualmente:** clique no ícone de lápis (editar) na linha do produto — abre a janela **"Alterar preço do produto"**, mostrando o Preço App atual e um campo **"Novo preço"**. Não existe validação sobre esse valor: fica valendo exatamente o que for digitado, até ser removido; isso popula a coluna **R$ customizado**. **Importante: o estoque (quantidade) não é editável pelo Portal** — só o preço; a quantidade sempre reflete o que o ERP enviar. Hoje esse recurso é exclusivo do perfil **Contato cliente** (balconista). Se muitos produtos aparecerem com valor divergente ao mesmo tempo, o recomendado é abrir chamado com o suporte do ERP pedindo uma atualização forçada em lote, em vez de corrigir um por um manualmente.
 
 ### Última atualização por produto
 
-Ao lado do EAN de cada produto, um ícone ⓘ mostra em tooltip a **última atualização de estoque** e a **última atualização de preço** daquele EAN especificamente (podem ser datas diferentes, já que o ERP envia uma ou outra de forma independente/incremental).
+Ao lado do EAN de cada produto, um ícone ⓘ mostra, ao passar o mouse, um texto explicativo com a **última atualização de estoque** e a **última atualização de preço** daquele EAN especificamente (podem ser datas diferentes, já que o ERP envia uma ou outra de forma independente/incremental).
 
-### Os dois "interruptores" da tela de Estoque
+### As duas "chaves" da tela de Estoque
 
-- **"Disponível: Sim/Não"** (toggle geral, no topo): liga/desliga **a loja inteira** no aplicativo. É o mesmo toggle que, se desligado por muito tempo de comunicação com o ERP (72h), o sistema aciona automaticamente (ver alerta abaixo) — mas também pode ser desligado manualmente pelo próprio associado, por exemplo quando ele percebe muitos problemas de preço/estoque e prefere pausar a loja no app enquanto ajusta o ERP.
+- **"Disponível: Sim/Não"** (chave geral, no topo): liga/desliga **a loja inteira** no aplicativo. É a mesma chave que, se desligada por muito tempo de comunicação com o ERP (72h), o sistema aciona automaticamente (ver alerta abaixo) — mas também pode ser desligada manualmente pelo próprio associado, por exemplo quando ele percebe muitos problemas de preço/estoque e prefere pausar a loja no app enquanto ajusta o ERP.
 - **"Exibir preço: Sim/Não"** (por linha de produto): o mesmo conceito, mas no nível do produto individual — desligar esconde só aquele EAN específico do app para aquela loja, sem afetar o restante do estoque.
 
 **Como ocultar um produto com preço/estoque errado:** desmarque a opção "Exibir preço" na linha do produto — ele some do app até a correção ser feita, sem precisar remover o cadastro.
@@ -318,7 +318,7 @@ Ao lado do EAN de cada produto, um ícone ⓘ mostra em tooltip a **última atua
 > 2. Solicitar a **"Nova Integração de Preço e Estoque"**.
 > 3. Informar ao suporte a **Chave de integração do ERP** da loja (em `Configurações > Dados da Loja > Informações da loja`).
 >
-> Lembrando que a loja também pode aparecer fora do app por **desativação manual** do estoque (toggle "Disponível" desligado no Portal) — vale checar os dois motivos antes de abrir chamado.
+> Lembrando que a loja também pode aparecer fora do app por **desativação manual** do estoque (chave "Disponível" desligada no Portal) — vale checar os dois motivos antes de abrir chamado.
 
 ### Solicitando um produto novo
 
@@ -361,9 +361,9 @@ Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a
 
 ### Cancelando um pedido
 
-Ao cancelar um pedido, abre o modal **"Cancelar pedido #[número]"**, pedindo para **selecionar o motivo da recusa**: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. A ação exige confirmação e **não pode ser desfeita**.
+Ao cancelar um pedido, abre a janela **"Cancelar pedido #[número]"**, pedindo para **selecionar o motivo da recusa**: Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. A ação exige confirmação e **não pode ser desfeita**.
 
-Se o pedido já tinha sido **pago online**, o modal mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"**.
+Se o pedido já tinha sido **pago online**, a janela mostra um selo **"Pedido pago"** com o aviso "O pagamento deste pedido já foi realizado", e um lembrete: **"Ao cancelar este pedido, lembre-se de informar ao cliente sobre as políticas de estorno e reembolso"**.
 
 **Como o estorno realmente funciona:** não depende de quem cancela (Portal ou ERP) — depende da **modalidade de pagamento** do pedido:
 - **Pagamento offline** (maquininha, na entrega ou na retirada): não há estorno, porque o cliente não pagou nada no momento da criação do pedido — o pagamento só acontece fisicamente depois.
@@ -391,7 +391,7 @@ O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**�
    - Pedidos em status **final** (Concluídos / Cancelados) devem respeitar o período selecionado, mas filtrando pela **data em que o pedido entrou nesse status** (`updatedAt`), não pela data de criação — considerando o dia cheio (00:00:01 do primeiro dia até 23:59:59 do último), com cuidado para o fuso não deslocar pedidos para o dia errado.
 2. **Nova coluna "Usuário Cancelamento"**: para pedidos concluídos/cancelados, deve trazer o usuário responsável pela mudança de status; se o cancelamento foi feito pelo próprio ERP (sem usuário do Portal envolvido), o valor deve ser **"ERP"**.
 3. **Lojas em grupo:** ao exportar de uma loja que faz parte de um Grupo de lojas (qualquer configuração de estoque), o relatório deve trazer os pedidos de **todas as lojas do grupo**, ignorando qualquer filtro de loja aplicado pelo usuário.
-4. **Entrega do arquivo:** se o período selecionado for menor que 6 meses, o download deve acontecer direto na tela (com toast de sucesso, sem abrir modal); para períodos maiores, mantém-se o fluxo atual (envio, possivelmente por e-mail).
+4. **Entrega do arquivo:** se o período selecionado for menor que 6 meses, o download deve acontecer direto na tela (com uma mensagem rápida de sucesso, sem abrir janela); para períodos maiores, mantém-se o fluxo atual (envio, possivelmente por e-mail).
 5. **"Status desconhecido"** deve ser desconsiderado/excluído do relatório.
 
 > Os pontos sobre substituir o envio por e-mail (SendGrid) por download direto, e um possível limite de tamanho para esse download, ainda estavam em discussão no ticket — **não estão decididos**, não tratar como regra confirmada.
@@ -426,9 +426,9 @@ Um filtro aplicado aparece como um chip removível (ex.: "Preço fixo ✕") acim
 
 O botão **"Exportar"** abre o painel **"Relatório de ofertas"**, com dois calendários de mês lado a lado (para escolher um intervalo de datas) e o botão **"Gerar relatório"**. **O relatório é filtrado pela data de criação da promoção**, não pela data de vigência/divulgação.
 
-**Colunas do relatório:** Item em oferta (Produto/Familia), Tipo oferta (aqui aparece como "Preço fixo"/"Porcentagem %" — nomenclatura um pouco diferente da usada no wizard de criação, que mostra "Desconto %"), Nome produto, Ean, Ativação, Vendas, **Pdv ou App** (formato "0/0" — mostra quantas vendas daquela oferta vieram do PDV da loja vs. do aplicativo), Conversão, Início da divulgação, Fim da divulgação, Status, Criação.
+**Colunas do relatório:** Item em oferta (Produto/Familia), Tipo oferta (aqui aparece como "Preço fixo"/"Porcentagem %" — nomenclatura um pouco diferente da usada no formulário de criação, que mostra "Desconto %"), Nome produto, Ean, Ativação, Vendas, **Pdv ou App** (formato "0/0" — mostra quantas vendas daquela oferta vieram do PDV da loja vs. do aplicativo), Conversão, Início da divulgação, Fim da divulgação, Status, Criação.
 
-> **Colunas sendo removidas** (ver [ECP-1062](https://farmarcas.atlassian.net/browse/ECP-1062)): o relatório hoje também traz **"Genero"** e **"Faixa etária"** (resquício de uma segmentação de público que existia numa versão antiga da tela de criação — o app nunca respeitou essa segmentação, é um dado morto) e uma coluna **"Média"** cujo cálculo não está claro nem para o time de produto. As três serão removidas do relatório. A mesma segmentação por Gênero/Faixa etária também está sendo removida das telas do Portal (drawer/criação de promoção) — ver [ECP-1063](https://farmarcas.atlassian.net/browse/ECP-1063).
+> **Colunas sendo removidas** (ver [ECP-1062](https://farmarcas.atlassian.net/browse/ECP-1062)): o relatório hoje também traz **"Genero"** e **"Faixa etária"** (resquício de uma segmentação de público que existia numa versão antiga da tela de criação — o app nunca respeitou essa segmentação, é um dado morto) e uma coluna **"Média"** cujo cálculo não está claro nem para o time de produto. As três serão removidas do relatório. A mesma segmentação por Gênero/Faixa etária também está sendo removida das telas do Portal (painel de detalhes/criação de promoção) — ver [ECP-1063](https://farmarcas.atlassian.net/browse/ECP-1063).
 
 ### Criando uma nova promoção
 
@@ -446,19 +446,19 @@ O formulário de criação segue 5 passos:
 
 ### Detalhes de uma promoção
 
-Clicando numa promoção da lista, abre um painel (drawer) com o produto/grupo, status, EAN, uma seção **"Desempenho"** (Ativação/Vendas/Conversão) e a lista de **lojas participantes**, com opção de remover uma loja específica da promoção sem cancelar tudo.
+Clicando numa promoção da lista, abre um painel lateral com o produto/grupo, status, EAN, uma seção **"Desempenho"** (Ativação/Vendas/Conversão) e a lista de **lojas participantes**, com opção de remover uma loja específica da promoção sem cancelar tudo.
 
-**Os botões no rodapé do drawer mudam conforme o status da promoção:**
+**Os botões no rodapé desse painel mudam conforme o status da promoção:**
 - **Promoção Ativa**: mostra **"Cancelar oferta"** e **"Destacar oferta"** (ou "Retirar destaque", se já estiver em destaque).
 - **Promoção Finalizada ou Cancelada**: mostra só o botão **"Repetir oferta"** (ver abaixo) — não é mais possível cancelar ou destacar uma promoção que já terminou.
 
-**Perfil Contato cliente (balconista):** não vê **nenhum** botão no rodapé desse drawer, em nenhum status — não cancela, não destaca e não repete promoções.
+**Perfil Contato cliente (balconista):** não vê **nenhum** botão no rodapé desse painel, em nenhum status — não cancela, não destaca e não repete promoções.
 
 O cancelamento de uma promoção pede confirmação antes de ser efetivado, já que a ação não pode ser desfeita.
 
 ### Repetindo uma promoção
 
-No drawer de detalhes de uma promoção **Finalizada** ou **Cancelada**, o botão **"Repetir oferta"** leva direto para o formulário de criação de uma nova promoção, **pré-preenchido com todos os dados da promoção original** (produtos, lojas, tipo de desconto, regras) — **exceto as datas de início e fim**, que precisam ser escolhidas de novo. Qualquer campo pré-preenchido pode ser alterado antes de salvar. Funciona tanto para promoções individuais quanto por grupo.
+No painel de detalhes de uma promoção **Finalizada** ou **Cancelada**, o botão **"Repetir oferta"** leva direto para o formulário de criação de uma nova promoção, **pré-preenchido com todos os dados da promoção original** (produtos, lojas, tipo de desconto, regras) — **exceto as datas de início e fim**, que precisam ser escolhidas de novo. Qualquer campo pré-preenchido pode ser alterado antes de salvar. Funciona tanto para promoções individuais quanto por grupo.
 
 ---
 
@@ -470,12 +470,12 @@ A tela **Banners** (também chamada de "Anúncios do aplicativo") controla os ba
 
 Filtros no topo: **Espaço do aplicativo** (hoje só "Carrossel da home"), **Estados**, **Lojas**, **Status** (ex.: "Em exibição"). A tabela mostra: **UFs** (onde o banner é exibido), **Posição** (arrastar para reordenar, com opção de excluir), **Mídia** (miniatura + nome), **Destino (ir para...)** — mostra o tipo de destino escolhido (ex.: "Departamento › Cosméticos", "Seleção de pr... › 72 produtos"), métricas de **Exibições** e **Cliques**, e **Divulgação** (Início/Fim).
 
-### Criando um novo banner (wizard de 4 passos)
+### Criando um novo banner (formulário de 4 passos)
 
-Botão **"Novo banner"** abre um wizard com 4 etapas, mostradas como uma trilha no topo da tela: **Início → Espaços → Lojas → Configurações**.
+Botão **"Novo banner"** abre um formulário com 4 etapas, mostradas como uma trilha no topo da tela: **Início → Espaços → Lojas → Configurações**.
 
 1. **Início**: "O que você gostaria de fazer?" — hoje só existe a opção **"Inserir um banner"**.
-2. **Espaços**: "Em qual área do aplicativo você gostaria de inserir um banner?" — opções **"No carrossel da home"** (única disponível hoje) e **"Em uma vitrine de produtos"** (marcada **"Em breve"**, desabilitada). A tela mostra um preview em tempo real dentro de um mockup do app. Especificações do banner: até **5 banners** por vez, dimensão **320×220px**, peso até **1MB**, formatos **PNG e JPG**.
+2. **Espaços**: "Em qual área do aplicativo você gostaria de inserir um banner?" — opções **"No carrossel da home"** (única disponível hoje) e **"Em uma vitrine de produtos"** (marcada **"Em breve"**, desabilitada). A tela mostra uma simulação em tempo real de como o banner vai aparecer, dentro de um desenho ilustrativo do app. Especificações do banner: até **5 banners** por vez, dimensão **320×220px**, peso até **1MB**, formatos **PNG e JPG**.
 3. **Lojas**: "Em quais regiões ou lojas você gostaria de exibir seu(s) banner(s)?" — busca por CNPJ, nome ou endereço da loja; opção **"Todas as lojas"**; ou seleção por Estado (UF), cada UF expansível (para refinar por loja específica dentro do estado).
 4. **Configurações**: para cada banner enviado (até 5), configure individualmente pelo botão **"Configurar"** no card do banner:
    - **"Ao clicar, leve o cliente para..."** — 4 tipos de destino:
@@ -483,8 +483,8 @@ Botão **"Novo banner"** abre um wizard com 4 etapas, mostradas como uma trilha 
      - **Departamento**: leva o cliente para um departamento específico do catálogo (ex.: Cosméticos).
      - **Uma seleção de produtos**: busca produtos por nome/EAN (ou importa uma lista via botão "Importar") para montar a lista de produtos de destino. **Atenção:** só lojas que têm esses produtos em estoque exibirão esse banner — se o banner não aparecer numa loja específica, o motivo mais provável é falta de estoque desses produtos ali.
      - **Um link externo**: campo de URL (`https://`) para redirecionar para fora do app.
-   - **"Exibir este banner no período de..."**: datas de Início/Término, ou toggle **"Banner permanente"** (sem data de término).
-   - Ações: **Cancelar**/**Salvar** (confirma a configuração daquele banner específico) e, no rodapé geral do wizard, **Voltar**/**Salvar e publicar** (finaliza e publica todos os banners do carrossel).
+   - **"Exibir este banner no período de..."**: datas de Início/Término, ou chave **"Banner permanente"** (sem data de término).
+   - Ações: **Cancelar**/**Salvar** (confirma a configuração daquele banner específico) e, no rodapé geral do formulário, **Voltar**/**Salvar e publicar** (finaliza e publica todos os banners do carrossel).
 
 ---
 
@@ -533,8 +533,8 @@ Listagem com todos os produtos cadastrados na plataforma (departamento, categori
 | **Tipo de cadastro** (Medicamento / Não Medicamento) | Sim | Define o restante do formulário — ver comportamento condicional abaixo. |
 | **Registro MS** | Depende do Tipo de cadastro | Número de registro do produto na ANVISA (Ministério da Saúde). |
 | **Tarja** (Sem tarja / Tarja Vermelha / Tarja Preta) | Depende do Tipo de cadastro | Classificação regulatória da ANVISA: **Sem tarja** = venda livre; **Tarja Vermelha** = venda sob prescrição médica comum; **Tarja Preta** = medicamento controlado/psicotrópico, com retenção de receita (é o que o glossário do produto chama de **Controlados**). |
-| **Permitir promocionar** (toggle, padrão Não) | — | Ver definição acima, na seção Produtos. |
-| **Genérico** (toggle, padrão Não) | — | Quando ativado, exibe a tag "genérico" no detalhe do item para o consumidor no app. |
+| **Permitir promocionar** (chave, padrão Não) | — | Ver definição acima, na seção Produtos. |
+| **Genérico** (chave, padrão Não) | — | Quando ativado, exibe a tag "genérico" no detalhe do item para o consumidor no app. |
 | **Imagens do produto** | Sim | Até **1 imagem**, formatos JPG ou PNG, até 2MB. |
 | **Princípios ativos** | Sim | Um ou mais princípios ativos (campo de tags, botão "+" para adicionar mais de um). Melhora a busca e a precisão do resultado no app. |
 | **Descrição curta** | Sim | Texto resumido do produto, até 650 caracteres. |
@@ -633,7 +633,7 @@ Quando uma loja precisa de um produto que ainda não existe no catálogo mestre,
 
 ### Login
 
-Tela inicial do Portal: **"Bem-vindo — Faça login para acessar sua conta."** Campos **E-mail** e **Senha** (com ícone de olho para mostrar/ocultar), checkbox **"Lembrar senha"**, link **"Esqueceu a senha?"** e botão **"Entrar"**.
+Tela inicial do Portal: **"Bem-vindo — Faça login para acessar sua conta."** Campos **E-mail** e **Senha** (com ícone de olho para mostrar/ocultar), a opção marcável **"Lembrar senha"**, link **"Esqueceu a senha?"** e botão **"Entrar"**.
 
 ### Esqueceu a senha
 
@@ -650,7 +650,7 @@ Quando um usuário é convidado (ver [Usuários](#11-usuários)), ele recebe um 
 
 Ao final, tela de sucesso: **"Parabéns, cadastro concluído! Agora você está redirecionado para a tela de login..."**, com botão **"Fazer login"**.
 
-**Do lado de quem convida** (ver [Usuários](#11-usuários)): o convite é feito por um modal simples — só o **e-mail** do convidado (com validação, bloqueando duplicados), mais o Perfil de acesso e o vínculo a loja/lojas/rede. Não há campos adicionais (nome, telefone etc.) nesse momento — esses dados só são preenchidos pelo próprio convidado no fluxo de "Complete seu cadastro" descrito acima.
+**Do lado de quem convida** (ver [Usuários](#11-usuários)): o convite é feito por uma janela simples — só o **e-mail** do convidado (com validação, bloqueando duplicados), mais o Perfil de acesso e o vínculo a loja/lojas/rede. Não há campos adicionais (nome, telefone etc.) nesse momento — esses dados só são preenchidos pelo próprio convidado no fluxo de "Complete seu cadastro" descrito acima.
 
 ---
 
@@ -695,7 +695,7 @@ Toda exportação de relatório no Portal é **processada de forma assíncrona**
 
 Toda vez que cai um **pedido novo** no módulo Vendas, o sistema dispara uma mensagem de WhatsApp **direto** para o número cadastrado em `Configurações > Dados da Loja > Informações da loja` (campo **WhatsApp** — na prática, muitas vezes é o número do Gestor de Loja) — ver seção 6.1. É assim que o responsável pela loja é avisado para iniciar a separação do pedido. Não existe hoje nenhuma etapa separada de conexão/autenticação para isso — o disparo é direto para o número cadastrado.
 
-### 14.5 Onboarding comercial e integração de nova loja (uso interno)
+### 14.5 Cadastro comercial e integração de nova loja (uso interno)
 
 Esses e-mails **não vão para o associado** — são direcionados ao time interno da Farmarcas e/ou a parceiros. Documentados aqui só para contexto, caso um associado pergunte "eu preenchi um formulário, para quem isso foi?":
 
@@ -710,6 +710,6 @@ Esses e-mails **não vão para o associado** — são direcionados ao time inter
 - **Resolvido:** o fluxo de Solicitação de produto pelo Associado foi identificado (ícone na tela Estoque) — ver seção 7.
 - **Resolvido:** independentemente do tipo de estoque (Espelhado/Integrado/Independente), o Grupo de lojas sempre centraliza o atendimento de pedidos na loja principal — ver seção 4.
 - **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados. O associado tem o contato direto do Anjo via WhatsApp, e também pode abrir chamado via Salesforce. O suporte é sempre com a Farmarcas — nunca com a Rede (ver seção 1).
-- **Resolvido:** o bug do modal de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
+- **Resolvido:** o bug da janela de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
 - **Templates de e-mail descartados/desconsiderados** (existem no centralizador de comunicação, mas não devem ser documentados/usados como referência — ver seção 14): "Aplicativo conectado ao ERP." (duplicado de "comunicação... restabelecida"), "Confira a lista de lojas com mais de 2 horas de atraso na integração" (será descontinuado), "Nova solicitação disponível" (não existe mais), "O relatório de lojas desativadas já está disponível" (não será utilizado), e o e-mail de falha de comunicação na integração com detalhe técnico do erro (será descontinuado).
 - Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-15; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
