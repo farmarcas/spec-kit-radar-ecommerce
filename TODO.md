@@ -3,9 +3,19 @@
 ## Em andamento
 
 - [ ] Reorganizar estrutura do repositório por squads (app, portal, core)
-  - [ ] Atualizar `CLAUDE.md` de cada squad com contexto específico
-  - [ ] Mover histórias existentes para `squads/app/specs/features/`
-  - [ ] Criar estrutura inicial para squads Portal e Core
+  - [x] Criar esqueleto `squads/{app,portal,core}/` com `CLAUDE.md` + `product.md` específicos por squad
+  - [ ] Preencher `squads/portal/product.md` com dados reais (KPIs, entregas, time) — hoje é template vazio
+  - [ ] Preencher `squads/core/product.md` — hoje é template vazio, quase nada documentado sobre essa squad ainda
+  - [ ] Revisar e mover specs existentes para os novos caminhos (checklist abaixo) sem quebrar links relativos entre documentos
+  - [ ] Depois da migração, enxugar `CLAUDE.md` da raiz para regras universais (hoje ainda fala como se fosse só a squad App) e generalizar `context/product.md` (hoje só cobre o App; visão/NSM/modelo de negócio deveriam ficar lá, o resto migra pra `squads/app/product.md`)
+
+### Checklist de migração (caminho atual → novo) — revisar antes de mover, nada foi movido ainda
+
+  - [ ] `specs/features/001-app-ecommerce/` → `squads/app/specs/features/`
+  - [ ] `sprints/status-atual.md` → `squads/app/sprints/status-atual.md`
+  - [ ] `assets/roadmap/roadmap-app-q3-2026.md` → `squads/app/roadmap/`
+  - [ ] `specs/features/portal/` → `squads/portal/specs/features/`
+  - [ ] Conteúdo específico de App em `context/product.md` (KPIs, time, entregas, personas, "Fora do escopo do App") → `squads/app/product.md`
 
 ## Próximos passos
 

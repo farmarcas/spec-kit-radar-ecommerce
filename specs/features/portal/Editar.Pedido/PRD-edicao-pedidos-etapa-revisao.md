@@ -4,11 +4,13 @@
 **Squad:** E-commerce
 **Autor:** Matheus (PO/PM)
 **Status:** Em refinamento — base para geração de tarefas via Claude Code
-**Versão:** 2.1
+**Versão:** 2.2
 
 ---
 
 ## 0. Changelog
+
+**v2.2 (2026-08-17)** — Incorporado resumo da visão do Consumidor no App (nova seção 7.1), a partir do PRD publicado pelo time App: [`specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md`](../../001-app-ecommerce/edição%20de%20pedido/PRD-pedido-editado-portal-app.md) (v1.0). Isso resolve parcialmente a dependência de UX que este documento deixava aberta desde a v1.0 (seção 3 e 15) sobre o protótipo do detalhe do pedido no app do cliente. Os dois PRDs continuam **separados** — este documento não descreve a experiência do App em detalhe, apenas referencia o que é relevante para decisões do Portal. Itens de alinhamento entre as duas squads (tratamento visual de item removido, copy final da push, cenário de cancelamento total) seguem como pendência na seção 15.
 
 **v2.1 (2026-08-11)** — Adicionada a regra de Troco (seção 8.2), validada no protótipo `troco-conferencia.html` (projeto claude.ai/design "Validação de ideias"). Gap identificado: o documento cobria estorno (pagamento no app) e "atualização do valor a cobrar" (pagamento offline), mas não descrevia como o troco em si deveria se comportar durante a edição. Card correspondente: [ECP-1260](https://farmarcas.atlassian.net/browse/ECP-1260).
 
@@ -56,7 +58,7 @@ Isso reduz cancelamentos totais desnecessários, dá controle fino sobre o pedid
 - Tela de histórico global/auditoria entre pedidos (só existe dentro do detalhe do pedido).
 - Campo de "motivo da edição".
 - Dashboard de indicadores (UI) — apenas os requisitos de dados/eventos ficam definidos aqui.
-- Protótipo da tela de detalhe do pedido no app do cliente final (dependência de UX, fora deste PRD).
+- Protótipo da tela de detalhe do pedido no app do cliente final (dependência de UX, fora deste PRD — hoje documentado no PRD do time App, ver seção 7.1).
 - SLA/timeout automático de tempo máximo em Conferência (não definido nesta versão).
 - Definição de copy das notificações push (dependência de UX).
 - Promoções com múltiplas faixas de desconto por "Limite por compra" — hoje só existe 1 faixa configurável por promoção (1 a 15 unidades, ou "Sem limite").
@@ -163,7 +165,19 @@ Regras por forma de pagamento:
 - **Pago no app:** estorno automático via Braspag → dispara notificação de estorno além da notificação de alteração.
 - **Pago offline (na entrega):** não há estorno automático (não houve cobrança prévia) → o cliente recebe apenas a notificação de alteração, com tom de "atenção: o valor do seu pedido foi alterado" (sem falar de estorno).
 
-Copy final das notificações e o protótipo da indicação de "pedido editado" na tela de detalhe do pedido do app do cliente são **dependências de UX**, não bloqueantes para o desenvolvimento da lógica de backend/tracking.
+Copy final das notificações é dependência de UX, não bloqueante para o desenvolvimento da lógica de backend/tracking. O protótipo da tela de detalhe do pedido no app do cliente **já foi definido** pelo time App — ver resumo na seção 7.1.
+
+### 7.1 Visão do Consumidor no App (referência)
+
+> Resumo do que o time App definiu para a experiência do Consumidor quando um pedido é editado/cancelado nesta etapa. Detalhe completo, critérios de aceite e protótipos Figma no PRD de origem do App: [`PRD-pedido-editado-portal-app.md`](../../001-app-ecommerce/edição%20de%20pedido/PRD-pedido-editado-portal-app.md). Este documento continua sendo a fonte de verdade para as regras de negócio do Portal — o link acima é só para quem precisar entender o que o cliente final enxerga do outro lado.
+
+- **Sinalização:** tag "📦 Pedido atualizado" no card da lista "Meus pedidos" e no cabeçalho do detalhe do pedido, sempre que houver ajuste de item (não aparece em pedidos concluídos/cancelados, cujo próprio status já comunica o estado final).
+- **Tags por item:** "📦 Qtd. ajustada X → Y" (item reduzido) e "❌ Produto removido" (item removido). **Diferença em relação ao Portal:** o App exibe o item removido em texto normal, sem tachado/opacidade 50% (aqui em 6.2) — o time App tratou como "registro do que já aconteceu", não como uma ação ainda reversível. Alinhar se isso é intencional (ver 15).
+- **Resumo financeiro:** rótulo **"Estorno"** (verde) quando o pedido foi pago no app, ou **"Itens removidos"** (verde) quando pago offline — nomenclatura própria do App, distinta de "Ajustes de itens" usada no bloco financeiro do Portal (seção 8.1). Sem menção a estorno no caso offline.
+- **Split promocional ("Limite por compra"):** o App simplifica a visão do Portal (linha-pai + linhas-filhas) em duas linhas de produto independentes — "Oferta" e "Preço normal" — com a tag de ajuste sempre na linha "Preço normal", consistente com a regra de priorização da seção 6.7.
+- **Push notification:** o time App localizou no Figma uma peça "Seu pedido foi atualizado" com a mesma copy do texto de apoio da tela de detalhe — candidata a copy final, mas ainda não confirmada oficialmente (ver 15).
+- **Sem protótipo ainda:** cancelamento total do pedido feito no Portal (distinto de edição de item) e a notificação de "estorno realizado" não têm tela prototipada do lado do App.
+- O Consumidor tem **leitura somente** — toda edição de pedido é exclusiva do Portal.
 
 ## 8. Estorno e Troco
 
@@ -322,7 +336,12 @@ Ainda que o dashboard de indicadores não seja construído nesta versão, o back
 
 ## 15. Dependências e itens abertos
 
-- **UX:** copy das notificações push; protótipo da indicação de "pedido editado" na tela de detalhe do pedido do app do cliente; eventual UI de dashboard de indicadores (fase 2); confirmar quais outros canais de origem existem para a Trilha de Auditoria além de "Pedido recebido do app" (ver seção 9).
+- **UX:** eventual UI de dashboard de indicadores (fase 2); confirmar quais outros canais de origem existem para a Trilha de Auditoria além de "Pedido recebido do app" (ver seção 9).
+- **Alinhamento Portal ↔ App** (itens levantados pelo PRD do App ao consumir este documento — ver seção 7.1):
+  - Confirmar se a copy de push "Seu pedido foi atualizado" encontrada no Figma do App é de fato a copy final adotada.
+  - Confirmar se a ausência de tachado/opacidade no item removido do lado do App (diferente do tratamento do Portal, seção 6.2) é intencional ou precisa ser alinhado entre os dois protótipos.
+  - Prototipar e documentar o cenário de cancelamento total do pedido do lado do App (hoje só existe do lado Portal, seção 6.4) antes da implementação dessa parte.
+  - Confirmar se já existe protótipo de tela/notificação para "estorno realizado" no App, ou se ainda está pendente.
 - **Integração ERP:** confirmar contrato de envio do status "cancelado" para pedidos que nunca chegaram a ser capturados operacionalmente.
 - **Integração Braspag:** confirmar SLA/contrato de resposta do estorno automático para gatilho correto da notificação de estorno.
 - **Split promocional (seção 6.7):** confirmar com o time tech onde vive hoje a lógica de "Limite por compra" (motor de preços/promoções vs. serviço de pedidos) — investigação a ser feita ao entrar no card de implementação, não bloqueia o refinamento funcional.
