@@ -41,6 +41,36 @@ Importante: o desenho de schema divergiu do que este plano assumia — a squad a
 - **Continua válido, ainda distante:** `ECC-247`–`ECC-252` (Fase 4, desligamento) — nada para desligar ainda, Datadog confirma tráfego intacto nos 2 serviços legados.
 - **Precisa de decisão do time, não só atualização de card:** o épico `ECC-253` ("Fundação Core — Infraestrutura Compartilhada") ficou com a maior parte do seu escopo original (`ECC-230`/`ECC-234`, e implicitamente `ECC-232`/`ECC-233`) cancelada ou excluída e substituída por `ECC-227`. Só resta `ECC-236` nele. Recomendo ao time decidir entre manter o épico só para a feature flag, ou mover `ECC-236` para dentro de `ECC-227` e fechar `ECC-253` — não fiz essa mudança estrutural sozinho.
 
+### 0.5 Correção fina — redução por endpoint (dado fornecido pelo time, não por mim)
+
+A checagem inicial (§0.1) olhou tráfego por **serviço inteiro** e não viu nenhum zerar — isso está correto, mas esconde o que de fato mudou. O time trouxe dados de Datadog por **endpoint específico**, comparando buckets de 15 minutos antes/depois de um corte para o Typesense (por volta das 15h05, data exata a confirmar):
+
+| Chamada do BFF | Antes | Depois | Efeito |
+|---|---|---|---|
+| `catalogue get-by-description` | ~290 | 0 | eliminada |
+| `product-search autocomplete` | ~1.000 | 0 | eliminada |
+| `stock byproductids` | ~160 | 0–2 | eliminada |
+| `catalogue byproductids` | ~900 | ~150 | −83% |
+| `orchestrator v3/prices` | ~700 | ~100 | −85% |
+| `product-search searchbyword` | ~150 | ~15 | −90% |
+
+E a fração do tráfego total de cada serviço ligada a esse fluxo de busca ("razão antes vs. depois"):
+
+| Serviço | Razão antes | Razão depois | Efeito da virada |
+|---|---|---|---|
+| `ecomm-api-product-search-dotnet` | 0,92 | 0,54 | −41% |
+| `ecomm-api-orchestrator-product-dotnet` | 0,93 | 0,73 | −21% |
+| `ecomm-api-stock-dotnet` | 0,96 | 0,81 | −15% |
+| `ecomm-api-catalogue-dotnet` | 0,61 | 0,64 | 0% |
+
+**O que isso muda no plano:** as chamadas de **enriquecimento de resultado de busca** (buscar preço/estoque por lista de IDs para montar o card de produto na tela de busca) foram de fato eliminadas ou muito reduzidas — porque o Typesense agora guarda esse dado de forma denormalizada e não precisa mais chamar `stock`/`catalogue`/`orchestrator` a cada busca. Isso é diferente de "consumidor desligado" (nenhum serviço parou), mas é exatamente o tipo de redução que motivou a pergunta original do time.
+
+**Impacto direto nos cards:**
+- `ECC-243` ([ecomm-bff-mobile-search-dotnet] Consumir estoque/preço da api-core): a fatia de tráfego que ele fazia para `stock`/`price` por causa de busca (`byproductids`, enriquecimento de resultado) já caiu bastante — não pelo api-core, pelo Typesense. O que sobrar de chamada (~15-19% do tráfego original) provavelmente é uso fora do fluxo de busca (ex: tela de produto isolada, outro fluxo do BFF) e precisa ser re-escopado antes de seguir com a migração — migrar "tudo" deixou de fazer sentido, porque parte do problema original já não existe mais.
+- `ECC-237` ([ecomm-api-orchestrator-product-dotnet] Consumir estoque/preço da api-core): `v3/prices` caiu 85%, mas ainda tem tráfego residual (~100/bucket) e o orchestrator como um todo ainda representa 73% do seu tráfego original nesse fluxo — a migração continua relevante aqui, só que num volume bem menor do que quando o card foi criado.
+
+Recomendo remedir o volume real de `stock`/`price` desses dois consumidores **depois** que a poeira do corte do Typesense assentar (algumas semanas), antes de estimar esforço da Fase 3 para eles — o escopo pode ter encolhido o suficiente para mudar a prioridade relativa entre os 9 consumidores mapeados em §5.
+
 ---
 
 ## 1. Contexto
