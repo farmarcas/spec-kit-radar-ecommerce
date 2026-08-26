@@ -225,7 +225,10 @@ Sim — a Recompra permite repetir um pedido anterior com um clique (funcionalid
 É o desconto que o consumidor tem por convênio ou plano de saúde farmacêutico. O parceiro atual é a **Interplayers**.
 
 **O PBM já está disponível no app?**
-Ainda não — é uma entrega planejada para o Q3 2026 (agosto–setembro), junto com o novo checkout via Deeplink (julho). A integração segue o modelo "plug-and-play": cada loja habilita o PBM de forma independente, sem customização do time do Radar.
+Ainda não — é uma entrega planejada para o Q3 2026 (agosto–setembro). A integração segue o modelo "plug-and-play": cada loja habilita o PBM de forma independente, sem customização do time do Radar.
+
+**O que é Deeplink no app?**
+É a capacidade de abrir o app diretamente numa tela específica — produto, vitrine, campanha, departamento, ofertas, busca — a partir de um link, funcionando com o app fechado ou em background. Usado principalmente por lojistas para anúncios digitais que levam o cliente direto ao produto anunciado, sem passar pela navegação manual. Resultado do Spike ECA-833; detalhes em `specs/features/001-app-ecommerce/Deeplink/PRD-deeplink-app.md`.
 
 ---
 
@@ -255,7 +258,7 @@ O lojista (farmácia associada), pelo Portal Radar E-commerce / E-Delivery. O ap
 | OMS | Sistema que gerencia o ciclo de vida do pedido após a criação |
 | Recompra | Repetir um pedido anterior com um clique |
 | Controlados | Medicamentos com retenção de receita, retirada obrigatória na loja |
-| Deeplink | Tecnologia do novo checkout para receber dados de precificação |
+| Deeplink | Link que abre o app direto numa tela específica (produto, vitrine, campanha, etc.), usado em anúncios de lojistas |
 
 ---
 

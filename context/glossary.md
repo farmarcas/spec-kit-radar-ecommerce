@@ -29,7 +29,7 @@
 | **PBM** | Programa de Benefício em Medicamentos. Sistema de desconto via convênio ou plano de saúde. Parceiro atual: Interplayers. |
 | **Plug-and-play (PBM)** | Estratégia onde cada lojista habilita sua integração PBM de forma independente, sem customização pelo time Radar. |
 | **Checkout** | Fluxo completo de finalização de compra no App. |
-| **Deeplink** | Tecnologia usada no novo checkout para receber dados necessários à precificação. |
+| **Deeplink** | Link que abre o app diretamente numa tela específica (produto, vitrine, campanha, departamento, ofertas, busca), usado principalmente por lojistas para anúncios digitais direcionados à sua loja. Suporta Universal/App Links (HTTPS) e custom scheme por flavor. Ver `specs/features/001-app-ecommerce/Deeplink/PRD-deeplink-app.md`. |
 | **OMS** | Order Management System. Gerencia o ciclo de vida dos pedidos após criação. |
 | **Recompra** | Funcionalidade que permite ao consumidor repetir um pedido anterior com um clique. |
 | **GE** | Grupo Econômico. Conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma **Rede** (bandeira). É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal. |
