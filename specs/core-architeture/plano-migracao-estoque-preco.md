@@ -1,8 +1,45 @@
 # Plano de Migração — Estoque e Preço para `ecomm-api-core` (Monólito Modular)
 
-> **Status:** rascunho para validação da squad Core
+> **Status:** reativo — replanejado após a implementação do Typesense
 > **Origem:** síntese da proposta de arquitetura ([16-sintese-proposta-final.md](16-sintese-proposta-final.md)) + board Jira `ECC` + diagnóstico direto do repositório `ecomm-api-core-dotnet` + mapa de dependências reais via Datadog APM
-> **Data:** 2026-07-16
+> **Data original:** 2026-07-16 · **Última revisão:** 2026-08-26
+
+---
+
+## 0. Atualização — 2026-08-26 (pós-Typesense)
+
+O time voltou a olhar para este plano depois de implementar um novo motor de busca com **Typesense** (épico `ECC-312`, ver `specs/features/001-app-ecommerce/Busca/plano-integracao-typesense.md`), com a hipótese de que consumidores mapeados nas seções 3–5 abaixo teriam ficado obsoletos e sido desligados. Investigação em três frentes (repositório `ecomm-api-core-dotnet` incluindo branches não mergeadas, board `ECC` completo, e Datadog APM) mostra um quadro diferente do esperado — nem pior, nem igual, mas **duas iniciativas paralelas que não se cruzam**:
+
+### 0.1 O que o Typesense realmente mudou
+
+**Nada, nesta frente de Estoque/Preço.** `ECC-312` e sua subárvore (`ECC-313`–`ECC-333`, quase tudo Finalizado) implementaram busca — um serviço novo (`ecomm-sub-service-typesense`, confirmado ativo em produção via Datadog: 1,68M requisições/7 dias) que roda em **repositórios próprios**, fora do `ecomm-api-core-dotnet`. Não há uma linha de código, branch ou commit relacionado a Typesense/Kafka/`ecomm-api-sense` no `ecomm-api-core-dotnet` (confirmado por busca exaustiva no código, incluindo todas as branches). O Datadog confirma: `ecomm-api-stock-dotnet` (2,3M req/7d) e `ecomm-api-price-dotnet` (10,6M req/7d) seguem com tráfego pesado, e os 9 consumidores mapeados na seção 5 continuam todos ativos — **nenhum foi desligado**. Ainda há trabalho de Typesense em aberto (`ECC-334` — indexar catálogo do Portal, Priorizado; `ECC-337` — bug de preço customizado não refletindo na busca, em desenvolvimento), mas isso não afeta este plano.
+
+### 0.2 O que de fato mudou: `ECC-227` avançou em paralelo
+
+Enquanto isso, **outra frente do próprio time** avançou a migração de Estoque/Preço para Postgres — sob o card `ECC-227` (que já existia como Backlog quando este plano foi escrito), agora **Em Desenvolvimento**, com subtarefas criadas em 2026-07-30:
+
+| Card | O que é | Status | Evidência no código |
+|---|---|---|---|
+| `ECC-287` | Implementação Pharmacy — modelo Postgres/EF Core | Em Code Review | Branch `feat/ECC-227-stock-pricing-postgres` |
+| `ECC-288` | Implementação Stock — modelo Postgres/EF Core | Em Code Review | `Stock.Domain` ganhou `StockGroup`, `StockGroupMember`, `StockGroupStatus`, `PharmacySalesState` |
+| `ECC-289` | Implementação Price — modelo Postgres/EF Core | Em Code Review | `Pricing.Infrastructure` real: `PricingDbContext`, migration `20260730175555_InitialPricing`, `GetEffectivePriceHandler`; CLI `ImportStockCommand`/`ImportPricingCommand` para backfill |
+| `ECC-260` | [CORE][Infra] Kafka compartilhada | Backlog | **Ainda não implementado em nenhuma branch** — confirmado por busca exaustiva (`git log --all --grep=kafka`) |
+| `ECC-290`/`ECC-291`/`ECC-292` | Workers de Estoque/Preço (host unificado, "similar ao antigo `ecomm-sub-service-unregistered-product-dotnet`") | Em Desenvolvimento | Sem código ainda, sem descrição detalhada no Jira |
+
+Importante: o desenho de schema divergiu do que este plano assumia — a squad adotou nomenclatura centrada em **Pharmacy** (`PharmacyProduct`, `PharmacyDiscountEnabled`, `PharmacySalesState`) em vez de `Store*`, e trata Pharmacy como módulo próprio (`ECC-257`, já com padrão `legacy_id` implementado e mergeado em `main`) — mais amplo do que os dois módulos (Stock, Pricing) que este plano cobria originalmente.
+
+### 0.3 Por que 3 dos nossos cards foram cancelados
+
+`ECC-229` (Kafka infra), `ECC-230` (Stock.Infrastructure) e `ECC-234` (legacy_id/UUIDv7 Stock/Pricing) foram **cancelados** por thiago.fernandes em 2026-07-20 ("Não será necessário" / "Não faz sentido essa implementação") — porque esse escopo já estava sendo assumido por `ECC-227`. Quatro outros cards que criamos (`ECC-231`, `ECC-232`, `ECC-233`, `ECC-235` — Stock.Application, Pricing.Infrastructure, Pricing.Application, registro de ADR) **foram excluídos do Jira** (não aparecem mais nem como cancelados — o item simplesmente não existe mais). Não sabemos quem excluiu nem o motivo exato; presumimos que seja o mesmo motivo de sobreposição com `ECC-227`, mas isso não foi confirmado com o time.
+
+**Conforme instrução: nenhum card cancelado ou concluído foi alterado.** As mudanças abaixo tocam apenas cards ainda abertos.
+
+### 0.4 O que continua válido e o que muda
+
+- **Continua válido, sem sobreposição:** `ECC-236` (feature flag por loja) — não duplicado em lugar nenhum, ainda não implementado, continua sendo o mecanismo de rollout necessário quando a Fase 3 começar.
+- **Continua válido, mas agora bloqueado por `ECC-227`, não pela nossa Fase 0:** os 9 cards de migração de consumidor (`ECC-237`–`ECC-245`, subtarefas de `ECC-210`/`ECC-211`) e `ECC-246` (wake-princing). Nenhum consumidor pode migrar antes de `ECC-290`/`ECC-291`/`ECC-292` (camada de worker) e `ECC-260` (Kafka) estarem prontos — e esses ainda não têm código.
+- **Continua válido, ainda distante:** `ECC-247`–`ECC-252` (Fase 4, desligamento) — nada para desligar ainda, Datadog confirma tráfego intacto nos 2 serviços legados.
+- **Precisa de decisão do time, não só atualização de card:** o épico `ECC-253` ("Fundação Core — Infraestrutura Compartilhada") ficou com a maior parte do seu escopo original (`ECC-230`/`ECC-234`, e implicitamente `ECC-232`/`ECC-233`) cancelada ou excluída e substituída por `ECC-227`. Só resta `ECC-236` nele. Recomendo ao time decidir entre manter o épico só para a feature flag, ou mover `ECC-236` para dentro de `ECC-227` e fechar `ECC-253` — não fiz essa mudança estrutural sozinho.
 
 ---
 
