@@ -71,6 +71,30 @@ E a fração do tráfego total de cada serviço ligada a esse fluxo de busca ("r
 
 Recomendo remedir o volume real de `stock`/`price` desses dois consumidores **depois** que a poeira do corte do Typesense assentar (algumas semanas), antes de estimar esforço da Fase 3 para eles — o escopo pode ter encolhido o suficiente para mudar a prioridade relativa entre os 9 consumidores mapeados em §5.
 
+### 0.6 Contexto mais amplo — este plano é 1 de 7 domínios da Core
+
+A missão da squad Core não para em Estoque/Preço: é reestruturar a arquitetura inteira, migrando **todos os domínios e todos os consumidores** para a `api-core`/Postgres. Estoque/Preço é o primeiro domínio a ser tratado a fundo — este documento é o "molde" para os demais.
+
+**Estratégia de execução, confirmada com o time em 2026-08-26:** a Core migra o **domínio** (modelo de dados + persistência na api-core); a migração de cada **consumidor** é mapeada pela Core mas **executada pela squad dona daquele consumidor** (Portal ou App, no caso de Estoque/Preço — ver `ECC-210`/`ECC-211`). A Core faz o mapeamento completo antes de repassar.
+
+**Sequência de foco, definida pelo time:** primeiro fechar Estoque/Preço (consumers via Squad Portal e Squad App) → depois **Order** → depois os demais domínios (Catalog, Pharmacy, Promotion). Não iniciar mapeamento dos domínios seguintes antes de Estoque/Preço avançar.
+
+**Inventário dos 7 módulos hoje em `src/Modules/` do `ecomm-api-core-dotnet`** (2 não estão na síntese de arquitetura original — `16-sintese-proposta-final.md` só cobre Catalog, Pricing, Promotion, Stock, Search e Pharmacy; Search nem é módulo do repo, é o Typesense, externo):
+
+| Domínio | Serviço legado | Tem legado real? | Maturidade do módulo na Core (arquivos .cs) | Consumers mapeados? |
+|---|---|---|---|---|
+| Stock | `ecomm-api-stock-dotnet` | Sim | Domain 6 · App 2 · Infra 15 · GraphQL 4 | ✅ Sim — este doc |
+| Price | `ecomm-api-price-dotnet` | Sim | Domain 5 · App 2 · Infra 12 · GraphQL 3 | ✅ Sim — este doc |
+| Catalog | `ecomm-api-catalogue-dotnet` | Sim | Domain 14 · App 37 · Infra 24 · GraphQL 23 | ❌ Não |
+| Pharmacy | `ecomm-api-pharmacy-dotnet` | Sim | Domain 27 · App 98 · Infra 35 · GraphQL 42 | ❌ Não |
+| Promotion | `ecomm-api-promotion-dotnet` | Sim (pendente) | Domain 2 · App 0 · Infra 0 · GraphQL 3 | ❌ Não |
+| **Order** | `ecomm-api-order-dotnet` + família de sub-serviços | **Sim — domínio mais crítico, trata pedido diretamente** | Domain 4 · App 0 · Infra 0 · GraphQL 3 | ❌ Não — próximo da fila |
+| Pbm | *nenhum encontrado no Datadog* | **Não — nasceu na Core** | Domain 8 · App 43 · Infra 40 · GraphQL 4 | N/A — sem legado pra migrar consumer |
+
+`Workers` está zerado nos 7 módulos, sem exceção — confirma que a infraestrutura de consumo (Kafka) é um bloqueio transversal a toda a Core, não só de Estoque/Preço (ver `ECC-260`).
+
+**Pendência real sobre Order:** `ecomm-api-order-dotnet` tem 1,68M requisições/7 dias — muito ativo — mas o módulo `Order` na Core é só scaffolding de Domain, sem Application/Infrastructure/Workers. Quando a fila chegar nele, o ponto de partida é comparável ao que Stock/Pricing eram em julho, antes do `ECC-227`.
+
 ---
 
 ## 1. Contexto
