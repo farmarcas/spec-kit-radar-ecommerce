@@ -85,15 +85,26 @@ A missão da squad Core não para em Estoque/Preço: é reestruturar a arquitetu
 |---|---|---|---|---|
 | Stock | `ecomm-api-stock-dotnet` | Sim | Domain 6 · App 2 · Infra 15 · GraphQL 4 | ✅ Sim — este doc |
 | Price | `ecomm-api-price-dotnet` | Sim | Domain 5 · App 2 · Infra 12 · GraphQL 3 | ✅ Sim — este doc |
-| Catalog | `ecomm-api-catalogue-dotnet` | Sim | Domain 14 · App 37 · Infra 24 · GraphQL 23 | ❌ Não |
-| Pharmacy | `ecomm-api-pharmacy-dotnet` | Sim | Domain 27 · App 98 · Infra 35 · GraphQL 42 | ❌ Não |
-| Promotion | `ecomm-api-promotion-dotnet` | Sim (pendente) | Domain 2 · App 0 · Infra 0 · GraphQL 3 | ❌ Não |
-| **Order** | `ecomm-api-order-dotnet` + família de sub-serviços | **Sim — domínio mais crítico, trata pedido diretamente** | Domain 4 · App 0 · Infra 0 · GraphQL 3 | ❌ Não — próximo da fila |
+| Catalog | `ecomm-api-catalogue-dotnet` | Sim — **domínio já completo, sem card novo** | Domain 14 · App 37 · Infra 24 · GraphQL 23 | ❌ Não |
+| Pharmacy | `ecomm-api-pharmacy-dotnet` | Sim — **domínio já completo, sem card novo** | Domain 27 · App 98 · Infra 35 · GraphQL 42 | ❌ Não |
+| Promotion | `ecomm-api-promotions-dotnet` (nome real, plural) | Sim (pendente) | Domain 2 · App 0 · Infra 0 · GraphQL 3 | ✅ Sim — 3 consumidores (ver `ECC-349`) |
+| **Order** | `ecomm-api-order-dotnet` + família de sub-serviços | **Sim — domínio mais crítico, trata pedido diretamente** | Domain 4 · App 0 · Infra 0 · GraphQL 3 | ✅ Sim — 21 consumidores (ver `ECC-348`) |
 | Pbm | *nenhum encontrado no Datadog* | **Não — nasceu na Core** | Domain 8 · App 43 · Infra 40 · GraphQL 4 | N/A — sem legado pra migrar consumer |
 
 `Workers` está zerado nos 7 módulos, sem exceção — confirma que a infraestrutura de consumo (Kafka) é um bloqueio transversal a toda a Core, não só de Estoque/Preço (ver `ECC-260`).
 
 **Pendência real sobre Order:** `ecomm-api-order-dotnet` tem 1,68M requisições/7 dias — muito ativo — mas o módulo `Order` na Core é só scaffolding de Domain, sem Application/Infrastructure/Workers. Quando a fila chegar nele, o ponto de partida é comparável ao que Stock/Pricing eram em julho, antes do `ECC-227`.
+
+### 0.7 Reorganização do board — 2026-09-02
+
+Criados os cards de domínio que faltavam no board `ECC`, seguindo a mesma lógica: só domínios sem trabalho de Core em andamento ganham card novo — Catalog e Pharmacy já estão com o domínio completo (sem card, nada pendente do lado Core), Stock/Price já têm subárvore ativa (`ECC-227`). **Nenhum card existente foi alterado ou removido.**
+
+| Épico | Card de migração do domínio | Consumidores mapeados (comentário, só consulta) |
+|---|---|---|
+| `ECC-346` — Domain: Order | `ECC-348` — Migrar domínio Pedido para api-core | 21 (`ecomm-bff-mobile-checkout`, `ecomm-sub-service-pix-status`, `ecomm-sub-service-store-cart`, `ecomm-bff-mobile-login`, `ecomm-bff-mobile-pharmacy`, `ecomm-bff-backoffice-order`, `ecomm-bff-mobile-main`, `ecomm-bff-mobile-emphasis`, `ecomm-sub-service-order-status-created`, `ecomm-bff-mobile-order`, `ecomm-sub-service-order-status-update-by-erp`, `ecomm-bff-mobile-profile`, `ecomm-bff-stock-file-validator`, `ecomm-sub-service-payment-status`, `ecomm-sub-service-offer-indicator`, `ecomm-sub-service-user-address`, `ecomm-bff-mobile-payment`, `ecomm-api-mobile-stock`, `ecomm-topic-sub-whatsapp`, `ecomm-bff-backoffice-indicator`, `ecomm-bff-mobile-cart`) |
+| `ECC-347` — Domain: Promotion | `ECC-349` — Migrar domínio Promoção para api-core | 3 (`ecomm-bff-mobile-search`, `ecomm-bff-mobile-main`, `ecomm-bff-backoffice-promotions`) |
+
+Ambos os cards de domínio ficam bloqueados por `ECC-260` (infra de Kafka compartilhada — ainda sem código em nenhuma branch) na parte de Workers/consumo, igual ao que já vale para Stock/Price.
 
 ---
 
