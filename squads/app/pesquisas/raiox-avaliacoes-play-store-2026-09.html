@@ -1,0 +1,428 @@
+<title>Raio-X do Ultra Popular</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --page:      #f9f9f7;
+    --surface:   #fcfcfb;
+    --surface-2: #f3f2ee;
+    --ink:       #0b0b0b;
+    --ink-2:     #52514e;
+    --muted:     #898781;
+    --grid:      #e1e0d9;
+    --border:    rgba(11,11,11,0.10);
+    --border-2:  rgba(11,11,11,0.16);
+
+    --c-busca:     #2a78d6;
+    --c-preco:     #eb6834;
+    --c-cobertura: #1baf7a;
+    --c-bugs:      #eda100;
+    --c-pedido:    #e87ba4;
+    --c-cadastro:  #008300;
+    --c-estoque:   #4a3aa7;
+    --c-pagamento: #e34948;
+    --c-generico:  #b7b5ab;
+
+    --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:      #0d0d0d;
+      --surface:   #1a1a19;
+      --surface-2: #212120;
+      --ink:       #ffffff;
+      --ink-2:     #c3c2b7;
+      --muted:     #898781;
+      --grid:      #2c2c2a;
+      --border:    rgba(255,255,255,0.10);
+      --border-2:  rgba(255,255,255,0.16);
+
+      --c-busca:     #3987e5;
+      --c-preco:     #d95926;
+      --c-cobertura: #199e70;
+      --c-bugs:      #c98500;
+      --c-pedido:    #d55181;
+      --c-cadastro:  #008300;
+      --c-estoque:   #9085e9;
+      --c-pagamento: #e66767;
+      --c-generico:  #6f6d65;
+
+      --critical: #e66767;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:      #0d0d0d;
+    --surface:   #1a1a19;
+    --surface-2: #212120;
+    --ink:       #ffffff;
+    --ink-2:     #c3c2b7;
+    --muted:     #898781;
+    --grid:      #2c2c2a;
+    --border:    rgba(255,255,255,0.10);
+    --border-2:  rgba(255,255,255,0.16);
+
+    --c-busca:     #3987e5;
+    --c-preco:     #d95926;
+    --c-cobertura: #199e70;
+    --c-bugs:      #c98500;
+    --c-pedido:    #d55181;
+    --c-cadastro:  #008300;
+    --c-estoque:   #9085e9;
+    --c-pagamento: #e66767;
+
+    --critical: #e66767;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    background:var(--page);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    line-height:1.55;
+  }
+  .wrap{ max-width:980px; margin:0 auto; padding:56px 24px 96px; }
+
+  h1,h2,h3{ font-family:"Libre Franklin", system-ui, sans-serif; text-wrap:balance; margin:0; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
+  .num{ font-variant-numeric:tabular-nums; }
+
+  /* ---- Header ---- */
+  header{ margin-bottom:40px; }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12.5px; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--critical); font-weight:500; margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{ content:"●"; font-size:8px; }
+  h1{ font-size:clamp(30px,4.4vw,44px); font-weight:800; letter-spacing:-0.01em; color:var(--ink); }
+  .dek{ font-size:17px; color:var(--ink-2); max-width:640px; margin-top:14px; }
+
+  .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-top:32px; }
+  .stat{ background:var(--surface); padding:18px 20px; }
+  .stat .v{ font-size:26px; font-weight:700; font-family:"Libre Franklin",sans-serif; }
+  .stat .l{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+
+  /* ---- Section shell ---- */
+  section{ margin-top:56px; }
+  .section-head{ margin-bottom:22px; }
+  .section-head .tag{ font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .section-head h2{ font-size:23px; font-weight:700; margin-top:6px; }
+  .section-head p{ color:var(--ink-2); font-size:15px; max-width:620px; margin-top:8px; }
+
+  /* ---- Chart card ---- */
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px 28px 20px; }
+
+  .chart-legend{ display:flex; flex-wrap:wrap; gap:14px 20px; margin-bottom:26px; }
+  .leg-item{ display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-2); }
+  .leg-swatch{ width:10px; height:10px; border-radius:2px; flex:none; }
+
+  .bars{ display:grid; grid-template-columns:repeat(5,1fr); gap:22px; align-items:end; }
+  .bar-col{ display:flex; flex-direction:column; align-items:center; }
+  .bar-stack{
+    width:100%; max-width:120px; height:280px;
+    display:flex; flex-direction:column-reverse;
+    border-radius:4px 4px 0 0; overflow:hidden;
+    background:var(--surface-2);
+    position:relative;
+  }
+  .seg{
+    width:100%;
+    position:relative;
+    border-top:2px solid var(--surface);
+    cursor:pointer;
+    transition:filter .12s ease;
+  }
+  .seg:first-child{ border-top:none; }
+  .seg:hover{ filter:brightness(1.12); }
+  .seg:last-child{ border-radius:4px 4px 0 0; }
+
+  .bar-foot{ margin-top:12px; text-align:center; }
+  .bar-year{ font-family:"Libre Franklin",sans-serif; font-weight:800; font-size:20px; }
+  .bar-n{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .bar-n .partial{ color:var(--critical); }
+
+  .tooltip{
+    position:absolute; pointer-events:none; z-index:5;
+    background:var(--ink); color:var(--page);
+    font-size:12.5px; line-height:1.4; padding:8px 10px; border-radius:8px;
+    max-width:190px; opacity:0; transform:translate(-50%,-100%) translateY(-8px);
+    transition:opacity .1s ease; white-space:nowrap;
+  }
+  .tooltip b{ display:block; font-family:"IBM Plex Mono",monospace; font-size:13px; }
+  .tooltip.show{ opacity:1; }
+
+  /* ---- Year cards ---- */
+  .year-grid{ display:flex; flex-direction:column; gap:16px; }
+  .year-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:26px 28px; }
+  .year-card summary{ list-style:none; cursor:pointer; display:flex; align-items:baseline; gap:16px; }
+  .year-card summary::-webkit-details-marker{ display:none; }
+  .year-card summary .yr{ font-family:"Libre Franklin",sans-serif; font-weight:800; font-size:28px; flex:none; width:76px; }
+  .year-card summary .headline{ font-size:16.5px; font-weight:600; flex:1; }
+  .year-card summary .chev{ font-family:"IBM Plex Mono",monospace; color:var(--muted); font-size:13px; transition:transform .15s ease; flex:none; }
+  .year-card[open] summary .chev{ transform:rotate(90deg); }
+
+  .year-body{ margin-top:20px; padding-top:20px; border-top:1px solid var(--border); display:grid; grid-template-columns:1.1fr 1fr; gap:28px; }
+  @media (max-width:680px){ .year-body{ grid-template-columns:1fr; } }
+
+  .top-themes{ display:flex; flex-direction:column; gap:10px; }
+  .tt-row{ display:flex; align-items:center; gap:10px; }
+  .tt-dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .tt-label{ font-size:13.5px; flex:1; }
+  .tt-pct{ font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--ink-2); }
+
+  .quotes{ display:flex; flex-direction:column; gap:12px; }
+  .quote{ background:var(--surface-2); border-radius:10px; padding:13px 14px; }
+  .quote p{ font-size:13.5px; color:var(--ink); margin:0 0 8px; }
+  .quote-meta{ display:flex; align-items:center; justify-content:space-between; font-size:11.5px; color:var(--muted); }
+  .stars{ color:var(--critical); font-size:11px; letter-spacing:1px; }
+  .qname{ font-weight:500; color:var(--ink-2); }
+
+  /* ---- Takeaways ---- */
+  .takeaways{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:680px){ .takeaways{ grid-template-columns:1fr; } }
+  .tk{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px 22px; }
+  .tk .tk-n{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); }
+  .tk h3{ font-size:16px; margin-top:6px; }
+  .tk p{ font-size:13.5px; color:var(--ink-2); margin-top:8px; }
+
+  /* ---- Methodology ---- */
+  .method{ font-size:13px; color:var(--muted); border-top:1px solid var(--border); padding-top:22px; }
+  .method b{ color:var(--ink-2); }
+
+  footer{ margin-top:64px; font-size:12.5px; color:var(--muted); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Análise de avaliações · Google Play</div>
+    <h1>Raio-X do Ultra Popular</h1>
+    <p class="dek">O que os clientes do app da rede Ultra Popular (Farmarcas) reclamam há mais tempo — e o que mudou entre 2022 e 2026, com base em 234 avaliações de 1 e 2 estrelas.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="v num">2,6<span style="font-size:15px;color:var(--muted)">/5</span></div><div class="l">nota média do app · 835 avaliações</div></div>
+      <div class="stat"><div class="v num">491</div><div class="l">avaliações com nota &lt; 3 estrelas</div></div>
+      <div class="stat"><div class="v num">234</div><div class="l">avaliações lidas e classificadas (48%)</div></div>
+      <div class="stat"><div class="v num">2022–26</div><div class="l">período coberto pela amostra</div></div>
+    </div>
+  </header>
+
+  <section id="chart">
+    <div class="section-head">
+      <div class="tag">Evolução por tema</div>
+      <h2>Para que servia cada estrela perdida, ano a ano</h2>
+      <p>Participação de cada tema no total de queixas negativas daquele ano (não é volume absoluto — 2026 é ano parcial, até agosto). Passe o mouse sobre um bloco para ver o detalhe.</p>
+    </div>
+
+    <div class="card">
+      <div class="chart-legend" id="legend"></div>
+      <div class="bars" id="bars"></div>
+    </div>
+  </section>
+
+  <section id="years">
+    <div class="section-head">
+      <div class="tag">Ano a ano</div>
+      <h2>O que os clientes estavam dizendo</h2>
+      <p>Cada bloco resume o tema dominante do ano e traz avaliações reais como evidência.</p>
+    </div>
+    <div class="year-grid" id="yearCards"></div>
+  </section>
+
+  <section id="takeaways">
+    <div class="section-head">
+      <div class="tag">Síntese</div>
+      <h2>Quatro leituras da evolução</h2>
+    </div>
+    <div class="takeaways">
+      <div class="tk">
+        <div class="tk-n">01</div>
+        <h3>O preço oculto foi resolvido — e sumiu do radar</h3>
+        <p>Em 2023, mais da metade (55%) das avaliações negativas reclamava de não ver preço no app e ter de chamar a farmácia no WhatsApp. A partir de 2024 essa queixa praticamente desaparece (10% → 4% → 0%), sinal de que a mudança de exibir preço resolveu o problema mais citado da história do app.</p>
+      </div>
+      <div class="tk">
+        <div class="tk-n">02</div>
+        <h3>Busca é a dor crônica que nunca foi embora</h3>
+        <p>"Busca" aparece entre os 2 temas mais citados em todos os 5 anos, e é o tema nº1 em 2025 e 2026 (28–29%). Produto errado, lista sem ordem, nome do medicamento não reconhecido — o mecanismo de busca nunca foi corrigido de forma duradoura.</p>
+      </div>
+      <div class="tk">
+        <div class="tk-n">03</div>
+        <h3>Cobertura de loja virou o novo ponto cego em 2024</h3>
+        <p>Reclamações de "minha cidade/loja não aparece" ou "loja em construção" saltam de 8% (2023) para 22% (2024) e seguem acima de 10% desde então — parece ter sido o efeito colateral de uma expansão de lojas mais rápida que o cadastro no app.</p>
+      </div>
+      <div class="tk">
+        <div class="tk-n">04</div>
+        <h3>2026 tem o maior nível de reclamações vagas — e isso é um sinal em si</h3>
+        <p>Separando "app trava" (sintoma técnico descrito: tela presa, erro específico, quebra após atualização) de avaliações puramente genéricas ("não funciona", "péssimo", sem dizer o quê), 2026 é o único ano em que as genéricas empatam com os problemas concretos (14% cada). Ou o app piorou a ponto de o usuário nem descrever a causa, ou parte disso é ruído — vale investigar antes de tratar como bug.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="method">
+      <p><b>Metodologia.</b> As avaliações foram lidas diretamente na página do app na Google Play Store (busca pública, sem login), filtradas por nota (1 e 2 estrelas) e ordenadas por relevância — critério padrão do Google, que combina utilidade e recência. Das 450 avaliações de 1 estrela, 200 foram lidas na íntegra (44%); das 41 de 2 estrelas, 34 (83%). Cada avaliação foi classificada em um tema dominante por leitura manual do texto; avaliações que tocavam mais de um tema foram atribuídas ao problema mais central do relato. <b>"App trava / erro concreto"</b> exige um sintoma técnico descrito (tela presa em termos/atualização, erro específico, app fecha sozinho, quebra após atualização, não instala) — reclamações sem nenhum detalhe ("não funciona", "péssimo", "inútil") foram isoladas em <b>"Avaliação genérica"</b> em vez de infladas na categoria de bug. 2026 é um ano parcial (avaliações até agosto). Por não ser um censo completo, as proporções são uma leitura direcional e não uma medição exata — mas o tamanho e a distribuição temporal da amostra (todos os 5 anos bem representados) sustentam as tendências apontadas.</p>
+    </div>
+  </footer>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  const THEMES = [
+    { key:'busca',     label:'Busca e pesquisa',            color:'var(--c-busca)' },
+    { key:'preco',     label:'Preço oculto / precisa WhatsApp', color:'var(--c-preco)' },
+    { key:'cobertura', label:'Loja/região indisponível',    color:'var(--c-cobertura)' },
+    { key:'bugs',      label:'App trava / erro concreto',   color:'var(--c-bugs)' },
+    { key:'pedido',    label:'Pedido e entrega',            color:'var(--c-pedido)' },
+    { key:'cadastro',  label:'Cadastro e login',            color:'var(--c-cadastro)' },
+    { key:'estoque',   label:'Estoque divergente',          color:'var(--c-estoque)' },
+    { key:'pagamento', label:'Pagamento',                   color:'var(--c-pagamento)' },
+    { key:'generico',  label:'Avaliação genérica (sem detalhe)', color:'var(--c-generico)' },
+  ];
+
+  const DATA = {
+    2022: { n:26,  partial:false, values:{busca:6,  preco:7,  cobertura:2,  bugs:6, pedido:3, cadastro:2, estoque:0, pagamento:0, generico:0} },
+    2023: { n:53,  partial:false, values:{busca:7,  preco:29, cobertura:4,  bugs:4, pedido:2, cadastro:2, estoque:2, pagamento:0, generico:3} },
+    2024: { n:63,  partial:false, values:{busca:14, preco:6,  cobertura:14, bugs:9, pedido:7, cadastro:6, estoque:4, pagamento:1, generico:2} },
+    2025: { n:47,  partial:false, values:{busca:13, preco:2,  cobertura:9,  bugs:6, pedido:8, cadastro:3, estoque:0, pagamento:2, generico:4} },
+    2026: { n:42,  partial:true,  values:{busca:12, preco:0,  cobertura:5,  bugs:6, pedido:8, cadastro:3, estoque:1, pagamento:1, generico:6} },
+  };
+
+  const YEAR_COPY = {
+    2022: {
+      headline: 'Estreia com duas dores: preço escondido e busca lenta',
+      quotes: [
+        { text:'A busca de produtos é super lenta e pra saber o preço de cada produto tem que ligar na loja. Se fosse pra ligar eu só pesquisava o número da loja mais próxima no Google.', name:'Anna Beatriz Dantas', date:'jul/2022', stars:1 },
+        { text:'App é muito lento, lentíssimo. Os produtos são difíceis de achar pois os nomes são cheios de abreviações.', name:'João Paulo da Silva', date:'jul/2022', stars:1 },
+      ]
+    },
+    2023: {
+      headline: '"Sem preço" domina: mais da metade das queixas do ano',
+      quotes: [
+        { text:'Qual a funcionalidade de um aplicativo que não possui preços? Se a loja tem autonomia sobre os preços, mudem o objeto do aplicativo ou não façam.', name:'Marco Antonio de Sousa', date:'mar/2023', stars:1 },
+        { text:'Se fosse pra ligar na loja para saber os valores dos produtos eu nem adquiria esse app. Sem utilidade nenhuma.', name:'Mirian Emi', date:'ago/2023', stars:1 },
+      ]
+    },
+    2024: {
+      headline: 'Preço resolvido; busca e cobertura de loja assumem a liderança',
+      quotes: [
+        { text:'Coloquem a BUSCA do APP para funcionar. Aparece um LISTÃO com quase 8.000 itens, e essa lista nem é em ordem alfabética, é aleatória.', name:'Helbert Rosas', date:'ago/2024 · 2★', stars:2 },
+        { text:'Uma rede desse tamanho com um app inútil desse. Aqui em minha cidade tem três farmácias da rede e o app diz que não existe nas aproximações.', name:'Ednardo Galvao', date:'mai/2024', stars:1 },
+      ]
+    },
+    2025: {
+      headline: 'Busca lidera; pedido/entrega e pagamento ganham peso',
+      quotes: [
+        { text:'Simplesmente não consigo realizar uma compra no App. O botão de pagamento fica inativo. Desisti da compra.', name:'Gustavo Mota', date:'nov/2025', stars:1 },
+        { text:'Aplicativo com falhas, fiz o pedido às 14:38, ficou em preparação por 1 hora, não tem opção de cancelar — 2:30 esperando e sem suporte algum.', name:'Andrew Menezes', date:'set/2025', stars:1 },
+      ]
+    },
+    2026: {
+      headline: 'Instabilidade + pedidos travados somam quase metade do ano',
+      quotes: [
+        { text:'Estou enfrentando um problema no aplicativo: ele constantemente mostra que estou sem internet, mesmo estando conectado. [...] Não há opção de cancelar o pedido nem de entrar em contato com a farmácia.', name:'Lucas Gabriel Souza Borge', date:'abr/2026', stars:1 },
+        { text:'UMA PORCARIAAAAAAAAAA!!!! Comprei um remédio pelo aplicativo, coloquei para receber em casa, e simplesmente não entregaram e também não dão suporte.', name:'Izabella Rios', date:'jul/2026', stars:1 },
+      ]
+    },
+  };
+
+  // ---- Legend ----
+  const legendEl = document.getElementById('legend');
+  THEMES.forEach(t=>{
+    const item = document.createElement('div');
+    item.className='leg-item';
+    item.innerHTML = `<span class="leg-swatch" style="background:${t.color}"></span>${t.label}`;
+    legendEl.appendChild(item);
+  });
+
+  // ---- Stacked bars (100%) ----
+  const barsEl = document.getElementById('bars');
+  const tooltip = document.getElementById('tooltip');
+  const years = Object.keys(DATA);
+
+  years.forEach(year=>{
+    const d = DATA[year];
+    const col = document.createElement('div');
+    col.className='bar-col';
+
+    const stack = document.createElement('div');
+    stack.className='bar-stack';
+
+    THEMES.forEach(t=>{
+      const v = d.values[t.key];
+      if(v<=0) return;
+      const pct = (v/d.n*100);
+      const seg = document.createElement('div');
+      seg.className='seg';
+      seg.style.height = pct+'%';
+      seg.style.background = t.color;
+      seg.addEventListener('mousemove', (e)=>{
+        tooltip.innerHTML = `<b>${pct.toFixed(0)}%</b>${t.label} · ${v} de ${d.n} avaliações (${year})`;
+        tooltip.style.left = e.clientX+'px';
+        tooltip.style.top = (e.clientY + window.scrollY)+'px';
+        tooltip.classList.add('show');
+      });
+      seg.addEventListener('mouseleave', ()=> tooltip.classList.remove('show'));
+      stack.appendChild(seg);
+    });
+
+    col.appendChild(stack);
+
+    const foot = document.createElement('div');
+    foot.className='bar-foot';
+    foot.innerHTML = `<div class="bar-year">${year}</div><div class="bar-n">n=${d.n}${d.partial?' <span class="partial">· parcial</span>':''}</div>`;
+    col.appendChild(foot);
+
+    barsEl.appendChild(col);
+  });
+
+  // ---- Year cards ----
+  const yearCardsEl = document.getElementById('yearCards');
+  years.slice().reverse().forEach((year, idx)=>{
+    const d = DATA[year];
+    const copy = YEAR_COPY[year];
+    const sorted = THEMES.map(t=>({...t, v:d.values[t.key], pct:d.values[t.key]/d.n*100}))
+                          .filter(t=>t.v>0)
+                          .sort((a,b)=>b.v-a.v)
+                          .slice(0,4);
+
+    const details = document.createElement('details');
+    details.className='year-card';
+    if(idx===0) details.open = true;
+
+    const themesHtml = sorted.map(t=>`
+      <div class="tt-row">
+        <span class="tt-dot" style="background:${t.color}"></span>
+        <span class="tt-label">${t.label}</span>
+        <span class="tt-pct num">${t.pct.toFixed(0)}%</span>
+      </div>`).join('');
+
+    const quotesHtml = copy.quotes.map(q=>`
+      <div class="quote">
+        <p>"${q.text}"</p>
+        <div class="quote-meta">
+          <span class="qname">${q.name}</span>
+          <span>${q.date}</span>
+        </div>
+      </div>`).join('');
+
+    details.innerHTML = `
+      <summary>
+        <span class="yr">${year}</span>
+        <span class="headline">${copy.headline}</span>
+        <span class="chev">▸</span>
+      </summary>
+      <div class="year-body">
+        <div class="top-themes">${themesHtml}</div>
+        <div class="quotes">${quotesHtml}</div>
+      </div>
+    `;
+    yearCardsEl.appendChild(details);
+  });
+</script>
