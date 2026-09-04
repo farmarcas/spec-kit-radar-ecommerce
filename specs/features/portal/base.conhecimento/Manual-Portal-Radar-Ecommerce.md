@@ -281,7 +281,7 @@ Depois de solicitado o upgrade, um botão **"Acompanhar solicitação"** mostra 
 
 ## 7. Estoque
 
-A tela **Estoque** mostra o catálogo de produtos daquela loja específica, com:
+A tela **Estoque** mostra o catálogo de produtos daquela loja específica, com um campo de **busca por nome ou EAN** do produto (os dois funcionam), além de:
 
 - **Produto** (nome + EAN, com um ícone ⓘ — ver "Última atualização por produto" abaixo), **R$ App** (preço exibido no aplicativo) e **R$ customizado** (um preço específico, diferente do preço padrão do ERP, definido manualmente — pode ser removido para voltar ao preço original).
 - **Estoque loja**: quantidade disponível.

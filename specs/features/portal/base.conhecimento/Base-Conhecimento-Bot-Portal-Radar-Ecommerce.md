@@ -237,6 +237,33 @@ Em `Configurações > Pagamentos > Com maquininha` — lá dá pra marcar quais 
 **Onde crio uma promoção?**
 Na tela `Promoções`, clique no botão **"Nova promoção"** no canto superior direito. Isso abre um formulário de 5 passos (o que promover, onde é válida, quando fica ativa, regras de uso, e quais produtos entram).
 
+**Como sei se tenho estoque de um produto?**
+Na tela `Estoque`, use o campo de **busca por nome ou EAN** no topo pra achar o produto rápido — cada linha tem a coluna **"Estoque loja"**, com a quantidade disponível (esse número vem direto do ERP, não é editável pelo Portal). Se um produto que você sabe que tem fisicamente não aparece na lista nem na busca, veja a Q&A "Esse produto não aparece no app, mas eu tenho em estoque" (seção de perguntas indiretas) para as causas mais prováveis.
+
+**Onde vejo quando foi a última atualização de estoque ou preço de um produto específico?**
+Ao lado do EAN de cada produto, na tela `Estoque`, tem um ícone **ⓘ** — passe o mouse por cima e aparece um texto com a última atualização de **estoque** e a última atualização de **preço** daquele EAN (podem ser datas diferentes, já que o ERP manda uma ou outra de forma independente).
+
+**Onde vejo os dados de um pedido — CPF do cliente, endereço de entrega, itens comprados?**
+Clique no pedido dentro do quadro da tela `Pedidos` — abre um painel de detalhe com: dados do cliente (nome e CPF), loja de origem, linha do tempo (horário do pedido e da entrega), contato e endereço de entrega, os itens comprados e o total.
+
+**Onde vejo quantas vezes uma oferta foi ativada, ou quais lojas participam dela?**
+Clique na promoção dentro da listagem em `Promoções` — abre um painel lateral com o produto/grupo, status, EAN, uma seção **"Desempenho"** (Ativação/Vendas/Conversão) e a lista de **lojas participantes** (com opção de remover uma loja específica sem cancelar a promoção toda). Se quiser comparar várias promoções de uma vez em vez de abrir uma por uma, use o campo **Ordenar** da listagem — tem as opções "Mais ativadas"/"Menos ativadas" (e também "Mais vendidas"/"Menores conversões", etc.).
+
+**Onde vejo se uma promoção está ativa, finalizada ou cancelada?**
+Na listagem da tela `Promoções`, a coluna **Status** já mostra isso em cada linha — mas também dá pra **filtrar** a lista inteira por Status (Ativa/Finalizados/Cancelados), além de filtrar por Tipo de oferta (Preço fixo/Desconto %).
+
+**Onde vejo quantas lojas um usuário tem vinculadas?**
+Na tela `Usuários`, a listagem já mostra nome, Perfil de acesso e o total de lojas vinculadas de cada pessoa.
+
+**Onde vejo se um produto está publicado no catálogo?** *(perfil Admin)*
+No cadastro do produto, em `Catálogo`, o status aparece como **"Publicado"** (visível/utilizável no app) ou **"Rascunho"** (salvo mas ainda não publicado).
+
+**Onde vejo quantos cliques ou exibições um banner teve?**
+Na tela `Banners`, a tabela de listagem já traz as colunas **Exibições** e **Cliques** de cada banner, junto com o período de divulgação.
+
+**Onde vejo há quanto tempo uma loja está sem sincronizar com o ERP?**
+Na tela `Lojas` (nível Rede) ou no Relatório de lojas/redes exportado, a coluna **"ERP conectado até"** mostra a data/hora da última sincronização (ou "Sem data" se nunca conectou) — é o mesmo dado por trás do alerta de comunicação que aparece na tela Estoque.
+
 **Onde vejo os banners do aplicativo?**
 Na tela `Banners` (às vezes chamada de "Anúncios do aplicativo"), que mostra os banners atuais do carrossel da home do app, com posição, período de exibição e métricas de cliques/exibições.
 
@@ -448,7 +475,7 @@ Em `Configurações > Pagamentos > Online`, é preciso primeiro preencher os dad
 ## Estoque
 
 **O que mostra a tela de Estoque?**
-Lista todos os produtos daquela loja, com preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a quantidade em estoque, e uma chave "Exibir preço" que controla se o produto aparece com preço visível no app.
+Lista todos os produtos daquela loja, com um campo de **busca por nome ou EAN** (os dois funcionam) para achar um produto específico rápido, preço padrão (R$ App), um preço customizado opcional (R$ customizado, que sobrescreve o preço do ERP), a coluna **"Estoque loja"** (quantidade disponível), e uma chave "Exibir preço" que controla se o produto aparece com preço visível no app.
 
 **Como o estoque da minha loja é montado?**
 O seu ERP envia EAN, quantidade e preço para o Portal. Se o EAN já existe no catálogo oficial da plataforma, o produto entra no seu Estoque; se não existe, o item é **desprezado** — não aparece em lugar nenhum, sem aviso.
