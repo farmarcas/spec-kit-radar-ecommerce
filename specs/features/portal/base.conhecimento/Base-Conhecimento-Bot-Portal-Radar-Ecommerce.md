@@ -648,6 +648,9 @@ Não mais — essas colunas são resquício de uma segmentação de público que
 **Consigo ver quantas vezes um cliente específico usou (ativou) minha promoção?**
 **Não diretamente.** Os indicadores e relatórios de Promoções são sempre agregados por oferta/produto (quantas ativações no total, quais produtos mais ativados, etc — ver Home de Ofertas) — não existe uma consulta pronta por CPF/cliente específico. **Indireto, dá pra descobrir:** baixe o **Relatório de Pedidos** (tela Pedidos, botão Exportar — ver seção Pedidos) e cruze manualmente o CPF do cliente com os produtos comprados; como o relatório traz CPF e o item/EAN de cada pedido, dá pra montar esse histórico na mão.
 
+**Dá pra criar promoção do tipo "compre 3 leve 4", "4 caixas por X" ou outro combo de quantidade?**
+**Essa funcionalidade não existe hoje.** O Portal só tem os tipos de desconto **Desconto %** e **Preço fixo** (passo 1 da criação de promoção) — não existe mecanismo de "leve mais pague menos"/combo por quantidade. O bot deve responder afirmando que o recurso não existe atualmente, e não que "não encontrou" a resposta na base de conhecimento.
+
 ---
 
 ## Banners
