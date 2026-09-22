@@ -5,7 +5,14 @@
 **Autor:** Daniel (PO)
 **Status:** Em refinamento — base para geração de histórias via Claude Code
 **Versão:** 1.1
-**Epics relacionados:** A definir (nenhum épico Jira vinculado ainda)
+**Epics relacionados:** [ECA-1198](https://farmarcas.atlassian.net/browse/ECA-1198) — Busca por código de barras (origem: Demanda UX [ECA-1023](https://farmarcas.atlassian.net/browse/ECA-1023))
+
+**Histórias:**
+- [ECA-1199](https://farmarcas.atlassian.net/browse/ECA-1199) — Ícone do scanner na home e permissão de câmera (6.1, 6.2)
+- [ECA-1200](https://farmarcas.atlassian.net/browse/ECA-1200) — Tela de leitura do código de barras (6.3)
+- [ECA-1021](https://farmarcas.atlassian.net/browse/ECA-1021) — Direcionamento pelo resultado do EAN (6.4, 6.6, 6.7)
+- [ECA-1201](https://farmarcas.atlassian.net/browse/ECA-1201) — Tela "Produto não encontrado" (6.5)
+- [ECA-1202](https://farmarcas.atlassian.net/browse/ECA-1202) — *(Tarefa)* Eventos de analytics do scanner (9, 10)
 
 ---
 
