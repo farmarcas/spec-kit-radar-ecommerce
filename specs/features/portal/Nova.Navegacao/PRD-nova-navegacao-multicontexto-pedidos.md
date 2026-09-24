@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 1.6
+**Versão:** 1.7
 
 ---
 
@@ -23,6 +23,8 @@
 **v1.5 (2026-09-23)** — Fecha os 7 pontos da seção 9.1 e a pendência de Balconista+Estoque: Balconista perde Estoque (intencional) mas mantém Promoções escopado à própria loja e sem ações destrutivas; Banners fica no contexto de Rede, visível só para Admin (redução em relação a hoje, onde Gestor de Rede também acessa); Hub de Lojas filtra a listagem pelo acesso do usuário (Admin = toda a Rede, Gestor = só suas lojas); Relatório de Pedidos herda os filtros globais do seletor multicontexto, substituindo a regra antiga do `ECP-747`; tags "Preço loja"/"Preço PEC" foram removidas de propósito; WhatsApp de pedido novo confirmado que continua; nuance de estorno Pix/Cielo explicitamente adiada, sem mudança na regra atual. Usuários (seção 5.2) ganha detalhe de escopo: Admin vê todos os usuários da plataforma, Gestor de Rede só os da própria Rede.
 
 **v1.6 (2026-09-24)** — Fecha 3 decisões vistas em novos prints do protótipo (mesmo arquivo Claude Design): (1) localização do filtro de GE — fica no header de Indicadores, resolvendo a pendência da v1.0; (2) navegação entre lojas de módulo Vendas/Ofertas dentro de Indicadores muda para macro-abas com contador ("Lojas de Vendas (25)"/"Loja de Ofertas (2)"); (3) confirma que "Hub de Lojas" se chama "Gestão de Lojas" na interface real, com 2 abas — "Lojas da rede" (a listagem em si) e "Anúncios do App" (Banners) — fechando de vez onde Banners mora na navegação nova.
+
+**v1.7 (2026-09-24)** — Rodada de revisão de conteúdo pedida por Matheus: adiciona Produtos (Catálogo) à tabela de contexto por funcionalidade (5.2), sem seletor de contexto, Admin only; corrige a redação confusa do gatilho do amarelo em 6.4 (é a mesma referência de tempo do prazo estimado, não duas coisas diferentes); reforça em 6.7 que o toast é global de fato, inclusive dentro do módulo de Configuração; corrige 6.8 — cancelamento é permitido a partir de **qualquer status, incluindo Concluído**, não só status ativos; adiciona reforço sobre o cálculo de estorno no cancelamento respeitar estornos parciais já feitos na Conferência (`PRD-edicao-pedidos-etapa-revisao.md`, seção 8.1); move a definição da navegação Lojas de Vendas/Loja de Ofertas de "pendência" para decisão fechada (seção 5.1); remove da seção 9/9.1 os itens já resolvidos (o conteúdo já vive nas seções principais, essas linhas eram só rastro de decisão).
 
 ---
 
@@ -94,7 +96,9 @@ O seletor reaproveita integralmente o que já foi especificado em cards anterior
 
 - **Rede → Loja:** filtro dependente (`ECP-1281`) — marcar uma Rede recalcula, no cliente, as opções disponíveis no dropdown de Loja.
 - **Grupo de lojas (Estoque Centralizado):** atalho de seleção dentro do filtro de Loja (`ECP-1291`) — marcar um grupo marca todas as lojas dele (cascata para baixo); desmarcar uma loja de um grupo cheio joga o checkbox do grupo para o estado parcial (cascata para cima); uma loja pertence a no máximo 1 grupo, sem cascata cruzada entre grupos.
-- **GE (Grupo Econômico):** filtro adicional, só para perfil Admin. **Definido em 2026-09-24:** fica no header da tela de Indicadores, não no header global do módulo de Operação — ver seção 9.
+- **GE (Grupo Econômico):** filtro adicional, só para perfil Admin. **Definido em 2026-09-24:** fica no header da tela de Indicadores, não no header global do módulo de Operação.
+
+**Navegação Lojas de Vendas × Loja de Ofertas dentro de Indicadores (definido em 2026-09-24):** as sub-abas simples "Vendas"/"Ofertas" do modelo atual (Manual seção 5) viram macro-abas com contador de lojas — ex.: "Lojas de Vendas (25)" / "Loja de Ofertas (2)". Indicadores segue fora do escopo detalhado deste PRD (mantido com os mesmos recursos de hoje), mas essa navegação interage com o seletor de contexto multicontexto: cada aba reflete só as lojas do módulo correspondente dentro do contexto (Rede/Grupo/Loja) selecionado.
 
 **Mudança de comportamento em relação a hoje:** atualmente o contexto de Rede/Loja só é aplicado na Home de Indicadores. No modelo novo, o contexto selecionado passa a valer para **todo o módulo de Operação** — trocar de contexto em qualquer tela (Home, Pedidos, Promoções) atualiza as outras também, dentro da mesma sessão de navegação.
 
@@ -111,10 +115,13 @@ Confirmado em 2026-09-23 — mapeamento de qual tipo de seletor cada funcionalid
 | Estoque | Seletor de uma loja |
 | Configurações | Seletor de uma loja |
 | Banners | Contexto de Rede (não de loja) — visível só para Admin |
+| Produtos (Catálogo) | Sem seletor de contexto — visível só para Admin |
 
 **Usuários entra no grupo multicontexto** — diferente do que a seção 5 registrava até aqui (que falava só em Pedidos/Promoções/Home para o módulo de Operação). Isso amplia o modelo: gerenciar usuários passa a ser possível através de múltiplas lojas/redes ao mesmo tempo, não só dentro de uma loja ou de uma Rede isolada como é hoje (ver `Manual-Portal-Radar-Ecommerce.md`, seção 11). Escopo por perfil, confirmado: **Admin** vê todos os usuários da plataforma; **Gestor de Rede** vê só os usuários vinculados à(s) sua(s) Rede(s). Estoque e Configurações confirmam o modelo de contexto único já descrito para o Módulo de Configuração.
 
 **Nota "de Vendas" no seletor de Pedidos:** o qualificador reflete que só lojas no módulo **Vendas** geram Pedidos no Portal — lojas no módulo Ofertas não aparecem/não fazem sentido nesse contexto (ver `Manual-Portal-Radar-Ecommerce.md`, seção 3, "Módulo Vendas x Módulo Ofertas").
+
+**Produtos (Catálogo) também não se encaixa no modelo multi/único de loja:** é um catálogo único, compartilhado entre todas as Redes da plataforma (`Manual-Portal-Radar-Ecommerce.md`, seção 12) — não existe "Rede/Loja" para filtrar, o cadastro é o mesmo pra todo mundo. Acesso exclusivo do Admin (regra já vigente hoje, seção 5.3).
 
 **Banners não se encaixa nos dois modelos (multi/único de loja):** o contexto dele é de **Rede**, consistente com o comportamento já existente hoje (Manual seção 10, tela só aparece no nível Rede) — mas a visibilidade muda: **fica restrita ao perfil Admin**. É uma redução deliberada em relação a hoje, onde Gestor de Rede também acessa Banners (Manual seção 2, menu de Rede inclui Banners) — confirmado por Matheus em 2026-09-23. Resolve a pendência 9.1 sobre onde Banners entra no modelo novo.
 
@@ -180,7 +187,7 @@ Decisão explícita: nesta tela o objetivo é deixar claro, **de forma preditiva
 Modelo de semáforo com 3 estados, em 2 eixos independentes:
 
 **Eixo 1 — prazo de entrega/retirada (cor da linha):**
-- **Amarelo** → faltando **20 minutos** para o pedido ficar atrasado (não 20 min do prazo final — é 20 min antes do momento em que ele cruza para "Atrasado").
+- **Amarelo** → faltando **20 minutos** para o prazo estimado de entrega/retirada — ou seja, 20 minutos antes do momento exato em que o pedido passa a ficar "Atrasado" (é a mesma referência de tempo; a v1.1 tinha usado por engano um termo diferente, "prazo de finalização", que não existe no modelo — ver changelog v1.2).
 - **Vermelho ("Atrasado")** → o pedido já excedeu o tempo de entrega/retirada. Cada loja pode ter uma configuração diferente desse tempo (ex.: default de 30 min) — **todo pedido atrasado fica vermelho**, independente de estar "Parado" ou não.
 
 **Eixo 2 — movimentação (tag "Parado", não muda a cor da linha por si só):**
@@ -197,7 +204,7 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 - **Diálogo de confirmação obrigatório em 3 casos:**
   1. Conferência → Na fila (é o commit do rascunho de edição, ver `PRD-edicao-pedidos-etapa-revisao.md`).
   2. Qualquer ação de "pular etapa" (ex.: Na fila → Liberados direto).
-  3. Qualquer transição para um **status final** — Liberados → Concluído (irreversível, "Esta ação não pode ser desfeita") e Cancelamento (ver 6.8), pelo mesmo motivo: é status final.
+  3. Qualquer transição para um **status final** — Liberados → Concluído (irreversível, "Esta ação não pode ser desfeita") e Cancelamento a partir de **qualquer status, incluindo Concluído** (ver 6.8), pelo mesmo motivo: é status final.
 - **Reverter status ("mover para trás") não está desenhado e não faz parte deste PRD** — segue como ideia registrada pela UX para avaliação futura.
 
 ### 6.6 Detalhe do pedido
@@ -219,13 +226,17 @@ Modelo in-app apenas — **sem** WhatsApp automático nem central de notificaç�
 - Acima de 2 toasts simultâneos, agrupam em "Existem +N pedidos parados" (evita empilhar a fila de mensagens).
 - Reincide a cada hora adicional parada (1h, 2h, 3h...).
 
+**Importante: "qualquer aba do Portal" é literal, não só dentro do módulo de Operação.** O toast é global — aparece mesmo se o usuário estiver no módulo de Configuração (Estoque/Configurações de uma loja específica), que opera em contexto único. Não conflita com o modelo de módulos: o toast não depende do contexto selecionado na tela atual, só do fato de existir um pedido parado dentro do que o usuário tem acesso a ver.
+
 ### 6.8 Cancelamento de pedido
 
-- Ação disponível a partir de qualquer status ativo (Conferência até Liberados).
+- **Ação disponível a partir de qualquer status do pedido, incluindo Concluído** — não fica restrita aos status ativos (Conferência até Liberados). **Confirmado por Matheus em 2026-09-24**, corrigindo a versão anterior deste documento, que dizia "Conferência até Liberados".
 - Abre modal pedindo o motivo do cancelamento, **reaproveitando as opções já existentes no Portal hoje** (`Manual-Portal-Radar-Ecommerce.md`): Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. **Achado nos protótipos (Figma e Claude Design):** ambos incluem uma 10ª opção, "Teste interno", que não está na lista atual do Manual — apareceu de forma consistente nos dois lugares, então parece intencional; confirmar com Matheus antes de adicionar.
 - O modal informa: "O cliente será notificado e o estorno processado" — cancelamento dispara notificação ao cliente e processamento de estorno (quando aplicável).
 - **Exige confirmação** (é status final, mesma regra da seção 6.5) e não pode ser desfeito.
 - Pedido cancelado registra quem cancelou e o motivo, exibido no lugar do status tracker (ver 6.6). **Verificado no protótipo:** confirmação de conclusão (Liberados → Concluído) segue exatamente o texto "Concluir pedido #[nº]? O pedido será finalizado e marcado como concluído. Esta ação não pode ser desfeita."
+
+**Reforço sobre o cálculo do estorno — reaproveita o que já foi fechado em `PRD-edicao-pedidos-etapa-revisao.md` (seção 8.1):** se o pedido já sofreu um **estorno parcial** durante a Conferência (item removido/reduzido, com estorno automático via Braspag do valor da diferença — só se aplica a pedidos pagos no app), o cancelamento **não** deve estornar o valor original do pedido de novo. O cancelamento estorna só o **valor restante ainda não estornado** (total pago menos o que já foi devolvido no ajuste parcial). Isso vale mesmo quando o cancelamento acontece bem depois da Conferência (ex.: a partir de Concluído, ver acima) — o histórico de estornos parciais já realizados precisa ser consultado antes de calcular o valor do estorno total.
 
 ## 7. Cenários de borda
 
@@ -238,6 +249,7 @@ Modelo in-app apenas — **sem** WhatsApp automático nem central de notificaç�
 | Pedido atrasado mas com movimentação recente (ex.: loja com tempo de entrega curto configurado) | Fica vermelho ("Atrasado") mesmo sem a tag "Parado" — os eixos não dependem um do outro. |
 | Usuário tenta pular etapa (ex.: Na fila → Liberados), concluir (Liberados → Concluído) ou cancelar um pedido | Exibe diálogo de confirmação nos 3 casos da seção 6.5 (pular etapa, Conferência → Na fila, e qualquer transição para status final). |
 | Usuário clica no cabeçalho de uma coluna sem ordenação (Prazo, Cliente, Status, Resumo, Tipo, Loja) | Nada acontece — só Data/Hora e Total são ordenáveis (seção 6.3). |
+| Usuário cancela um pedido que já está Concluído, e esse pedido já teve estorno parcial durante a Conferência | Cancelamento é permitido; o estorno cobre só o valor restante (total pago menos o já estornado no ajuste parcial), não o valor original do pedido (ver 6.8). |
 | Grupo com volume alto de lojas/pedidos simultâneos | Sem volumetria exata validada; hoje o grupo com melhor performance no app opera na faixa de 200 pedidos em tela (maioria já encerrados) sem problema. Poucos corner cases esperados de grupos com muitas lojas, mas **precisa de validação de engenharia antes do rollout amplo** (ver seção 9). |
 
 ## 8. Dependências de Design System (Alquimia UI)
@@ -252,24 +264,14 @@ Esses itens não bloqueiam o PRD, mas devem virar cards próprios de "criação 
 
 ## 9. Pendências / decisões em aberto
 
-- ~~**Localização final do filtro de GE:**~~ **Resolvido em 2026-09-24** — fica no header da tela de Indicadores, não no header global do módulo de Operação (ver seções 3 e 5.1).
 - **Modelo de SLA da Home de Indicadores:** percentual (modelo já usado em `ECP-1313`/`ECP-1318`) vs. minutos absolutos (modelo deste documento) — decisão separada, a ser tomada quando a Home entrar em pauta.
-- **Navegação Lojas de Vendas × Loja de Ofertas dentro de Indicadores:** protótipo (2026-09-24) mostra essa separação como macro-abas com contador de lojas (ex.: "Lojas de Vendas (25)" / "Loja de Ofertas (2)"), substituindo as sub-abas simples "Vendas"/"Ofertas" do modelo atual (Manual seção 5) — Indicadores segue fora do escopo detalhado deste PRD (D confirmado como "mantido, com os mesmos recursos atuais"), mas registro aqui porque essa navegação interage com o seletor de contexto multicontexto: cada aba deve refletir só as lojas do módulo correspondente dentro do contexto (Rede/Grupo/Loja) selecionado.
-- ~~**Empty state da listagem de Pedidos:**~~ **Resolvido em 2026-09-23** — protótipo já cobre os 4 cenários (sem pedidos ativos por perfil Gestor/Balconista, filtro sem resultado, busca fora dos 30 dias).
 - **Volumetria real de pedidos/lojas simultâneas por grupo:** sem número validado; precisa de checagem de engenharia antes de fechar a estratégia de paginação/performance para grupos com muitas lojas.
-- ~~**Balconista e acesso a Estoque:**~~ **Resolvido em 2026-09-23** — remoção intencional, ver seção 5.3.
 
-### 9.1 Cruzamento com o Manual do Portal atual (2026-09-23)
+### 9.1 Cruzamento com o Manual do Portal atual
 
-Revisão do `Manual-Portal-Radar-Ecommerce.md` (estado atual do Portal em produção) contra este PRD, para identificar componentes/fluxos/regras de negócio existentes hoje que ainda não têm um destino claro no modelo novo (não inclui mudanças de navegação/UX, que são o próprio objetivo do redesenho). **Todos os pontos abaixo foram revisados com Matheus em 2026-09-23:**
+Revisão do `Manual-Portal-Radar-Ecommerce.md` (estado atual do Portal em produção) contra este PRD, para identificar componentes/fluxos/regras de negócio existentes hoje que ainda não têm um destino claro no modelo novo (não inclui mudanças de navegação/UX, que são o próprio objetivo do redesenho).
 
-- ~~**Banners**~~ **Resolvido** — contexto de Rede, visível só para Admin, vive como aba "Anúncios do App" dentro de Gestão de Lojas (ver seções 5.2 e 5.4).
-- ~~**Tela "Lojas" (nível Rede)**~~ **Resolvido** — vira a tela "Gestão de Lojas" (nome real confirmado em protótipo, seção 5.4), com aba "Lojas da rede" equivalente à tela de hoje, e a listagem respeita o acesso do usuário logado: Admin vê todas as lojas da Rede, Gestor só as suas (ver seção 5.3). As ações "Nova loja" e "Exportar Lojas" continuam presumidas dentro dessa aba, sem mudança de regra — só a listagem em si ganhou o filtro por perfil.
-- ~~**Relatório de Pedidos / Exportar**~~ **Resolvido** — como a listagem de Pedidos já respeita os filtros globais do seletor multicontexto, o relatório segue o mesmo comportamento (exporta o que está filtrado no momento). Isso substitui a regra antiga do `ECP-747` de "Grupo de lojas sempre traz tudo do grupo, ignorando o filtro" — no modelo novo, o filtro *é* o grupo escolhido no seletor, então não há mais a mesma necessidade de uma regra à parte.
 - **Nuance de estorno por modalidade de pagamento (Pix/Cielo)** — **não entra neste ciclo**; segue a regra de negócio atual (Manual seção 8) sem alteração — decisão explícita de não abrir esse tópico agora.
-- ~~**Etiquetas de origem de preço por item ("Preço loja"/"Preço PEC")**~~ **Resolvido** — removidas de propósito, não fazem parte do novo detalhe do pedido.
-- ~~**Notificação de pedido novo por WhatsApp**~~ **Resolvido** — confirmado que continua existindo, sem relação com o WhatsApp de "pedido parado" excluído na seção 3.
-- ~~**Acesso granular dentro de Promoções para o Balconista**~~ **Resolvido** — ver seção 5.3: menu visível, escopado à própria loja, sem ações destrutivas (mesma regra de hoje).
 
 ## 10. Critérios de aceite (alto nível)
 
@@ -289,6 +291,6 @@ Revisão do `Manual-Portal-Radar-Ecommerce.md` (estado atual do Portal em produ�
 
 **Dado que** clico para avançar um pedido de "Na fila" direto para "Liberados" (pulando "Em separação"), **quando** confirmo a ação, **então** vejo um diálogo de confirmação antes da mudança ser efetivada — diferente de um avanço sequencial normal, que não pede confirmação.
 
-**Dado que** um pedido está em "Liberados" e clico em "Concluir pedido", **ou** clico em "Cancelar pedido" em qualquer status ativo, **quando** confirmo a ação, **então** vejo um diálogo de confirmação (ação irreversível de status final) antes da mudança ser efetivada; no caso do cancelamento, preciso antes selecionar um motivo dentre as opções já existentes no Portal.
+**Dado que** um pedido está em "Liberados" e clico em "Concluir pedido", **ou** clico em "Cancelar pedido" em qualquer status do pedido (incluindo Concluído), **quando** confirmo a ação, **então** vejo um diálogo de confirmação (ação irreversível de status final) antes da mudança ser efetivada; no caso do cancelamento, preciso antes selecionar um motivo dentre as opções já existentes no Portal, e o valor do estorno considera qualquer estorno parcial já feito durante a Conferência.
 
 **Dado que** clico no cabeçalho da coluna Data/Hora ou Total, **quando** a lista reordena, **então** a ordenação é aplicada; **dado que** clico no cabeçalho de qualquer outra coluna (Prazo, Cliente, Status, Resumo, Tipo, Loja), **então** nada acontece.
