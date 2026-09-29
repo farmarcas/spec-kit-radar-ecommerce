@@ -167,9 +167,9 @@ Demais indicadores da Home de Vendas:
 | Indicador | O que significa |
 |---|---|
 | **Ticket Médio** | "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos." *(gráfico de barras; passar o mouse mostra o valor em R$; sem clique/legenda)* |
-| **Total de Pedidos em Aberto** | "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." Tem um botão **"Visualizar pedidos"**. |
-| **Volume dos pedidos em aberto** | Soma em R$ de todos os pedidos ainda não finalizados (Na fila + Em separação + Liberados). |
-| **Pedidos em aberto por status** | Contagem de pedidos em cada status (Fila / Em separação / Liberados), exibida em %. *(gráfico de rosca; ao passar o mouse mostra "Status: quantidade (%)"; legenda é uma lista estática de cores com o percentual de cada status, sem interação)* ⚠️ Hoje esse indicador filtra incorretamente pelo período de datas selecionado — deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação. Correção já registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
+| **Total de Pedidos em Aberto** | "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." **Também conta pedidos na etapa Conferência** (ver seção 8) — a descrição textual do card ainda não foi atualizada pra citar essa etapa, mas ela já entra na contagem. Tem um botão **"Visualizar pedidos"**. |
+| **Volume dos pedidos em aberto** | Soma em R$ de todos os pedidos ainda não finalizados (**Conferência** + Na fila + Em separação + Liberados). |
+| **Pedidos em aberto por status** | Contagem de pedidos em cada status (**Conferência** / Fila / Em separação / Liberados), exibida em %. *(gráfico de rosca; ao passar o mouse mostra "Status: quantidade (%)"; legenda é uma lista estática de cores com o percentual de cada status, sem interação)* ⚠️ Hoje esse indicador filtra incorretamente pelo período de datas selecionado — deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação. Correção já registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056). |
 | **Tempo médio para iniciar primeiro atendimento** | Tempo entre o pedido entrar "Na fila" e ser concluído. Exibido em formato de duração (ex.: "9h e 37min"). |
 | **Tempo médio total de atendimento** | Também entendido como "Na fila" até "Concluído" — a definição exata implementada hoje ainda não está confirmada com engenharia; correção/checagem registrada em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056) (inclusive a sobreposição de definição com o indicador acima). Exibido em formato de duração (ex.: "2 dias e 11h"). |
 | **Média de itens por cesta** | Média de itens por pedido, considerando todos os pedidos (concluídos ou não). |
@@ -182,8 +182,6 @@ Demais indicadores da Home de Vendas:
 | **Formas de pagamento** | "Distribuição dos pedidos realizados no período, de acordo com o meio de pagamento utilizado." *(gráfico de rosca; legenda detalha Online → Crédito/Pix e Offline → Balcão/Na entrega, todos em %)* |
 | **Métodos de entrega** | "Mostra como os pedidos foram recebidos pelos clientes no período, diferenciando opções como Receber em Casa (entrega no endereço do cliente) e Retirada (o próprio cliente busca o pedido na loja ou ponto de coleta)." |
 | **Lojas sem opção de receber em casa** *(só no painel de Rede)* | "Lojas que oferecem apenas a modalidade de retirada, sem opção de entrega em domicílio. Esse indicador ajuda a identificar associados que podem não ter operação logística para envio." Tem um botão "Ver lojas com retirada" (ícone de download, então provavelmente exporta uma lista em vez de navegar — não confirmado). |
-
-> ❓ **A confirmar:** com a etapa **Conferência** (ver seção 8) agora existindo antes de "Na fila", ainda não está confirmado se "Total de Pedidos em Aberto", "Volume dos pedidos em aberto" e "Pedidos em aberto por status" passaram a contar pedidos em Conferência também, ou se continuam contando só a partir de "Na fila" como a definição textual acima (não atualizada) ainda sugere.
 
 ### 5.2 Home de Ofertas
 
@@ -216,12 +214,42 @@ Alguns cards da Home baixam um relatório em Excel (.xlsx) com o detalhe por tr�
 | Relatório | Como é baixado | Colunas |
 |---|---|---|
 | **Pedidos Faturados** | Botão **"Exportar"** no cabeçalho da Home de Vendas — funciona em qualquer uma das 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), sempre traz o mesmo relatório. | Uma linha por **item** do pedido (não por pedido): Loja *(⚠️ hoje traz o CNPJ, não o nome — correção pendente, ver nota abaixo)*, Número do pedido, Data do pedido, Nome do cliente, CPF, Detalhe do pedido *(EAN do item)*, Método de pagamento, Método de entrega, Valor, Status. |
-| **Pedidos em Aberto** | Botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". | Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Pendente / Em separação / Liberado), Valor. *(❓ não confirmado se "Conferência" também aparece aqui como status — ver nota na seção 5.1.)* |
+| **Pedidos em Aberto** | Botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". | Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (**Conferência** / Pendente / Em separação / Liberado), Valor. |
 | **Lojas com retirada ativa** | Botão **"Ver lojas com retirada"** no card "Lojas sem opção de receber em casa" (Home de Vendas, nível Rede). | Rede, CNPJ, Nome da loja. Deveria trazer só lojas do módulo Vendas sem entrega em domicílio *(⚠️ hoje não filtra corretamente por módulo — ver nota abaixo)*. |
 | **Produtos mais ativados** | Botão **"Baixar produtos"** no card "Top produtos com mais ativações" (Home de Ofertas). | Ranking, EAN, Nome do produto, Quantidade de ativações — sempre Top 10. |
 | **Lojas sem ofertas ativas** | Botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição" (Home de Ofertas, logo abaixo de "Total de ofertas criadas"). | Rede, CNPJ, Nome da loja. |
 
 > **Ajustes pendentes nos relatórios** (todos já registrados em [ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056)): o cabeçalho "Loja" do relatório de Pedidos Faturados precisa deixar claro que traz o CNPJ, não o nome; e o relatório de Lojas com retirada ativa hoje não respeita o módulo da loja (deveria considerar só lojas do módulo Vendas).
+
+### 5.5 Ruptura de Estoque (indicadores de edição de pedidos)
+
+🚧 **Em finalização — previsão de lançamento na semana de 2026-09-29.** É o nome oficial dado ao conjunto de indicadores sobre pedidos editados/com item removido na etapa **Conferência** (ver seção 8) — as telas já existem em ambiente de staging, com partes já **finalizadas** e outras ainda em teste/homologação (status por seção abaixo, com base nos cards Jira ECP-1265/1267/1268/1269/1270/1271/1301/1339/1362).
+
+**Regra de período válida para toda a tela:** todo indicador aqui conta **pedidos concluídos** dentro do período selecionado, ancorado pela **data de conclusão** — nunca pela data de criação, edição ou liberação para "Na fila". Pedido cancelado **nunca** entra em nenhum desses indicadores. O intervalo de datas sempre vai de 00:00:01 do dia inicial até 23:59:59 do dia final, em horário local (não no fuso do servidor).
+
+#### Card "Ruptura de Estoque" na Home de Indicadores *(✅ finalizado)*
+
+Um card na Home de Indicadores (junto dos outros cards de Vendas/Ofertas) resume:
+- **Venda Perdida (R$)** — soma da diferença de subtotal de todas as edições dos pedidos concluídos no período.
+- **Pedidos com Ruptura** — contagem + % sobre o total de pedidos concluídos no período.
+- **Itens com Ruptura** — contagem total de itens editados.
+- **Top Falta** — o produto com maior valor perdido acumulado no período.
+
+Botão **"Ver detalhes →"** leva para a tela de Detalhamento (abaixo), levando consigo o filtro de loja e de período que estavam ativos na Home. Se não houver nenhuma ruptura no período/filtro, o card mostra **R$ 0,00 / 0 pedidos / 0% / 0 itens** com a mensagem **"Sem rupturas em pedidos concluídos no período selecionado"** — com um aviso diferente para o filtro "Hoje" sem dados (pra não parecer que já é "sem problema" logo cedo no dia).
+
+#### Tela "Detalhamento da Ruptura de Estoque"
+
+**Header e indicadores macro** *(✅ finalizado)*: filtro de período (Hoje / Últimos 7 dias / Últimos 30 dias / Últimos 3 meses / Últimos 12 meses / Personalizado — default "Últimos 7 dias"), que herda o filtro da Home quando a tela é aberta via "Ver detalhes" (e usa o próprio default se acessada direto). Mostra os indicadores macro **Venda Perdida (R$)**, **Pedidos com Edição** (contagem + % + total do período), **Itens em Ruptura** (contagem + "X Removidos") e **Item Crítico** (produto + valor). Tem um botão **Exportar** (relatório detalhado) e, junto ao header, um card de **Análise gerada por IA** sobre a ruptura do período/filtro selecionado.
+
+**Expectativa vs. Realidade** *(🟡 em teste)* — gráfico de barras com 3 séries por bucket de tempo: **Faturado** (receita real de todos os pedidos concluídos), **Perdido** (venda perdida por ruptura) e **Potencial Máx.** (Faturado + Perdido). O valor perdido aparece como uma "barra de progresso" vermelha dentro do valor faturado (ex.: pedido de R$100 com R$95 removidos → barra vermelha ocupando 95% da barra). O bucket de tempo muda com o período: por hora (Hoje), por dia (7 dias), por semana (30 dias — semanas "móveis", com o intervalo de datas exibido abaixo de cada barra), por mês (3 e 12 meses). Tooltip com detalhe ao passar o mouse.
+
+**Ranking de Perdas por Loja** *(🟡 em teste)* — gráfico de barras, Top 10 lojas por valor perdido, dentro do filtro de Rede/Loja aplicado. Só aparece se o usuário tiver mais de 1 loja no filtro — com 1 loja só, a seção fica oculta (não faz sentido rankear 1 item).
+
+**Top Produtos em Ruptura** *(🟠 em homologação)* — tabela com **Produto (EAN)**, **Un. Faltantes** (soma das unidades removidas em todas as ocorrências) e **Valor Perdido (R$)**, ordenada decrescente por valor perdido. Mostra só os **5 primeiros produtos** na tela — o restante só sai no relatório completo exportado.
+
+**Histórico de Edições** *(🟢 pronto para release)* — tabela cronológica (mais recente primeiro) com **Data** (de conclusão), **Nº do Pedido**, **Loja**, **EAN's Alterados** (quantos produtos diferentes tiveram alteração — não a soma de unidades) e **Venda Perdida (R$)**. Mostra até 5 linhas na tela (para o histórico completo, usa o botão de exportar o relatório detalhado). Tem busca por número do pedido ou nome do cliente. **Cada linha é clicável e abre um painel lateral (drawer) com o resumo do pedido.**
+
+**"Comportamento de busca no App"** *(status a confirmar)* — seção com os termos mais buscados pelos clientes no app das lojas do usuário (fonte: Mixpanel), em duas tabelas com scroll infinito (sem paginação por número, carrega mais ao rolar), cada uma com seu próprio campo de busca. Reflete só as lojas vinculadas ao usuário logado, nunca a base geral do app.
 
 ---
 
@@ -441,9 +469,7 @@ Dentro do detalhe de qualquer pedido, uma seção mostra o histórico de tudo qu
 
 > Documentação completa do lado do consumidor: `specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md`.
 
-#### Indicadores de edição de pedidos
-
-🚧 **Em staging — previsão de lançamento nesta semana** (ainda não em produção no momento desta atualização). Quando disponíveis, os relatórios/indicadores planejados incluem: volume de pedidos editados por período, tipo de alteração mais comum (quantidade reduzida/item removido/cancelamento/restauração), produtos mais editados/removidos, lojas com maior taxa de edição/cancelamento, tempo médio em Conferência até liberação, e valor financeiro impactado por estornos.
+**Indicadores de edição de pedidos ("Ruptura de Estoque"):** ver seção 5.5 — card na Home de Indicadores + tela de Detalhamento, em finalização no momento desta atualização.
 
 ### Cancelando um pedido
 
@@ -466,6 +492,8 @@ O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**�
 
 **Colunas observadas hoje:** Número do pedido, Valor, Itens (quantidade), Data da compra, Taxa de entrega, Tipo da compra (Delivery/Retirada), Nome da Loja, CNPJ, Pagamento (Online/Offline), Status (Entregue/Retirado/Cancelado/"Status desconhecido"), Motivo, CPF, Meio de Pagamento (Pix/Cartão de Crédito/Dinheiro), Data de Cancelamento (só populada para pedidos cancelados).
 
+> ⚠️ **Mudança de granularidade (com a etapa Conferência):** o relatório agora exporta **item por item — na prática, unidade por unidade**: se o cliente comprou 3 unidades do mesmo EAN, o relatório traz 3 linhas para aquele item, não 1 linha agregada. Isso afeta como a coluna "Itens (quantidade)" e o Status devem ser lidos: se um item específico foi removido em Conferência, só a(s) linha(s) daquele item mostram o status **"Item cancelado"**, enquanto as demais linhas do mesmo pedido seguem com o status normal (ex.: "Finalizado"). Se depois disso o **pedido inteiro** for cancelado, **todas as linhas** (inclusive as que já estavam "Item cancelado") passam para **"Cancelado"**. O **Valor** final do pedido é sempre ajustado considerando **só os itens que restaram** — itens removidos em Conferência não entram na conta. *(A lista de colunas acima ainda não foi reverificada linha a linha contra esse novo formato — tratar como o que se sabe até aqui, não como conferido campo a campo.)*
+
 > **Atenção — coluna "Motivo" tem duplo uso:** para pedidos entregues/retirados, ela mostra o motivo do tipo de compra ("Entrega em domicilio"/"Retirar na loja"); para pedidos **cancelados**, o mesmo campo passa a mostrar o **motivo do cancelamento** (ex.: "Cliente solicitou produto por engano"). É a mesma coluna sendo usada para dois propósitos diferentes dependendo do status.
 
 > **"Status desconhecido":** hoje esse valor pode aparecer na coluna Status — é um estado inconsistente já identificado pelo time de produto, que deve ser desconsiderado do relatório (ver ajuste abaixo).
@@ -473,7 +501,7 @@ O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**�
 **Este relatório está em processo de adequação — ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747)** ("Refinado", ainda não implementado). Regras definidas para a versão corrigida:
 
 1. **Filtro por status é dinâmico:**
-   - Pedidos em status **ativo** (Na fila / Em separação / Liberados) devem **sempre** aparecer no relatório, **ignorando** o período selecionado — é uma "fotografia" em tempo real do que está em aberto. *(❓ não confirmado se Conferência também entra como status "ativo" aqui — ver nota na seção 5.1.)*
+   - Pedidos em status **ativo** (Conferência / Na fila / Em separação / Liberados) devem **sempre** aparecer no relatório, **ignorando** o período selecionado — é uma "fotografia" em tempo real do que está em aberto.
    - Pedidos em status **final** (Concluídos / Cancelados) devem respeitar o período selecionado, mas filtrando pela **data em que o pedido entrou nesse status** (`updatedAt`), não pela data de criação — considerando o dia cheio (00:00:01 do primeiro dia até 23:59:59 do último), com cuidado para o fuso não deslocar pedidos para o dia errado.
 2. **Nova coluna "Usuário Cancelamento"**: para pedidos concluídos/cancelados, deve trazer o usuário responsável pela mudança de status; se o cancelamento foi feito pelo próprio ERP (sem usuário do Portal envolvido), o valor deve ser **"ERP"**.
 3. **Lojas em grupo:** ao exportar de uma loja que faz parte de um Grupo de lojas (qualquer configuração de estoque), o relatório deve trazer os pedidos de **todas as lojas do grupo**, ignorando qualquer filtro de loja aplicado pelo usuário.
@@ -798,5 +826,8 @@ Esses e-mails **não vão para o associado** — são direcionados ao time inter
 - **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados. O associado tem o contato direto do Anjo via WhatsApp, e também pode abrir chamado via Salesforce. O suporte é sempre com a Farmarcas — nunca com a Rede (ver seção 1).
 - **Resolvido:** o bug da janela de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
 - **Templates de e-mail descartados/desconsiderados** (existem no centralizador de comunicação, mas não devem ser documentados/usados como referência — ver seção 14): "Aplicativo conectado ao ERP." (duplicado de "comunicação... restabelecida"), "Confira a lista de lojas com mais de 2 horas de atraso na integração" (será descontinuado), "Nova solicitação disponível" (não existe mais), "O relatório de lojas desativadas já está disponível" (não será utilizado), e o e-mail de falha de comunicação na integração com detalhe técnico do erro (será descontinuado).
-- **Adicionado (2026-09-29):** etapa **Conferência** na tela Pedidos (edição/remoção de item, cancelamento, Rascunho, split promocional, troco, Trilha de Auditoria — ver seção 8), com base no PRD `specs/features/portal/Editar.Pedido/PRD-edicao-pedidos-etapa-revisao.md` (v2.2) e no PRD de visão do App `specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md` (v1.0). Confirmado em produção nesta data (Conferência, split, Trilha de Auditoria e retorno no App); **os indicadores de edição de pedidos (seção 12 de ambos os PRDs) ainda estavam em staging**, com lançamento previsto para a semana de 2026-09-29. **Em aberto:** não confirmado se os indicadores/relatórios de "Pedidos em aberto" (seção 5.1) passaram a contar pedidos em Conferência.
+- **Adicionado (2026-09-29):** etapa **Conferência** na tela Pedidos (edição/remoção de item, cancelamento, Rascunho, split promocional, troco, Trilha de Auditoria — ver seção 8), com base no PRD `specs/features/portal/Editar.Pedido/PRD-edicao-pedidos-etapa-revisao.md` (v2.2) e no PRD de visão do App `specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md` (v1.0). Confirmado em produção nesta data (Conferência, split, Trilha de Auditoria e retorno no App).
+- **Adicionado (2026-09-29):** indicadores de "Ruptura de Estoque" (seção 5.5) — card na Home + tela de Detalhamento (header/macro e card Home já finalizados; Expectativa vs. Realidade e Ranking de Perdas por Loja em teste; Top Produtos em Ruptura em homologação; Histórico de Edições pronto para release), com base nos cards Jira ECP-1265/1267/1268/1269/1270/1271/1301/1339/1362 (não documentados nos PRDs originais, que só definiam requisitos de dados). Lançamento completo previsto para a semana de 2026-09-29.
+- **Resolvido (2026-09-29):** Conferência conta como status "aberto"/"ativo" nos indicadores e relatórios de pedidos (Total de Pedidos em Aberto, Volume dos pedidos em aberto, Pedidos em aberto por status, relatório "Pedidos em Aberto" e o filtro de status ativo do Relatório de Pedidos/ECP-747 — ver seções 5.1, 5.4 e 8).
+- **Resolvido (2026-09-29):** o Relatório de Pedidos (ECP-747, seção 8) agora exporta uma linha por **unidade** (não mais por pedido nem por item agregado), com status por linha ("Item cancelado" para itens removidos em Conferência, revertendo para "Cancelado" em todas as linhas se o pedido inteiro for cancelado depois) e o Valor do pedido ajustado considerando só os itens restantes.
 - Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-09-29; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.

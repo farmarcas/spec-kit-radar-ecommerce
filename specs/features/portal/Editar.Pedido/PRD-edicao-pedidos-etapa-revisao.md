@@ -4,11 +4,13 @@
 **Squad:** E-commerce
 **Autor:** Matheus (PO/PM)
 **Status:** Em refinamento — base para geração de tarefas via Claude Code
-**Versão:** 2.2
+**Versão:** 2.3
 
 ---
 
 ## 0. Changelog
+
+**v2.3 (2026-09-29)** — Adicionada a seção 12.1, documentando a UI real implementada para os indicadores da fase 2 (seção 12), batizada de **"Ruptura de Estoque"** — a seção 12 original só previa requisitos de dados, sem definição de UI ("UI a definir com UX depois"). Baseado nos cards Jira ECP-1265, ECP-1267, ECP-1268, ECP-1269, ECP-1270, ECP-1271, ECP-1301, ECP-1339 e ECP-1362. Status na data desta atualização: card na Home de Indicadores e header/indicadores macro do Detalhamento **finalizados**; gráficos "Expectativa vs. Realidade" e "Ranking de Perdas por Loja" em teste; tabela "Top Produtos em Ruptura" em homologação; "Histórico de Edições" pronto para release; seção "Comportamento de busca no App" com status de implementação não confirmado. Lançamento completo previsto para a semana de 2026-09-29.
 
 **v2.2 (2026-08-17)** — Incorporado resumo da visão do Consumidor no App (nova seção 7.1), a partir do PRD publicado pelo time App: [`specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md`](../../001-app-ecommerce/edição%20de%20pedido/PRD-pedido-editado-portal-app.md) (v1.0). Isso resolve parcialmente a dependência de UX que este documento deixava aberta desde a v1.0 (seção 3 e 15) sobre o protótipo do detalhe do pedido no app do cliente. Os dois PRDs continuam **separados** — este documento não descreve a experiência do App em detalhe, apenas referencia o que é relevante para decisões do Portal. Itens de alinhamento entre as duas squads (tratamento visual de item removido, copy final da push, cenário de cancelamento total) seguem como pendência na seção 15.
 
@@ -256,6 +258,25 @@ Ainda que o dashboard de indicadores não seja construído nesta versão, o back
 7. Taxa de cancelamento na etapa Conferência vs. total de pedidos.
 8. Valor financeiro impactado por estornos (soma de diferenças de subtotal).
 9. Comparativo estorno automático (pago no app) vs. apenas notificado (pago offline).
+
+### 12.1 UI implementada — "Ruptura de Estoque"
+
+A UI que atende aos requisitos acima foi batizada de **"Ruptura de Estoque"** e implementada como um card na Home de Indicadores + uma tela de detalhamento própria (fonte: cards Jira ECP-1265, ECP-1267–1271, ECP-1301, ECP-1339, ECP-1362 — não fazem parte do escopo original deste PRD nem do PRD do App, que deixavam a UI em aberto).
+
+**Regra de período válida para toda a UI:** todo indicador conta **pedidos concluídos** dentro do período selecionado, ancorado pela **data de conclusão** (nunca pela data de criação, edição ou liberação para "Na fila"). Pedido cancelado nunca entra em nenhum indicador. Intervalo de datas sempre 00:00:01 do dia inicial até 23:59:59 do dia final, em horário local (não no fuso do servidor).
+
+**Card "Ruptura de Estoque" na Home de Indicadores** *(✅ ECP-1265/1301, finalizado)*
+- Métricas: **Venda Perdida (R$)**, **Pedidos com Ruptura** (contagem + %), **Itens com Ruptura** (contagem), **Top Falta** (produto com maior valor perdido).
+- Botão **"Ver detalhes →"** abre a tela de Detalhamento, levando consigo o filtro de loja/período ativo na Home.
+- Estado vazio: "R$ 0,00 / 0 pedidos / 0% / 0 itens" + "Sem rupturas em pedidos concluídos no período selecionado" (com variação de copy específica para o filtro "Hoje" sem dados).
+
+**Tela "Detalhamento da Ruptura de Estoque"**
+- **Header e indicadores macro** *(✅ ECP-1267/1362, finalizado)*: filtro de período (Hoje/7 dias/30 dias/3 meses/12 meses/Personalizado, default 7 dias), herdando o filtro da Home quando acessado via "Ver detalhes". Indicadores macro: Venda Perdida, Pedidos com Edição, Itens em Ruptura, Item Crítico. Botão Exportar (relatório detalhado, ECP-1017) e card de Análise gerada por IA (ECP-1283) junto ao header.
+- **Expectativa vs. Realidade** *(🟡 ECP-1268, em teste)*: gráfico de barras — séries Faturado / Perdido / Potencial Máx. (Faturado + Perdido), com o valor perdido representado como barra de progresso vermelha dentro do valor faturado. Bucket de tempo varia com o período (hora/dia/semana móvel/mês).
+- **Ranking de Perdas por Loja** *(🟡 ECP-1269, em teste)*: gráfico de barras, Top 10 lojas por valor perdido; oculto se o usuário tiver só 1 loja no filtro.
+- **Top Produtos em Ruptura** *(🟠 ECP-1270, em homologação)*: tabela Produto (EAN) / Un. Faltantes / Valor Perdido, ordenada decrescente, só os 5 primeiros na tela (resto no export completo).
+- **Histórico de Edições** *(🟢 ECP-1271, pronto para release)*: log cronológico (Data de conclusão / Nº do Pedido / Loja / EAN's Alterados / Venda Perdida), até 5 linhas na tela, busca por nº do pedido ou nome do cliente. **Cada linha abre um painel lateral (drawer) com o resumo do pedido.**
+- **"Comportamento de busca no App"** *(ECP-1339, status de implementação não confirmado)*: termos mais buscados no app pelos clientes das lojas do usuário (fonte Mixpanel), duas tabelas com scroll infinito e busca própria — fora do escopo original deste PRD (é dado do App, não de Conferência), incluído aqui só por aparecer na mesma tela de Ruptura de Estoque.
 
 ## 13. Casos de borda / edge cases
 
