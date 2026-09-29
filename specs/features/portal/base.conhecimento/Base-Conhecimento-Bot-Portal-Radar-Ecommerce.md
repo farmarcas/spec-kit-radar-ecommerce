@@ -2,7 +2,7 @@
 
 > **Uso deste documento:** conteúdo-fonte para um bot de atendimento que responde dúvidas simples de Associados/Lojistas sobre o uso do Portal Radar E-commerce (ex: "onde encontro minha API KEY", "como vejo o módulo da minha loja"). Cada bloco de pergunta/resposta abaixo foi escrito para ser **autocontido** — não depende de ler o restante do documento para fazer sentido — pensando em recuperação por trechos (chunking) por um sistema de busca/RAG.
 >
-> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 15 de julho de 2026.
+> **Baseado em:** `Manual-Portal-Radar-Ecommerce.md` (mapeamento de telas reais do Portal, cruzado com o código-fonte `ecomm-front-webapp-portal-angular`, validado com o time de produto) e no FAQ interno de suporte (CS/Anjos) da Farmarcas. Atualizado em 29 de setembro de 2026.
 >
 > **Regra para o bot:** se a dúvida do associado não estiver coberta aqui, o bot deve admitir que não sabe e direcionar para o suporte humano (Farmarcas/N1) — nunca inventar um caminho de tela que não está descrito neste documento. A seção final "Perguntas sem resposta confirmada" lista o que ainda não foi mapeado.
 >
@@ -151,7 +151,7 @@ Essas são as mais fundamentais — geralmente de quem está começando agora ou
 | "Cliente pagou e quer cancelar — o que eu faço com o dinheiro?" | Dúvida sobre estorno | Depende da modalidade: offline não tem estorno (nunca foi pago antes); crédito online estorna automático pela Braspag; Pix estorna automático **só se houver saldo na conta Cielo** — senão, é manual. Ver seção "Cancelando um pedido". |
 | "Não sei qual motivo de cancelamento escolher" | Lista de motivos da janela de cancelamento | Ver seção "Como cancelo um pedido" — 9 motivos fixos. |
 | "Parei de receber aviso de pedido no WhatsApp" | Número de WhatsApp errado/desatualizado na config da loja | Checar campo **WhatsApp** em `Configurações > Dados da Loja`. |
-| "Um item do pedido não tem estoque, o que eu faço?" | Achar que dá pra remover só aquele item | **Não dá estorno parcial** — a tag "Sem estoque" é automática; a única solução é cancelar o pedido inteiro. |
+| "Um item do pedido não tem estoque, como eu removo só esse item?" | Depende da etapa do pedido | **Se o pedido ainda está em Conferência**: dá sim, reduza a quantidade ou remova esse item específico direto na linha dele (ver "Etapa Conferência" em Pedidos). **Se já passou de Conferência** (Na fila em diante): não dá mais — a tag "Sem estoque" é automática, e a única solução nesse ponto é cancelar o pedido inteiro. |
 
 **Promoções**
 
@@ -354,9 +354,9 @@ No topo há 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), cada um
 
 Demais indicadores:
 - **Ticket Médio**: "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos."
-- **Total de Pedidos em Aberto**: "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." Tem botão "Visualizar pedidos".
-- **Volume dos pedidos em aberto**: soma em R$ de todos os pedidos ainda não finalizados (Na fila + Em separação + Liberados).
-- **Pedidos em aberto por status** (gráfico de rosca Fila/Em separação/Liberados, em %): contagem de pedidos por status. Hoje esse indicador tem um problema: filtra pelo período de data selecionado, quando deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação — correção já registrada em ticket interno.
+- **Total de Pedidos em Aberto**: "Quantidade de pedidos ainda não finalizados no período, incluindo todos os status pendentes (na fila, liberados e em separação)." **Também conta pedidos na etapa Conferência** (ver seção Pedidos) — a descrição do card ainda não cita essa etapa, mas ela já entra na contagem. Tem botão "Visualizar pedidos".
+- **Volume dos pedidos em aberto**: soma em R$ de todos os pedidos ainda não finalizados (Conferência + Na fila + Em separação + Liberados).
+- **Pedidos em aberto por status** (gráfico de rosca Conferência/Fila/Em separação/Liberados, em %): contagem de pedidos por status. Hoje esse indicador tem um problema: filtra pelo período de data selecionado, quando deveria sempre mostrar o total de pedidos em aberto das lojas do usuário, independente da data de criação — correção já registrada em ticket interno.
 - **Tempo médio para iniciar primeiro atendimento**: tempo entre o pedido entrar "Na fila" e ser concluído (formato de duração, ex.: "9h e 37min").
 - **Tempo médio total de atendimento**: também entendido como "Na fila" até "Concluído" (ex.: "2 dias e 11h") — definição exata ainda em checagem com engenharia (pode haver sobreposição com o indicador anterior; já registrado em ticket interno).
 - **Média de itens por cesta**: média de itens por pedido, considerando todos os pedidos (concluídos ou não).
@@ -400,7 +400,7 @@ Alguns cards da Home baixam um relatório em Excel (.xlsx):
 Pelo botão **"Exportar"** no cabeçalho da Home de Vendas — funciona em qualquer uma das 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), sempre gera o mesmo relatório. Colunas: Loja (⚠️ hoje traz o CNPJ, não o nome — correção pendente), Número do pedido, Data do pedido, Nome do cliente, CPF, Detalhe do pedido (EAN do item), Método de pagamento, Método de entrega, Valor, Status. É uma linha por item do pedido, não por pedido — se um pedido tem 5 produtos, aparecem 5 linhas com o mesmo Número do pedido.
 
 **Como baixo o relatório de Pedidos em Aberto?**
-Pelo botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". Colunas: Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Pendente/Em separação/Liberado), Valor.
+Pelo botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". Colunas: Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Conferência/Pendente/Em separação/Liberado), Valor.
 
 **Como baixo o relatório de Lojas com retirada ativa?**
 Pelo botão **"Ver lojas com retirada"** no card "Lojas sem opção de receber em casa" (Home de Vendas, nível Rede). Colunas: Rede, CNPJ, Nome da loja. Deveria trazer só lojas do módulo Vendas sem entrega em domicílio — hoje não filtra corretamente por módulo (correção pendente).
@@ -412,6 +412,23 @@ Pelo botão **"Baixar produtos"** no card "Top produtos com mais ativações" (H
 Pelo botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição" (Home de Ofertas, logo abaixo de "Total de ofertas criadas"). Colunas: Rede, CNPJ, Nome da loja.
 
 > Os dois ajustes pendentes (cabeçalho "Loja"=CNPJ no relatório de Pedidos Faturados, e filtro de módulo no relatório de Lojas com retirada ativa) já estão registrados em ticket interno ([ECP-1056](https://farmarcas.atlassian.net/browse/ECP-1056)).
+
+### Ruptura de Estoque (indicadores de pedidos editados)
+
+🚧 **Em finalização** — algumas partes já estão prontas, outras ainda em teste/homologação (status indicado em cada item abaixo). É o nome oficial dos indicadores sobre pedidos com item ajustado/removido na etapa **Conferência** (ver seção Pedidos).
+
+**Regra de período que vale pra tudo aqui:** só conta **pedidos concluídos** dentro do período selecionado, pela **data de conclusão** — nunca pela data de criação, edição ou liberação pra fila. Pedido cancelado nunca entra em nenhum desses números.
+
+**O que aparece na Home de Indicadores?** *(✅ pronto)*
+Um card **"Ruptura de Estoque"** com: Venda Perdida (R$), Pedidos com Ruptura (contagem + %), Itens com Ruptura (contagem) e Top Falta (produto com maior valor perdido). Botão **"Ver detalhes →"** abre a tela de Detalhamento, levando o filtro de loja/período que estava ativo na Home. Sem ruptura no período: mostra R$ 0,00/0 pedidos/0%/0 itens com a mensagem "Sem rupturas em pedidos concluídos no período selecionado".
+
+**O que tem na tela "Detalhamento da Ruptura de Estoque"?**
+- **Cabeçalho** *(✅ pronto)*: filtro de período (Hoje/7 dias/30 dias/3 meses/12 meses/Personalizado — default 7 dias), indicadores macro (Venda Perdida, Pedidos com Edição, Itens em Ruptura, Item Crítico), botão Exportar, e um card de análise gerada por Inteligência Artificial.
+- **Gráfico "Expectativa vs. Realidade"** *(🟡 em teste)*: compara Faturado, Perdido e Potencial Máximo por período (hora/dia/semana/mês, dependendo do filtro), com o valor perdido mostrado como uma barra vermelha dentro do valor faturado.
+- **Ranking de Perdas por Loja** *(🟡 em teste)*: gráfico com as 10 lojas que mais perderam valor — só aparece se você tiver mais de 1 loja no filtro.
+- **Tabela "Top Produtos em Ruptura"** *(🟠 em homologação)*: produto, unidades faltantes e valor perdido, mostrando os 5 produtos que mais causaram perda (o resto só sai no relatório completo).
+- **"Histórico de Edições"** *(🟢 pronto)*: lista dos pedidos editados, mais recente primeiro, com busca por número do pedido ou nome do cliente. **Clicar numa linha abre um painel lateral com o resumo daquele pedido.**
+- **"Comportamento de busca no App"** *(status ainda não confirmado)*: mostra os termos mais buscados pelos clientes no app das suas lojas.
 
 ---
 
@@ -539,14 +556,62 @@ Use o ícone "Solicitar produto" na barra de ferramentas da tela Estoque. No for
 A tela Pedidos tem um campo de busca que encontra pedidos pelo **Número do pedido** ou pelo **CPF** do cliente. Busca por **nome ainda não existe**. Se você não tem nenhum dos dois em mãos, também dá pra baixar o Relatório de Pedidos (Exportar), que traz Número do pedido, CPF e Nome do cliente juntos numa planilha.
 
 **O que significam as colunas do quadro de Pedidos?**
-- **Na fila**: pedido novo, ainda aguardando início do atendimento. Assim que o pedido cai, o sistema dispara um WhatsApp direto pro número cadastrado da loja (`Configurações > Dados da Loja`), avisando o responsável. Do lado do consumidor, ele recebe push notification a cada mudança de status e também acompanha pelo detalhe do pedido no próprio App.
+- **Conferência**: pedido novo, aguardando revisão do balconista antes de seguir o fluxo — é aqui que dá pra ajustar/remover item ou cancelar antes da captura pelo ERP. Ver bloco "Etapa Conferência" abaixo.
+- **Na fila**: pedido liberado da Conferência, aguardando início do atendimento. Assim que o pedido cai, o sistema dispara um WhatsApp direto pro número cadastrado da loja (`Configurações > Dados da Loja`), avisando o responsável. Do lado do consumidor, ele recebe push notification a cada mudança de status e também acompanha pelo detalhe do pedido no próprio App.
 - **Em separação**: pedido sendo preparado/separado na loja.
 - **Liberados**: pedido pronto, liberado para entrega ou retirada.
 - **Concluídos**: pedido já entregue/retirado com sucesso.
 - **Cancelados**: pedido cancelado, seja pela loja ou pelo consumidor.
 
+### Etapa "Conferência" — revisando o pedido antes da fila
+
+**O que é a etapa Conferência?**
+É a primeira coluna do quadro de Pedidos — todo pedido novo cai lá antes de ir pra "Na fila". É nessa etapa que o balconista pode ajustar o pedido: reduzir a quantidade de um item, remover um item, ou cancelar o pedido inteiro, antes dele seguir pro fluxo normal de separação.
+
+**Por que existe a etapa Conferência?**
+Pra evitar cancelamento total quando só um item tem problema (ex: sem estoque), e pra evitar que o pedido seja replicado pro ERP (em lojas com pré-venda) antes de qualquer ajuste necessário.
+
+**Como funciona, na prática?**
+1. Pedido novo cai em Conferência.
+2. O balconista pode reduzir a quantidade de um item, remover um item, ou cancelar o pedido inteiro.
+3. Ao clicar em **"Liberar para fila"**, o pedido vai pra "Na fila" — é nesse momento que as edições ficam definitivas, e (em lojas com pré-venda) o pedido é replicado pro ERP pela primeira vez.
+4. **A partir de "Na fila" em diante, não dá mais pra editar ou remover item** — só resta cancelar o pedido inteiro.
+
+**Como eu reduzo a quantidade de um item em Conferência?**
+Direto na linha do item, com botões de mais/menos — não abre nenhuma tela separada. A quantidade pode ir de 1 até o total que o cliente comprou daquele item. Não dá pra reduzir até 0 pelo botão de menos — pra isso existe a opção separada **"Remover produto do pedido"**. Quando você reduz, aparece o texto **"Qtd. Original: X"** abaixo do produto (esse texto some quando o pedido é liberado pra fila).
+
+**Como eu removo um item em Conferência?**
+A opção "Remover produto do pedido" só aparece se sobrar pelo menos 1 item no pedido depois — não dá pra esvaziar o pedido inteiro removendo item por item. O item removido fica marcado (riscado, com opacidade menor) e tem um botão de desfazer, enquanto o pedido ainda está em Conferência.
+
+**O pedido tem só 1 item e 1 unidade — dá pra editar?**
+Não. Nesse caso, a edição fica bloqueada por completo (não dá pra reduzir nem remover) — a única ação disponível é **cancelar o pedido inteiro**.
+
+**O que é a tag "Rascunho" no pedido?**
+Enquanto o pedido está em Conferência, toda edição é provisória — o pedido mostra a tag "Rascunho" assim que a primeira edição é feita. Os valores atualizam na tela na hora, mas só ficam salvos de verdade quando o balconista clica em **"Liberar para fila"**. Se tentar sair da tela com uma edição pendente, o Portal pergunta se quer sair e descartar, ou continuar editando.
+
+**Como funciona a edição de um item com "Limite por compra" (promoção) em Conferência?**
+Se o item faz parte de uma promoção com limite, e o cliente comprou mais que o limite, o pedido já mostra **2 linhas** pra esse produto: uma no preço promocional e outra no preço de loja (o excedente). Reduzir desconta primeiro do excedente; só depois de zerar o excedente é que reduz a parte da promoção. Restaurar (desfazer) faz o caminho contrário. Remover o produto por completo remove as duas linhas juntas.
+
+**O que são os avisos amarelo e vermelho que aparecem em Conferência?**
+- **Amarelo**: aparece quando o pedido tem 2 ou mais itens e pelo menos 1 precisa de ajuste.
+- **Vermelho**: aparece só no caso do pedido com exatamente 1 item e 1 unidade sem estoque — bloqueio total, só resta cancelar.
+
+Se o balconista fechar o aviso e voltar pro pedido depois, ele reaparece enquanto o problema não for resolvido.
+
+**Reduzir ou remover um item em Conferência gera estorno?**
+Sim, segue a mesma lógica de estorno por modalidade de pagamento (ver "Como o estorno realmente acontece?" abaixo) — não é só o cancelamento total que gera estorno.
+
+**E se o pedido for pago em dinheiro na entrega e eu editar algo em Conferência?**
+A edição recalcula o **troco** na hora: o bloco financeiro mostra "Cliente vai pagar com: R$ X" (valor informado pelo cliente, que não muda com a edição) e o troco é sempre esse valor menos o subtotal atual. Como a Conferência só reduz o pedido, o troco só pode subir, nunca fica negativo.
+
+**O que é a Trilha de Auditoria?**
+Dentro do detalhe de qualquer pedido, mostra o histórico de tudo que aconteceu com ele — mudanças de status e edições feitas por alguém. Se o evento veio do ERP, o responsável aparece como "Sistema"; se foi uma ação manual no Portal, aparece o nome de quem fez. Mostra os 5 eventos mais recentes, com um botão pra ver mais. **Edições feitas em Conferência só aparecem na Trilha depois que o pedido é liberado pra fila** — mas com o horário de quando a edição foi feita de verdade, não o horário da liberação.
+
+**O cliente final percebe que o pedido dele foi editado?**
+Sim — se algum item for ajustado ou removido, o card do pedido em "Meus pedidos" (no app) ganha a tag "Pedido atualizado", e o cliente recebe uma notificação avisando. No detalhe do pedido, cada item alterado mostra uma tag própria ("Qtd. ajustada X → Y" ou "Produto removido"), e o resumo financeiro mostra "Estorno" (se pago no app) ou "Itens removidos" (se pago na entrega/retirada). O cliente nunca vê a tag "Rascunho" — só é avisado depois que o pedido é liberado pra fila.
+
 **O que significa a etiqueta "Preço loja" / "Preço PEC" num item do pedido?**
-Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja"** é o preço padrão cadastrado no Estoque; **"Preço PEC"** vem do sistema PEC (base de clientes/preços da rede). Também pode aparecer **"Sem estoque"** — uma tag gerada automaticamente pelo sistema (não é o balconista quem marca; o Portal não permite editar estoque) quando o item foi vendido com estoque baixo/não confirmado. **Importante:** não existe estorno parcial de item — se um produto do pedido está em falta, a única solução é cancelar o pedido inteiro.
+Indica de onde veio o preço daquele produto no momento da venda: **"Preço loja"** é o preço padrão cadastrado no Estoque; **"Preço PEC"** vem do sistema PEC (base de clientes/preços da rede). Também pode aparecer **"Sem estoque"** — uma tag gerada automaticamente pelo sistema (não é o balconista quem marca; o Portal não permite editar estoque) quando o item foi vendido com estoque baixo/não confirmado. **Importante:** enquanto o pedido ainda está em **Conferência**, dá pra reduzir a quantidade ou remover esse item específico sem cancelar o pedido inteiro (ver "Etapa Conferência" acima). **A partir de "Na fila" em diante**, isso deixa de ser possível — a única saída nesse ponto é cancelar o pedido inteiro.
 
 **Como funciona o troco quando o pagamento é em dinheiro?**
 O Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido, exibidos no painel de detalhe do pedido.
@@ -576,6 +641,8 @@ Sempre confira o **EAN (código de barras)** do produto no cadastro do Estoque/C
 **Como baixo o relatório de Pedidos?**
 Botão "Exportar" no topo da tela Pedidos → escolha o período (Últimos 7/30/90 dias ou Personalizado) → "Gerar Relatório". Colunas atuais: Número do pedido, Valor, Itens, Data da compra, Taxa de entrega, Tipo da compra (Delivery/Retirada), Nome da Loja, CNPJ, Pagamento (Online/Offline), Status, Motivo, CPF, Meio de Pagamento, Data de Cancelamento (só para cancelados).
 
+⚠️ **Mudança importante (com a etapa Conferência):** esse relatório agora exporta **uma linha por unidade** — se o cliente comprou 3 unidades do mesmo produto, aparecem 3 linhas. Se um item específico foi removido em Conferência, só a(s) linha(s) daquele item mostram o status **"Item cancelado"**, enquanto as demais linhas do pedido seguem normais. Se depois o **pedido inteiro** for cancelado, **todas as linhas** passam pra **"Cancelado"**. O **Valor** do pedido é sempre ajustado considerando só os itens que restaram — itens removidos em Conferência não entram na conta.
+
 **A coluna "Motivo" do relatório de Pedidos significa sempre a mesma coisa?**
 Não — é usada para duas coisas diferentes dependendo do status: em pedidos entregues/retirados, mostra o tipo de entrega ("Entrega em domicilio"/"Retirar na loja"); em pedidos cancelados, mostra o motivo do cancelamento (texto livre, ex: "Cliente solicitou produto por engano").
 
@@ -584,7 +651,7 @@ Não — é usada para duas coisas diferentes dependendo do status: em pedidos e
 
 **O relatório de Pedidos está passando por uma correção — o que muda?**
 Sim, o ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747) (refinado, ainda não implementado) define o comportamento correto:
-- Pedidos em status **ativo** (Na fila/Em separação/Liberados) sempre aparecem no relatório, **independente do período** selecionado — é uma fotografia em tempo real.
+- Pedidos em status **ativo** (Conferência/Na fila/Em separação/Liberados) sempre aparecem no relatório, **independente do período** selecionado — é uma fotografia em tempo real.
 - Pedidos em status **final** (Concluídos/Cancelados) respeitam o período, mas pela data em que **entraram** nesse status, não pela data de criação.
 - Nova coluna **"Usuário Cancelamento"**: mostra quem cancelou/concluiu; se foi o próprio ERP, mostra "ERP".
 - Lojas que fazem parte de um Grupo: o relatório sempre traz pedidos de **todas as lojas do grupo**, ignorando filtro de loja aplicado pelo usuário.
