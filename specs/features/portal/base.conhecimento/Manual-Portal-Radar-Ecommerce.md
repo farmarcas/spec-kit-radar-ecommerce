@@ -2,7 +2,7 @@
 
 > Documentação funcional do **Portal** (front-end web do Radar E-commerce, usado pelos Associados/Lojistas e pela Farmarcas para gerenciar suas lojas). Objetivo: apoiar o aculturamento de Associados na ferramenta e servir de base de consulta para o N1 de suporte.
 >
-> Fonte: mapeamento de telas reais do Portal em produção, cruzado com o código-fonte (`ecomm-front-webapp-portal-angular`), validado com o time de produto e com o FAQ interno de suporte (CS/Anjos). Atualizado em 2026-07-14.
+> Fonte: mapeamento de telas reais do Portal em produção, cruzado com o código-fonte (`ecomm-front-webapp-portal-angular`), validado com o time de produto e com o FAQ interno de suporte (CS/Anjos). Atualizado em 2026-09-29.
 >
 > **Fora do escopo deste manual:** o aplicativo mobile do consumidor final (App) — ver `FAQ-App-Radar-Ecommerce.md`.
 
@@ -183,6 +183,8 @@ Demais indicadores da Home de Vendas:
 | **Métodos de entrega** | "Mostra como os pedidos foram recebidos pelos clientes no período, diferenciando opções como Receber em Casa (entrega no endereço do cliente) e Retirada (o próprio cliente busca o pedido na loja ou ponto de coleta)." |
 | **Lojas sem opção de receber em casa** *(só no painel de Rede)* | "Lojas que oferecem apenas a modalidade de retirada, sem opção de entrega em domicílio. Esse indicador ajuda a identificar associados que podem não ter operação logística para envio." Tem um botão "Ver lojas com retirada" (ícone de download, então provavelmente exporta uma lista em vez de navegar — não confirmado). |
 
+> ❓ **A confirmar:** com a etapa **Conferência** (ver seção 8) agora existindo antes de "Na fila", ainda não está confirmado se "Total de Pedidos em Aberto", "Volume dos pedidos em aberto" e "Pedidos em aberto por status" passaram a contar pedidos em Conferência também, ou se continuam contando só a partir de "Na fila" como a definição textual acima (não atualizada) ainda sugere.
+
 ### 5.2 Home de Ofertas
 
 | Indicador | O que significa (texto ao passar o mouse) |
@@ -214,7 +216,7 @@ Alguns cards da Home baixam um relatório em Excel (.xlsx) com o detalhe por tr�
 | Relatório | Como é baixado | Colunas |
 |---|---|---|
 | **Pedidos Faturados** | Botão **"Exportar"** no cabeçalho da Home de Vendas — funciona em qualquer uma das 3 abas (Faturamento/Pedidos cancelados/Pedidos concluídos), sempre traz o mesmo relatório. | Uma linha por **item** do pedido (não por pedido): Loja *(⚠️ hoje traz o CNPJ, não o nome — correção pendente, ver nota abaixo)*, Número do pedido, Data do pedido, Nome do cliente, CPF, Detalhe do pedido *(EAN do item)*, Método de pagamento, Método de entrega, Valor, Status. |
-| **Pedidos em Aberto** | Botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". | Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Pendente / Em separação / Liberado), Valor. |
+| **Pedidos em Aberto** | Botão **"Visualizar pedidos"** no card "Total de Pedidos em Aberto". | Rede, CNPJ, Nome da Loja, Número do pedido, Data do pedido realizado, Status (Pendente / Em separação / Liberado), Valor. *(❓ não confirmado se "Conferência" também aparece aqui como status — ver nota na seção 5.1.)* |
 | **Lojas com retirada ativa** | Botão **"Ver lojas com retirada"** no card "Lojas sem opção de receber em casa" (Home de Vendas, nível Rede). | Rede, CNPJ, Nome da loja. Deveria trazer só lojas do módulo Vendas sem entrega em domicílio *(⚠️ hoje não filtra corretamente por módulo — ver nota abaixo)*. |
 | **Produtos mais ativados** | Botão **"Baixar produtos"** no card "Top produtos com mais ativações" (Home de Ofertas). | Ranking, EAN, Nome do produto, Quantidade de ativações — sempre Top 10. |
 | **Lojas sem ofertas ativas** | Botão **"Ver lojas sem ofertas"** no card "Lojas sem ofertas em exibição" (Home de Ofertas, logo abaixo de "Total de ofertas criadas"). | Rede, CNPJ, Nome da loja. |
@@ -344,7 +346,8 @@ Os pedidos são organizados num quadro (kanban) por status, cada um com contador
 
 | Status no Portal | O que significa |
 |---|---|
-| **Na fila** | Pedido novo, aguardando início do atendimento. |
+| **Conferência** | Pedido novo, aguardando revisão do balconista antes de seguir o fluxo — é aqui que dá pra ajustar/remover item ou cancelar antes da captura pelo ERP. Ver "Etapa Conferência" abaixo. |
+| **Na fila** | Pedido liberado da Conferência, aguardando início do atendimento. |
 | **Em separação** | Pedido sendo preparado/separado na loja. |
 | **Liberados** | Pedido pronto, liberado para entrega ou retirada. |
 | **Concluídos** | Pedido entregue/retirado com sucesso. |
@@ -355,9 +358,92 @@ Ao clicar num pedido, o painel de detalhe mostra: dados do cliente (nome, CPF), 
 **Sobre os itens do pedido**, cada produto pode trazer uma etiqueta de origem de preço:
 - **Preço loja**: preço padrão cadastrado no Estoque da loja.
 - **Preço PEC**: preço vindo do sistema PEC (base de clientes/preços da rede).
-- **Sem estoque**: tag gerada **automaticamente pelo sistema** (não é uma marcação manual do atendente — o Portal não permite edição de estoque) quando o item foi vendido com estoque baixo/não confirmado — vale atenção redobrada na separação desse pedido. **Importante:** hoje não existe estorno parcial de item — se algum produto do pedido está em falta, a única saída é cancelar o pedido inteiro (ver "Cancelando um pedido" abaixo).
+- **Sem estoque**: tag gerada **automaticamente pelo sistema** (não é uma marcação manual do atendente — o Portal não permite edição de estoque) quando o item foi vendido com estoque baixo/não confirmado — vale atenção redobrada na separação desse pedido. **Importante:** enquanto o pedido ainda está em **Conferência**, dá pra reduzir a quantidade ou remover esse item específico sem cancelar o pedido inteiro (ver "Etapa Conferência" abaixo). **A partir de "Na fila" em diante**, isso deixa de ser possível — a única saída nesse ponto é cancelar o pedido inteiro (ver "Cancelando um pedido" abaixo).
 
 Na forma de pagamento **Dinheiro**, o Portal calcula automaticamente o **Valor a cobrar** e o **Troco** com base no total do pedido.
+
+### Etapa "Conferência" — revisando o pedido antes da fila
+
+Todo pedido novo cai primeiro na coluna **Conferência**, antes de ir para "Na fila". É aqui que o balconista pode ajustar o pedido — reduzir a quantidade de um item, remover um item, ou cancelar o pedido inteiro — **antes** que ele siga pro fluxo normal de separação.
+
+**Por que essa etapa existe:** evita cancelamentos totais desnecessários quando só um item está com problema (ex.: sem estoque, quantidade divergente), e evita que o pedido seja replicado pro ERP (em lojas que operam com pré-venda) antes de qualquer ajuste necessário.
+
+**Como funciona, passo a passo:**
+1. Pedido novo chega e cai em **Conferência**.
+2. O balconista pode: reduzir a quantidade de um item, remover um item, ou cancelar o pedido inteiro.
+3. Ao clicar em **"Liberar para fila"**, o pedido sai de Conferência e vai para **Na fila** — é exatamente nesse momento que:
+   - As edições feitas ficam definitivas (ver "Modelo de Rascunho" abaixo).
+   - Em lojas com fluxo de **pré-venda**, o pedido é replicado pro ERP pela primeira vez — não existe replicação automática antes disso.
+4. **A partir de "Na fila" em diante, não é mais possível editar ou remover item** — a lista de itens vira somente leitura, e a única forma de mexer no pedido volta a ser o cancelamento total (ver "Cancelando um pedido" abaixo).
+
+#### Editando a quantidade de um item
+
+- A edição acontece direto na linha do item, com um botão "−"/"+" — não abre nenhuma janela separada.
+- A quantidade pode variar entre **1 (mínimo)** e a **quantidade original comprada pelo cliente (máximo)** — esse teto vale por item individual (ex.: cliente comprou 6 unidades de um produto → esse item pode variar de 1 a 6, independente do que acontece com os outros itens do pedido).
+- Não dá pra reduzir até 0 pelo "−" — pra isso existe a ação separada "Remover produto do pedido" (ícone de lixeira).
+- O botão "−" desliga ao chegar em 1; o "+" desliga ao chegar na quantidade original (clicar mesmo assim mostra um aviso "Qtd. máx. permitida" por 2 segundos). Digitar manualmente um valor acima do limite deixa o campo com borda vermelha e bloqueia o botão "Liberar para fila" até corrigir.
+- Quando a quantidade é alterada, aparece o texto **"Qtd. Original: X"** abaixo do nome do produto — esse texto só aparece enquanto o pedido está em Conferência; some assim que o pedido é liberado pra fila.
+
+#### Removendo um item
+
+- A opção "Remover produto do pedido" só aparece se, depois de remover, **sobrar pelo menos 1 item no pedido** — não dá pra esvaziar o pedido inteiro removendo item por item.
+- Item removido aparece riscado, com opacidade reduzida, quantidade "0" e preço "R$ 0,00" — e tem um ícone de desfazer (↺) pra restaurar a quantidade anterior, enquanto o pedido ainda estiver em Conferência.
+- Quando resta **só 1 item** no pedido (não importa quantas unidades ele tenha), a opção de remover esse último item desaparece — só resta ajustar a quantidade dele, ou cancelar o pedido inteiro.
+
+#### Caso especial: pedido com 1 item e 1 unidade
+
+Quando o pedido tem exatamente **1 item e 1 unidade**, a edição fica totalmente bloqueada — não dá pra reduzir (já está no mínimo) nem remover isoladamente. A única ação disponível é **cancelar o pedido inteiro**. É esse cenário que dispara o **banner vermelho** quando causado por falta de estoque (ver abaixo).
+
+#### Modelo de "Rascunho"
+
+Enquanto o pedido está em Conferência, toda edição é **provisória** — o pedido mostra a tag **"Rascunho"** assim que a primeira edição é feita. Os valores recalculados (subtotal, ajustes) aparecem na tela em tempo real, mas **não ficam salvos** até a confirmação.
+
+- A confirmação definitiva só acontece ao clicar em **"Liberar para fila"** — é o único momento em que as edições são realmente gravadas (e aparecem na Trilha de Auditoria, ver abaixo).
+- Se o balconista tentar sair da tela ou fechar a aba com uma edição pendente (não confirmada), o Portal pergunta **"Sair e descartar rascunho?"**, com a opção de continuar editando ou descartar o que foi feito.
+
+#### Split de preço promocional ("Limite por compra") durante a edição
+
+Se o item editado faz parte de uma promoção com **"Limite por compra"** configurado (ver seção 9, Promoções), e o cliente comprou mais unidades do que esse limite, o pedido já mostra o produto em **2 linhas**: uma no preço promocional (até o limite) e outra no preço de loja (o excedente). Ao editar a quantidade desse produto:
+- **Reduzir** desconta primeiro da linha de **preço de loja (excedente)** — só depois de zerar o excedente é que a linha "Promo" começa a reduzir.
+- **Restaurar** (desfazer) enche primeiro a linha "Promo" até o limite da promoção, só depois volta a preencher o excedente.
+- **Remover o produto por completo** remove as duas linhas juntas — não dá pra remover só uma das duas partes isoladamente.
+
+#### Banner de atenção (item sem estoque)
+
+- **Banner amarelo**: aparece quando o pedido tem 2 ou mais itens e pelo menos 1 precisa de ajuste — "1 item requer atenção antes da liberação".
+- **Banner vermelho**: aparece só no caso do pedido com exatamente 1 item e 1 unidade sem estoque (ver caso especial acima) — bloqueio total, só resta cancelar.
+- O banner pode ser fechado, mas **volta a aparecer** automaticamente se o balconista sair e voltar pro pedido enquanto o problema não for resolvido.
+
+#### Estorno e troco durante a edição em Conferência
+
+Além do estorno em cancelamento total (ver "Cancelando um pedido" abaixo), reduzir ou remover um item durante a Conferência também pode gerar estorno — segue a **mesma lógica por modalidade de pagamento** já descrita em "Cancelando um pedido" (offline não estorna, crédito online estorna automático, Pix depende de saldo disponível na conta Cielo).
+
+**Pagamento em dinheiro na entrega:** se o pedido for pago em dinheiro (na entrega), a edição recalcula o **troco** em tempo real:
+- O bloco financeiro mostra a linha **"Cliente vai pagar com: R$ X"** — o valor que o cliente informou no app na hora da compra, que **não muda** com a edição.
+- O troco é sempre **"Cliente vai pagar com" menos o subtotal atual** — como a Conferência só reduz o pedido (nunca aumenta), **o troco só pode subir, nunca fica negativo**.
+- A cada edição, o troco é recalculado e mostra um indicador de quanto mudou (ex.: "↑ R$ 89,90").
+
+#### Trilha de Auditoria
+
+Dentro do detalhe de qualquer pedido, uma seção mostra o histórico de tudo que aconteceu com ele — mudanças de status e edições feitas por um usuário.
+
+- Cada evento mostra: título, detalhe, quem foi o responsável e a data/hora.
+- Se o evento veio do **ERP** (ex.: mudança de status automática), o responsável aparece como **"Sistema"**, com o sufixo **"(ERP)"** no título (ex.: "Enviado para fila (ERP)"). Se veio de uma ação manual no Portal, aparece o nome de quem fez.
+- Mostra os 5 eventos mais recentes por padrão, com um botão **"Ver mais"** pra expandir.
+- **Atenção:** eventos de edição feitos durante a Conferência (quantidade ajustada, item removido) só aparecem na Trilha **depois** que o pedido é liberado pra fila — mas com o horário **original** de quando a edição foi feita, não o horário da liberação (é o mesmo modelo de "Rascunho" acima).
+
+#### O que o cliente vê no app, quando o pedido dele é editado
+
+- Se algum item for ajustado ou removido, o card do pedido em "Meus pedidos" ganha a tag **"Pedido atualizado"**, e o cliente recebe uma **push notification** avisando (uma notificação por liberação, mesmo que vários itens tenham mudado).
+- No detalhe do pedido, cada item alterado mostra uma tag própria — **"Qtd. ajustada X → Y"** para redução de quantidade, ou **"Produto removido"** para item removido.
+- O resumo financeiro mostra a diferença como **"Estorno"** (se o pedido foi pago no app) ou **"Itens removidos"** (se foi pago na entrega/retirada, sem estorno).
+- O cliente **nunca vê o "Rascunho"** — só é notificado depois que o balconista confirma "Liberar para fila".
+
+> Documentação completa do lado do consumidor: `specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md`.
+
+#### Indicadores de edição de pedidos
+
+🚧 **Em staging — previsão de lançamento nesta semana** (ainda não em produção no momento desta atualização). Quando disponíveis, os relatórios/indicadores planejados incluem: volume de pedidos editados por período, tipo de alteração mais comum (quantidade reduzida/item removido/cancelamento/restauração), produtos mais editados/removidos, lojas com maior taxa de edição/cancelamento, tempo médio em Conferência até liberação, e valor financeiro impactado por estornos.
 
 ### Cancelando um pedido
 
@@ -387,7 +473,7 @@ O botão **"Exportar"** no topo da tela Pedidos abre um seletor de período (**�
 **Este relatório está em processo de adequação — ticket [ECP-747](https://farmarcas.atlassian.net/browse/ECP-747)** ("Refinado", ainda não implementado). Regras definidas para a versão corrigida:
 
 1. **Filtro por status é dinâmico:**
-   - Pedidos em status **ativo** (Na fila / Em separação / Liberados) devem **sempre** aparecer no relatório, **ignorando** o período selecionado — é uma "fotografia" em tempo real do que está em aberto.
+   - Pedidos em status **ativo** (Na fila / Em separação / Liberados) devem **sempre** aparecer no relatório, **ignorando** o período selecionado — é uma "fotografia" em tempo real do que está em aberto. *(❓ não confirmado se Conferência também entra como status "ativo" aqui — ver nota na seção 5.1.)*
    - Pedidos em status **final** (Concluídos / Cancelados) devem respeitar o período selecionado, mas filtrando pela **data em que o pedido entrou nesse status** (`updatedAt`), não pela data de criação — considerando o dia cheio (00:00:01 do primeiro dia até 23:59:59 do último), com cuidado para o fuso não deslocar pedidos para o dia errado.
 2. **Nova coluna "Usuário Cancelamento"**: para pedidos concluídos/cancelados, deve trazer o usuário responsável pela mudança de status; se o cancelamento foi feito pelo próprio ERP (sem usuário do Portal envolvido), o valor deve ser **"ERP"**.
 3. **Lojas em grupo:** ao exportar de uma loja que faz parte de um Grupo de lojas (qualquer configuração de estoque), o relatório deve trazer os pedidos de **todas as lojas do grupo**, ignorando qualquer filtro de loja aplicado pelo usuário.
@@ -712,4 +798,5 @@ Esses e-mails **não vão para o associado** — são direcionados ao time inter
 - **Resolvido:** "Anjo" é o profissional do time de Operações internas da Farmarcas que dá suporte a associados. O associado tem o contato direto do Anjo via WhatsApp, e também pode abrir chamado via Salesforce. O suporte é sempre com a Farmarcas — nunca com a Rede (ver seção 1).
 - **Resolvido:** o bug da janela de cancelamento de oferta com o texto "[Nome da loja]" não interpolado já foi corrigido em produção.
 - **Templates de e-mail descartados/desconsiderados** (existem no centralizador de comunicação, mas não devem ser documentados/usados como referência — ver seção 14): "Aplicativo conectado ao ERP." (duplicado de "comunicação... restabelecida"), "Confira a lista de lojas com mais de 2 horas de atraso na integração" (será descontinuado), "Nova solicitação disponível" (não existe mais), "O relatório de lojas desativadas já está disponível" (não será utilizado), e o e-mail de falha de comunicação na integração com detalhe técnico do erro (será descontinuado).
-- Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-07-15; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
+- **Adicionado (2026-09-29):** etapa **Conferência** na tela Pedidos (edição/remoção de item, cancelamento, Rascunho, split promocional, troco, Trilha de Auditoria — ver seção 8), com base no PRD `specs/features/portal/Editar.Pedido/PRD-edicao-pedidos-etapa-revisao.md` (v2.2) e no PRD de visão do App `specs/features/001-app-ecommerce/edição de pedido/PRD-pedido-editado-portal-app.md` (v1.0). Confirmado em produção nesta data (Conferência, split, Trilha de Auditoria e retorno no App); **os indicadores de edição de pedidos (seção 12 de ambos os PRDs) ainda estavam em staging**, com lançamento previsto para a semana de 2026-09-29. **Em aberto:** não confirmado se os indicadores/relatórios de "Pedidos em aberto" (seção 5.1) passaram a contar pedidos em Conferência.
+- Este documento cobre o que foi visto em telas reais e no FAQ interno de suporte até 2026-09-29; conforme novas funcionalidades forem mapeadas ou o Portal evoluir, atualizar as seções correspondentes.
