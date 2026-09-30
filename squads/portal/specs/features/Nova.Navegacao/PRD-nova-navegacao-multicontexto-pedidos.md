@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 1.7
+**Versão:** 1.9
 
 ---
 
@@ -25,6 +25,10 @@
 **v1.6 (2026-09-24)** — Fecha 3 decisões vistas em novos prints do protótipo (mesmo arquivo Claude Design): (1) localização do filtro de GE — fica no header de Indicadores, resolvendo a pendência da v1.0; (2) navegação entre lojas de módulo Vendas/Ofertas dentro de Indicadores muda para macro-abas com contador ("Lojas de Vendas (25)"/"Loja de Ofertas (2)"); (3) confirma que "Hub de Lojas" se chama "Gestão de Lojas" na interface real, com 2 abas — "Lojas da rede" (a listagem em si) e "Anúncios do App" (Banners) — fechando de vez onde Banners mora na navegação nova.
 
 **v1.7 (2026-09-24)** — Rodada de revisão de conteúdo pedida por Matheus: adiciona Produtos (Catálogo) à tabela de contexto por funcionalidade (5.2), sem seletor de contexto, Admin only; corrige a redação confusa do gatilho do amarelo em 6.4 (é a mesma referência de tempo do prazo estimado, não duas coisas diferentes); reforça em 6.7 que o toast é global de fato, inclusive dentro do módulo de Configuração; corrige 6.8 — cancelamento é permitido a partir de **qualquer status, incluindo Concluído**, não só status ativos; adiciona reforço sobre o cálculo de estorno no cancelamento respeitar estornos parciais já feitos na Conferência (`PRD-edicao-pedidos-etapa-revisao.md`, seção 8.1); move a definição da navegação Lojas de Vendas/Loja de Ofertas de "pendência" para decisão fechada (seção 5.1); remove da seção 9/9.1 os itens já resolvidos (o conteúdo já vive nas seções principais, essas linhas eram só rastro de decisão).
+
+**v1.8 (2026-09-24)** — Ajustes pós-daily de arquitetura/navegação (24/09): reconfirma "Parado" em 60 minutos fixos (a daily levantou 120 min, Matheus manteve 60 — sem personalização por loja neste ciclo); explicita que o filtro "Parados" cruza todos os status/etapas; adiciona fechamento automático do modal de detalhe ao chegar em status final (Concluído/Cancelado); reconfirma WhatsApp automático fora de escopo (mesmo com API da Meta voltando à mesa) e notificações em tempo real aprovadas só como base de arquitetura, sem central de notificações neste ciclo; esclarece que Produtos (sem contexto de Rede) e Banners (dentro de Gestão de Lojas, com contexto de Rede) não são a mesma coisa. **Nota maior, fora do PRD:** a daily confirmou construção de um **repositório novo do zero** para o Portal (não migração in-place) — isso muda a lógica de sequenciamento de entrega registrada nos épicos do Jira; ver memória do projeto para o novo modelo.
+
+**v1.9 (2026-09-28)** — Adiciona o comportamento do bloco de identidade de Rede no header global (seção 5.1): se o usuário está vinculado a 1 única Rede, o header exibe a logo + nome dessa Rede (reaproveitando o asset já usado hoje) no lugar do seletor de Rede; se está vinculado a múltiplas Redes, exibe o seletor "Todas as Redes ▾" no lugar da logo fixa. Dentro da tela de Gestão de Lojas, o bloco de contexto (seletor de Loja, e de Rede quando multi-rede) é substituído pelo texto "Gestão de Lojas" — mas a logo de Rede única continua aparecendo quando aplicável.
 
 ---
 
@@ -102,6 +106,11 @@ O seletor reaproveita integralmente o que já foi especificado em cards anterior
 
 **Mudança de comportamento em relação a hoje:** atualmente o contexto de Rede/Loja só é aplicado na Home de Indicadores. No modelo novo, o contexto selecionado passa a valer para **todo o módulo de Operação** — trocar de contexto em qualquer tela (Home, Pedidos, Promoções) atualiza as outras também, dentro da mesma sessão de navegação.
 
+**Bloco de identidade de Rede no header (definido em 2026-09-28):** a exibição do lado esquerdo do header varia conforme a quantidade de Redes vinculadas ao usuário:
+- **1 única Rede vinculada:** o header mostra a logo + nome dessa Rede (ex.: "Acfarma ·"), reaproveitando o asset de logo já usado hoje no Portal — não existe seletor de Rede pra escolher, já que só há uma opção.
+- **Múltiplas Redes vinculadas:** o header mostra o seletor "Todas as Redes ▾" no lugar da logo fixa, já que não há uma única marca pra representar.
+- **Dentro da tela de Gestão de Lojas:** o bloco de contexto (seletor de Loja, e de Rede quando multi-rede) é substituído pelo texto "Gestão de Lojas" — mas a logo de Rede única continua aparecendo quando aplicável (ex.: "Acfarma · Gestão de Lojas"); no caso multi-rede, o seletor de Rede some e só resta o texto "Gestão de Lojas".
+
 ### 5.2 Contexto por funcionalidade
 
 Confirmado em 2026-09-23 — mapeamento de qual tipo de seletor cada funcionalidade usa:
@@ -122,6 +131,8 @@ Confirmado em 2026-09-23 — mapeamento de qual tipo de seletor cada funcionalid
 **Nota "de Vendas" no seletor de Pedidos:** o qualificador reflete que só lojas no módulo **Vendas** geram Pedidos no Portal — lojas no módulo Ofertas não aparecem/não fazem sentido nesse contexto (ver `Manual-Portal-Radar-Ecommerce.md`, seção 3, "Módulo Vendas x Módulo Ofertas").
 
 **Produtos (Catálogo) também não se encaixa no modelo multi/único de loja:** é um catálogo único, compartilhado entre todas as Redes da plataforma (`Manual-Portal-Radar-Ecommerce.md`, seção 12) — não existe "Rede/Loja" para filtrar, o cadastro é o mesmo pra todo mundo. Acesso exclusivo do Admin (regra já vigente hoje, seção 5.3).
+
+**Atenção para não confundir Produtos com Banners (esclarecido em 2026-09-24):** o Admin continua precisando selecionar um contexto de Rede/Loja para navegar no Portal normalmente — isso não muda. A diferença é que **Produtos** é acessado direto pelo novo menu, sem depender de qual contexto está selecionado (o catálogo é o mesmo independente da Rede/Loja escolhida). **Banners é diferente** — continua vivendo dentro de Gestão de Lojas (seção 5.4), então precisa que o Admin esteja com uma Rede selecionada.
 
 **Banners não se encaixa nos dois modelos (multi/único de loja):** o contexto dele é de **Rede**, consistente com o comportamento já existente hoje (Manual seção 10, tela só aparece no nível Rede) — mas a visibilidade muda: **fica restrita ao perfil Admin**. É uma redução deliberada em relação a hoje, onde Gestor de Rede também acessa Banners (Manual seção 2, menu de Rede inclui Banners) — confirmado por Matheus em 2026-09-23. Resolve a pendência 9.1 sobre onde Banners entra no modelo novo.
 
@@ -191,7 +202,8 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 - **Vermelho ("Atrasado")** → o pedido já excedeu o tempo de entrega/retirada. Cada loja pode ter uma configuração diferente desse tempo (ex.: default de 30 min) — **todo pedido atrasado fica vermelho**, independente de estar "Parado" ou não.
 
 **Eixo 2 — movimentação (tag "Parado", não muda a cor da linha por si só):**
-- **"Parado"** → pedido sem nenhuma movimentação por **mais de 1 hora**.
+- **"Parado"** → pedido sem nenhuma movimentação por **mais de 1 hora (60 minutos fixos)**. **Reconfirmado em 2026-09-24** (daily de arquitetura levantou 120 min como possível padrão — Matheus manteve 60 min fixos). Sem personalização por loja neste ciclo — fica para 2027.
+- **O filtro "Parados" cruza todos os status** — um pedido parado pode estar em Conferência, Na fila, Em separação ou Liberados; o recorte "Parados" (painel "Todos os filtros", seção 6.1.1) traz os pedidos parados de **qualquer** uma dessas etapas juntos, não fica preso a uma coluna/status específico.
 
 **Os dois eixos são independentes** — um pedido pode estar atrasado sem estar parado (chegou uma movimentação recente, mas a loja configurou um tempo de entrega curto e ele já estourou) e pode estar parado sem estar atrasado (loja com tempo de entrega mais longo, ainda dentro do prazo, mas sem toque há 1h+). Quando os dois se aplicam ao mesmo tempo, a UI mostra os dois (linha vermelha + tag "Parado").
 
@@ -215,10 +227,11 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 - Nomenclatura de pagamento: **COBRAR** (dinheiro, Pix ou maquininha — débito/crédito) vs. **PAGO** (crédito, débito ou Pix já processado).
 - Tag **"Editado"** = pedido teve item removido ou substituído (consistente com o modelo já fechado em `PRD-edicao-pedidos-etapa-revisao.md`).
 - Pedidos cancelados não mostram o status tracker — mostram o motivo do cancelamento no lugar.
+- **Fecha automaticamente ao chegar em status final** (Concluído ou Cancelado) — confirmado na daily de 2026-09-24, para evitar inconsistência visual de deixar o modal aberto mostrando um pedido que já saiu da lista ativa.
 
 ### 6.7 Notificações (toast)
 
-Modelo in-app apenas — **sem** WhatsApp automático nem central de notificações (seguem fora de escopo, seção 3).
+Modelo in-app apenas — **sem** WhatsApp automático nem central de notificações (seguem fora de escopo, seção 3). **Reconfirmado na daily de arquitetura de 2026-09-24:** WhatsApp para pedido parado voltou a ser mencionado como tecnicamente viável (API da Meta), mas Matheus manteve a decisão de não implementar agora — não é complexo de adicionar depois, se necessário. Também foi aprovada a base de **notificações em tempo real** (websocket/push em vez de polling de endpoint) como direção de arquitetura — a implementação deve deixar o caminho preparado para uma futura central de notificações, mas **a central em si não é entregue neste ciclo**.
 
 - Toast fica fixo até o usuário fechar manualmente pelo "x" — não some sozinho.
 - Se o usuário fechar a aba/tela e voltar a abrir, o toast reaparece enquanto o pedido continuar parado.
