@@ -120,6 +120,7 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 
 - [ ] Confirmar que ECP-1494 (header global novo) reaproveita literalmente os endpoints do ECP-1468 (seção 5) e não uma implementação nova — os endpoints hoje existem pro filtro da tela de Indicadores em produção, ainda não confirmados no contexto do header global.
 - [ ] Status do `SessionPermissionGuard` (permissões finas `offer:*`/`product:*`/`order:*`/`pharmacy:*`) — confirmar se segue desabilitado por design ou se é pendência técnica.
+- [x] ~~Fonte exata de "quais Redes/Lojas o usuário tem vínculo"~~ — **pista forte encontrada em 2026-10-01**: a resolução de escopo (PharmacyId/PharmacyNetworkId/Groups/Networks/States) acontece no **BFF** `ecomm-bff-backoffice-indicator-dotnet` (`ValidationOrderLayerService.PrepareBodyRequestAsync`), via `GetPharmaciesUserCommand`/`PostStoresFilterCommand` — **antes** de qualquer chamada ao serviço Order. Repo clonado em `Documents/GitHub/ecomm-bff-backoffice-indicator-dotnet`. Ainda não li o código literal desses dois commands — próximo passo se for confirmar de vez.
 
 ## Changelog
 

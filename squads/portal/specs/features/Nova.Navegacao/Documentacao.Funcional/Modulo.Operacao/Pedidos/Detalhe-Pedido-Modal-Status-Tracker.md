@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 6.6
 **Componente novo:** Status Tracker horizontal (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-09-30
+**Última atualização:** 2026-10-01
 
 ---
 
@@ -40,11 +40,13 @@ Não mostram o status tracker — mostram o motivo do cancelamento no lugar.
 
 ### 3.5 Fechamento automático em status final
 
-Ao chegar em status final (Concluído ou Cancelado), o modal fecha automaticamente — evita deixar aberto um pedido que já saiu da lista ativa.
+Ao chegar em status final (Concluído ou Cancelado), o modal fecha automaticamente — evita deixar aberto um pedido que já saiu da lista ativa. **Confirmado como comportamento correto em 2026-10-01** — o protótipo ainda não tinha essa implementação (fechava só por X/Esc/clique fora); já foi passado um prompt de ajuste pro protótipo incluir fechar automaticamente logo após a transição, com um pequeno delay pro usuário ver a confirmação visual antes.
 
-### 3.6 Pendência de nomenclatura de campo
+### 3.6 "Loja responsável" = "Filial responsável" (resolvido 2026-10-01)
 
-O bloco "Loja responsável" (CNPJ + nome) aparece tanto em Entrega quanto em Retirada. Não está claro se é o mesmo campo citado como "Filial responsável" na v1.0 do PRD (que previa ocultar em Retirada) — a regra de ocultar não está implementada assim no protótipo. **Confirmar com Matheus antes de fechar.**
+Mesmo conceito, exibido em lugares diferentes conforme o tipo de entrega — não são dois campos duplicados:
+- **Retirada:** aparece dentro do container único de endereço/pagamento, rotulado "Loja responsável" (CNPJ + endereço da loja).
+- **Entrega:** existe um card lateral dedicado "Loja responsável", que fica **oculto na Retirada** (porque a informação já está no container principal nesse caso).
 
 ## 4. Nível de integração / fonte de dados
 
@@ -58,14 +60,16 @@ O bloco "Loja responsável" (CNPJ + nome) aparece tanto em Entrega quanto em Ret
 |---|---|
 | Pedido do tipo Retirada | Taxa de entrega oculta |
 | Navego pro próximo pedido (▶) com o pedido atual em último da lista | Botão ▶ desabilitado |
-| Pedido avança pra status final durante a visualização | Modal fecha automaticamente |
+| Pedido avança pra status final durante a visualização | Modal fecha automaticamente (ajuste ainda pendente no protótipo, ver 3.5) |
 | `canceledReason` vazio | Trata como cancelamento via ERP, não como erro |
+| Pedido do tipo Retirada | "Loja responsável" aparece dentro do container principal, não como card separado |
+| Pedido do tipo Entrega | Card lateral dedicado "Loja responsável" aparece, além do container de endereço |
 
 ## 6. Pendências / perguntas em aberto
 
-- [ ] "Loja responsável" vs. "Filial responsável" — confirmar com Matheus se são o mesmo campo e se a regra de ocultar em Retirada ainda vale.
 - [ ] Fonte exata (endpoint) do detalhe do pedido — não levantada ainda.
 
 ## Changelog
 
+- **2026-10-01** — Revalidado contra o código-fonte do protótipo Claude Design: resolvida a pendência "Loja responsável"/"Filial responsável" (mesmo conceito, posições diferentes por tipo); confirmado que o fechamento automático em status final está correto mas ainda não implementado no protótipo (prompt de ajuste já enviado).
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1516, ECP-1313, PRD seção 6.6, e [[feedback_status_change_query_rules]].

@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 1.9
+**Versão:** 2.0
 
 ---
 
@@ -29,6 +29,15 @@
 **v1.8 (2026-09-24)** — Ajustes pós-daily de arquitetura/navegação (24/09): reconfirma "Parado" em 60 minutos fixos (a daily levantou 120 min, Matheus manteve 60 — sem personalização por loja neste ciclo); explicita que o filtro "Parados" cruza todos os status/etapas; adiciona fechamento automático do modal de detalhe ao chegar em status final (Concluído/Cancelado); reconfirma WhatsApp automático fora de escopo (mesmo com API da Meta voltando à mesa) e notificações em tempo real aprovadas só como base de arquitetura, sem central de notificações neste ciclo; esclarece que Produtos (sem contexto de Rede) e Banners (dentro de Gestão de Lojas, com contexto de Rede) não são a mesma coisa. **Nota maior, fora do PRD:** a daily confirmou construção de um **repositório novo do zero** para o Portal (não migração in-place) — isso muda a lógica de sequenciamento de entrega registrada nos épicos do Jira; ver memória do projeto para o novo modelo.
 
 **v1.9 (2026-09-28)** — Adiciona o comportamento do bloco de identidade de Rede no header global (seção 5.1): se o usuário está vinculado a 1 única Rede, o header exibe a logo + nome dessa Rede (reaproveitando o asset já usado hoje) no lugar do seletor de Rede; se está vinculado a múltiplas Redes, exibe o seletor "Todas as Redes ▾" no lugar da logo fixa. Dentro da tela de Gestão de Lojas, o bloco de contexto (seletor de Loja, e de Rede quando multi-rede) é substituído pelo texto "Gestão de Lojas" — mas a logo de Rede única continua aparecendo quando aplicável.
+
+**v2.0 (2026-10-01)** — Revalidação contra o **código-fonte real** do protótipo Claude Design "Validação de ideias" (arquivos `.jsx`/`.js` exportados, não só a UI renderizada). Fecha 3 pendências e reforça 2 regras que o código do protótipo tinha implementado errado:
+- **Fecha a pendência do "Loja responsável"/"Filial responsável" (6.6):** são o mesmo conceito. Pra Retirada, o campo aparece dentro do container único de endereço/pagamento (rotulado "Loja responsável"); pra Entrega, existe um card dedicado "Loja responsável" que fica oculto na Retirada (esse já estava correto no protótipo — a pendência era só falta de clareza na nomenclatura entre os dois termos).
+- **Confirma "Teste interno" como 10ª opção de motivo de cancelamento (6.8)** — estava nos dois protótipos de forma consistente; Matheus confirmou diretamente.
+- **Reforça que "Conferência" não tem opção de pular etapa** (6.5) — só "Na fila → Liberados" é um pulo válido. O protótipo tinha implementado (por engano) um pulo de Conferência direto pra Liberados; Matheus confirmou que isso está errado e não deve ser considerado.
+- **Reforça que não existe "Desfazer"/undo de status** (6.5) — o protótipo tinha um snackbar de "Desfazer" depois de avançar status; Matheus confirmou que essa funcionalidade não existe e não deveria estar lá (sobra de uma versão anterior do protótipo, não reflete decisão nenhuma).
+- **Reforça o fechamento automático do modal em status final** (6.6) — o protótipo ainda não tinha essa implementação; comportamento confirmado como correto, prompt de ajuste já enviado pra incluir no protótipo.
+- Adiciona textos exatos de confirmação por caso (6.5): Conferência→Na fila usa "Ao liberar este pedido para a separação, você não poderá mais fazer edições nos itens."; pular etapa usa "Ao confirmar, o sistema entende que os itens já foram separados fisicamente e o pedido estará pronto para [entrega/retirada]."; concluir usa o texto já documentado em 6.8.
+- **Nota de arquitetura, fora do escopo de produto desta versão:** há uma mudança em estudo no modelo de notificação de pedido parado — um novo FAB substituiria o modelo de toast/banner atual (seção 6.7). Ainda sem desenho fechado; não alterar 6.7 até a UX fechar o formato.
 
 ---
 
@@ -213,17 +222,18 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 
 - Ação principal: **botão split** — um botão primário com a ação padrão (avançar 1 etapa sequencial) e um chevron acoplado que abre um menu com a alternativa de **pular direto para "Liberados"**.
 - **Transições sequenciais intermediárias acontecem sem diálogo de confirmação.**
-- **Diálogo de confirmação obrigatório em 3 casos:**
-  1. Conferência → Na fila (é o commit do rascunho de edição, ver `PRD-edicao-pedidos-etapa-revisao.md`).
-  2. Qualquer ação de "pular etapa" (ex.: Na fila → Liberados direto).
+- **Diálogo de confirmação obrigatório em 3 casos, com texto específico por caso:**
+  1. Conferência → Na fila (é o commit do rascunho de edição, ver `PRD-edicao-pedidos-etapa-revisao.md`) — texto: "Ao liberar este pedido para a separação, você não poderá mais fazer edições nos itens."
+  2. Qualquer ação de "pular etapa" — texto: "Ao confirmar, o sistema entende que os itens já foram separados fisicamente e o pedido estará pronto para [entrega/retirada]."
   3. Qualquer transição para um **status final** — Liberados → Concluído (irreversível, "Esta ação não pode ser desfeita") e Cancelamento a partir de **qualquer status, incluindo Concluído** (ver 6.8), pelo mesmo motivo: é status final.
-- **Reverter status ("mover para trás") não está desenhado e não faz parte deste PRD** — segue como ideia registrada pela UX para avaliação futura.
+- **O único "pular etapa" válido é Na fila → Liberados direto.** Conferência **não** tem opção de pular etapa — só o caminho sequencial (Conferência → Na fila). **Reforçado em 2026-10-01** depois de encontrar no código do protótipo um pulo (por engano) de Conferência direto pra Liberados; Matheus confirmou que está errado e não deve ser considerado.
+- **Reverter status ("mover para trás") não está desenhado e não faz parte deste PRD** — segue como ideia registrada pela UX para avaliação futura. **Reforçado em 2026-10-01:** o protótipo tinha um "Desfazer" (undo) via snackbar depois de avançar status — confirmado que essa funcionalidade não existe e é sobra de uma versão anterior do protótipo, não reflete nenhuma decisão de produto.
 
 ### 6.6 Detalhe do pedido
 
 - Abre como modal, largura máxima 1180px, altura dinâmica de até 90% da viewport.
 - Navegação **◀ / ▶ "próximo pedido"** dentro do próprio modal, sem precisar fechar e reabrir — desabilitada no primeiro e no último pedido da lista carregada.
-- Comportamento condicional por tipo de entrega: **Retirada** oculta o campo de taxa de entrega. **Verificado no protótipo (2026-09-23):** o bloco "Loja responsável" (CNPJ + nome da loja que atende o pedido) aparece tanto em Entrega quanto em Retirada — se "Filial responsável" citado aqui é o mesmo campo, a regra de ocultar em Retirada **não está implementada assim**; confirmar com Matheus se são campos diferentes ou se a regra mudou.
+- Comportamento condicional por tipo de entrega: **Retirada** oculta o campo de taxa de entrega. **"Loja responsável" = "Filial responsável" (resolvido 2026-10-01):** é o mesmo conceito, só exibido em lugares diferentes conforme o tipo. Pra **Retirada**, o campo aparece dentro do container único de endereço/pagamento (rotulado "Loja responsável", junto com CNPJ e endereço da loja). Pra **Entrega**, existe um card lateral dedicado "Loja responsável" — esse card fica **oculto na Retirada** (porque a informação já está no container principal), não duplicado.
 - Nomenclatura de pagamento: **COBRAR** (dinheiro, Pix ou maquininha — débito/crédito) vs. **PAGO** (crédito, débito ou Pix já processado).
 - Tag **"Editado"** = pedido teve item removido ou substituído (consistente com o modelo já fechado em `PRD-edicao-pedidos-etapa-revisao.md`).
 - Pedidos cancelados não mostram o status tracker — mostram o motivo do cancelamento no lugar.
@@ -244,7 +254,7 @@ Modelo in-app apenas — **sem** WhatsApp automático nem central de notificaç�
 ### 6.8 Cancelamento de pedido
 
 - **Ação disponível a partir de qualquer status do pedido, incluindo Concluído** — não fica restrita aos status ativos (Conferência até Liberados). **Confirmado por Matheus em 2026-09-24**, corrigindo a versão anterior deste documento, que dizia "Conferência até Liberados".
-- Abre modal pedindo o motivo do cancelamento, **reaproveitando as opções já existentes no Portal hoje** (`Manual-Portal-Radar-Ecommerce.md`): Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque. **Achado nos protótipos (Figma e Claude Design):** ambos incluem uma 10ª opção, "Teste interno", que não está na lista atual do Manual — apareceu de forma consistente nos dois lugares, então parece intencional; confirmar com Matheus antes de adicionar.
+- Abre modal pedindo o motivo do cancelamento. Lista de motivos (**10 opções, confirmada em 2026-10-01**): Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque, **Teste interno**. As primeiras 9 já existem no Portal hoje (`Manual-Portal-Radar-Ecommerce.md`); "Teste interno" é a adição confirmada por Matheus (apareceu de forma consistente em ambos os protótipos antes da confirmação).
 - O modal informa: "O cliente será notificado e o estorno processado" — cancelamento dispara notificação ao cliente e processamento de estorno (quando aplicável).
 - **Exige confirmação** (é status final, mesma regra da seção 6.5) e não pode ser desfeito.
 - Pedido cancelado registra quem cancelou e o motivo, exibido no lugar do status tracker (ver 6.6). **Verificado no protótipo:** confirmação de conclusão (Liberados → Concluído) segue exatamente o texto "Concluir pedido #[nº]? O pedido será finalizado e marcado como concluído. Esta ação não pode ser desfeita."
@@ -279,6 +289,7 @@ Esses itens não bloqueiam o PRD, mas devem virar cards próprios de "criação 
 
 - **Modelo de SLA da Home de Indicadores:** percentual (modelo já usado em `ECP-1313`/`ECP-1318`) vs. minutos absolutos (modelo deste documento) — decisão separada, a ser tomada quando a Home entrar em pauta.
 - **Volumetria real de pedidos/lojas simultâneas por grupo:** sem número validado; precisa de checagem de engenharia antes de fechar a estratégia de paginação/performance para grupos com muitas lojas.
+- **Modelo de notificação de pedido parado em estudo (adicionado 2026-10-01):** há uma mudança em estudo que substituiria o toast/banner da seção 6.7 por um FAB (floating action button). Ainda sem desenho fechado — a seção 6.7 continua valendo como está até a UX fechar o novo formato; não implementar o FAB sem esse fechamento.
 
 ### 9.1 Cruzamento com o Manual do Portal atual
 

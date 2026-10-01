@@ -5,14 +5,16 @@
 **Referência UX:** [ECP-1450](https://farmarcas.atlassian.net/browse/ECP-1450) (Notificações de pedido parado)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 6.7
 **Relacionado:** [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md) (mesma definição de "Parado" — 60 min fixos)
-**Status:** Em desenvolvimento
-**Última atualização:** 2026-09-30
+**Status:** Em desenvolvimento — ⚠️ modelo em revisão (ver 5)
+**Última atualização:** 2026-10-01
 
 ---
 
 ## 1. O que é
 
 Modelo in-app apenas — sem WhatsApp automático nem central de notificações (fora de escopo deste ciclo, mesmo com a API da Meta voltando à mesa na daily de 24/09). A base de notificações em tempo real (websocket/push, não polling) foi aprovada como direção de arquitetura, preparando caminho para uma futura central — mas a central em si não é entregue agora.
+
+**⚠️ Mudança em estudo (2026-10-01):** há um novo FAB (floating action button) em desenvolvimento que vai **substituir** o modelo de toast/banner abaixo — "não vai existir o banner mais", segundo Matheus. O desenho ainda não está fechado; as regras abaixo (seções 2-4) continuam sendo a especificação válida até a UX fechar o novo formato. Não implementar o FAB sem esse fechamento — ver pendência em 5.
 
 ## 2. Regras de negócio
 
@@ -54,9 +56,11 @@ Visível em **qualquer aba do Portal**, não só na tela de Pedidos — inclusiv
 
 ## 5. Pendências / perguntas em aberto
 
+- [ ] **Desenho do novo FAB que substitui o toast/banner** — ainda sem especificação fechada pela UX (adicionado 2026-10-01). Este documento precisa de uma revisão completa assim que o formato fechar.
 - [ ] Arquitetura exata do canal de tempo real (protocolo/serviço) — só aprovada a direção, não a implementação.
 - [ ] Comportamento exato quando o pedido resolve com toast aberto em múltiplas abas simultaneamente.
 
 ## Changelog
 
+- **2026-10-01** — Adiciona aviso de mudança em estudo: um FAB vai substituir o modelo de toast/banner (Matheus, ao revalidar o protótipo). Regras atuais continuam válidas até o novo desenho fechar.
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1518, ECP-1450, PRD seção 6.7.
