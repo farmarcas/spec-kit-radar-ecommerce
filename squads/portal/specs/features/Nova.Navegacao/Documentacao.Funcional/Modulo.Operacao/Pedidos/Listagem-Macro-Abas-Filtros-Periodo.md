@@ -105,6 +105,17 @@ Portal Angular: `POST /orders/report` com `{ isCanceled: false, pharmacyId, grou
 
 `Order/Commands/GetCanceledOrdersV1/GetCanceledOrdersV1Command.cs`: `HelpersOrder.ApplyFilters(..., "Canceled")` (período por `Canceled.TriggeredAt`), ordenada por `Canceled.TriggeredAt` decrescente, com `Skip`/`Take`. Não exclui o motivo "Teste interno" — comportamento mantido na tela nova.
 
+### 4.5 Pontos de atenção do legado (BFF de pedidos `ecomm-bff-backoffice-order-dotnet`)
+
+Confirmados em código em 2026-10-05; cada ponto está embutido como "Ponto de atenção / correção" na História correspondente.
+
+- **Escopo de lojas vem do cliente e não é validado contra o perfil** (headers `x-pharmacy-id`/`x-pharmacy-network-id`, `pharmacyIds` do `localStorage`); sem o header a lista segue vazia e o order-service devolve pedidos de todas as lojas — ECP-1514.
+- **Sem paginação real:** o BFF zera a página e usa a soma dos contadores como tamanho; `Convert.ToInt16` do contador de Concluídos/Retirados estoura acima de 32.767; ordenação padrão pelo primeiro status selecionado; contadores filtram abertos por `CreatedAt` e a lista não — ECP-1515.
+- **Janela de concluídos de 7 dias no BFF** (`DAY_CONSULT_ORDER_FINISHED = -7`) enquanto a tela informa 30; cancelados usam 30 dias pelo relógio do servidor, sem fuso de Brasília — ECP-1554.
+- **Busca por número/CPF só na rota V1** (uma loja ou grupo de busca, sem paginação, filtro por concatenação de texto); a listagem multi-loja não tem busca textual — ECP-1557.
+- **Exportar:** `POST backoffice/orders/report` publica no Kafka `order.report` e responde sempre 200 (publicação não aguardada, exceção engolida); escopo vem do corpo; o consumidor do tópico não foi encontrado nos repositórios acessados — ECP-1558.
+- **Sem tempo real:** o legado só faz polling de 1 minuto para o contador de novos; não há websocket/SignalR/SSE — ECP-1566.
+
 ## 5. Cenários de borda
 
 | Cenário | Regra |
@@ -124,6 +135,7 @@ Portal Angular: `POST /orders/report` com `{ isCanceled: false, pharmacyId, grou
 
 ## Changelog
 
+- **2026-10-05 (2)** — Adicionada a seção 4.5 com os pontos de atenção do BFF de pedidos legado (escopo vindo do cliente, paginação, janela de 7 dias para concluídos, busca V1, exportar com erro engolido, ausência de tempo real).
 - **2026-10-05 (3)** — Seção 4.1 passa a documentar a listagem multi-loja V3 (a mais próxima do que o Portal precisa), com o que faz e não faz (paginação, total e ordenação); a listagem de uma loja só fica como referência.
 
 - **2026-10-05 (2)** — Na busca, o Prazo volta a ordenar (abertos pelo tempo restante, fechados pela data de encerramento, abertos antes).

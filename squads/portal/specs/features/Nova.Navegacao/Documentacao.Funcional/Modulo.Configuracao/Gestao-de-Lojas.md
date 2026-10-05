@@ -1,11 +1,11 @@
 # Gestão de Lojas (Hub de Lojas)
 
 **Módulo:** Configuração
-**Histórias:** [ECP-1496](https://farmarcas.atlassian.net/browse/ECP-1496) — Gestão de Lojas (Hub de Lojas)
+**Histórias:** [ECP-1496](https://farmarcas.atlassian.net/browse/ECP-1496) — Estrutura da tela e entrada no contexto da loja; [ECP-1572](https://farmarcas.atlassian.net/browse/ECP-1572) — Lojas da Rede (tabela); [ECP-1573](https://farmarcas.atlassian.net/browse/ECP-1573) — Busca e filtro por Módulo; [ECP-1574](https://farmarcas.atlassian.net/browse/ECP-1574) — Exportar lojas
 **Referência UX:** [ECP-1453](https://farmarcas.atlassian.net/browse/ECP-1453) (Demanda UX — Hub de Lojas)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 5, 5.3, 5.4
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-09-30
+**Última atualização:** 2026-10-05
 
 ---
 
@@ -53,9 +53,13 @@ Regra pré-existente de Estoque Centralizado — sem cascata cruzada entre grupo
 
 ## 6. Pendências / perguntas em aberto
 
-- [ ] Endpoint/query exata que popula a listagem "Lojas da rede" (campos: Grupo, Telefone, Estado, Cidade, ERP conectado até, Módulo ativado) — ainda não levantado.
-- [ ] Comportamento do "Exportar Lojas" no modelo novo — herda o filtro do seletor multicontexto? Confirmar (mesma lógica que já foi decidida pro Relatório de Pedidos, ver PRD v1.5).
+- [ ] Handler real da listagem "Lojas da rede" (`GET /customer-management/v1/stores-planinng/networkies/v2/{id}/pharmacies`) e do "Exportar lojas" (`POST .../store-service/stores/export-report/pharmacy-by-network`): não estão em nenhum repositório acessado. A fonte mais próxima da listagem é `GET /pharmacy` do `ecomm-api-pharmacy-dotnet` (busca full-text em nome/CNPJ/cidade/UF, lista de CNPJs com `;`, filtro Módulo, escopo por perfil); o gerador do relatório não foi encontrado.
+- [ ] "Exportar lojas" no modelo novo — herda a busca e o filtro de Módulo da tela? Hoje exporta a Rede inteira no escopo do usuário, por e-mail assíncrono.
+- [ ] Correções do legado embutidas nos cards: lojas duplicadas e total inflado (`DISTINCT p.*` com `sales_module`), loja com `Status` 2 a 62 fora dos filtros de Módulo, SQL montada por concatenação, escopo por perfil frágil (`stores-filter`, `GetPharmaciesRequest` sem `Role`), guard de rota inefetivo, máscara de telefone de 10 dígitos.
+- [ ] Decisões de produto abertas (listadas nos cards): destino de "Estoque da loja"/"Configurações da loja" enquanto o módulo de Configuração não existe; "Buscar rede" e "Exportar redes" na lista de Redes; header após abrir uma Rede no fluxo multi-Rede; coluna "Grupo" sempre ou sob flag piloto; ordenação; busca ao digitar ou ao confirmar.
+- Fora do recorte atual (aguardam o módulo de Configuração): Nova loja, Estoque da loja, Configurações da loja, Anúncios do App/Banners, atalho "Grupo de lojas".
 
 ## Changelog
 
+- **2026-10-05** — Gestão de Lojas fatiada em 4 Histórias (ECP-1496 reescrita; ECP-1572, ECP-1573, ECP-1574 criadas) e subtarefas ECP-1499 a 1501 substituídas; registradas as correções do legado e as pendências de produto. Nova loja, Estoque, Configurações e Anúncios do App ficam fora até o módulo de Configuração entrar.
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1496/ECP-1453 e da PRD seções 5, 5.3, 5.4.
