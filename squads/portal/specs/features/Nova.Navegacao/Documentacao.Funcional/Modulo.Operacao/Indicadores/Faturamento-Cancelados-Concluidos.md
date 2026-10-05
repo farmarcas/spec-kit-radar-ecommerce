@@ -49,7 +49,7 @@
 Cadeia de serviços confirmada 2026-10-01 (ver [[reference_indicadores_backend_repos]] pra detalhe completo, incluindo os trechos de código):
 
 ```
-Portal (front) → ecomm-bff-backoffice-indicator-dotnet (orquestração + cache Redis 60min)
+Portal (front) → ecomm-bff-backoffice-indicator-dotnet (orquestração + cache Redis 30 min em produção)
               → ecomm-api-order-dotnet (query real, LINQ-to-Mongo sobre a coleção order_data)
 ```
 
@@ -60,7 +60,7 @@ Portal (front) → ecomm-bff-backoffice-indicator-dotnet (orquestração + cache
 | Pedidos Concluídos | `cancellations`.`CompletedCount` (mesmo endpoint acima) | `created-order` → `orders-created-per-{day,...}` — **nome enganoso**: filtra `Delivered`/`Withdrawn` por `Finished.TriggeredAt`, não é sobre pedidos recém-criados (não confundir com `new-created-order`, que é um indicador diferente de "tem pedido novo chegando") |
 
 - **Escopo de lojas:** resolvido no BFF (`ValidationOrderLayerService.PrepareBodyRequestAsync`, via `GetPharmaciesUserCommand`/`PostStoresFilterCommand`), antes de chamar o Order.
-- **Cache:** Redis, chave `Cache:{userId}:{typeIndicator}:{ResponseTypeName}`, TTL 60min (180min em `isExtendedTime`) — **bypassado** quando `TypeIndicator == custom` ou há filtro específico de loja/rede/grupo/estado. Visão default pode ter até 1h de defasagem; visão filtrada é sempre ao vivo.
+- **Cache:** Redis, chave `Cache:{userId}:{typeIndicator}:{ResponseTypeName}`, TTL de 30 min em produção (`Cache:DefaultExpirationMinutes`; 5 min em dev/staging; 60 é só o valor padrão do código; 180 min em `isExtendedTime`) — **bypassado** quando `TypeIndicator == custom` ou há filtro específico de loja/rede/grupo/estado. Visão default pode ter até 30 min de defasagem; visão filtrada é sempre ao vivo. **A chave não inclui os cabeçalhos de loja e rede do contexto** (ponto de engenharia ao reconstruir).
 - **Timezone:** `"E. South America Standard Time"` (Brasília), convertido pra UTC antes da consulta.
 
 **Onde esse back vai morar no Portal novo (Core, BFF unificado, etc.) é decisão de engenharia** — esta História só documenta o contrato/comportamento atual a ser reaproveitado, não prescreve destino de arquitetura.
@@ -81,6 +81,8 @@ Portal (front) → ecomm-bff-backoffice-indicator-dotnet (orquestração + cache
 - [ ] Considerar renomear `orders-created-per-day` (e variantes) pra algo menos ambíguo ao reescrever o backend — não é obrigatório, mas evita o mesmo engano que eu tive na primeira investigação.
 
 ## Changelog
+
+- **2026-10-05** — Corrigido o TTL do cache: 30 min em produção (não 60 min), com a observação de que a chave não inclui o contexto de loja/rede.
 
 - **2026-10-01 (2)** — Matheus deu as URLs reais de produção pra Cancelados (`tax-cancellation-order`) e Concluídos (`created-order`), resolvendo as 2 pendências de série diária. Documentada a tabela completa de endpoints por aba (KPI + série), incluindo o achado de que `created-order` tem nome enganoso (não é sobre pedidos recém-criados).
 - **2026-10-01** — Criação do documento (v1), a partir de ECP-1546/1547/1548, `Manual-Portal-Radar-Ecommerce.md` seção 5, e leitura direta do código-fonte de `ecomm-api-order-dotnet`/`ecomm-bff-backoffice-indicator-dotnet` ([[reference_indicadores_backend_repos]]).

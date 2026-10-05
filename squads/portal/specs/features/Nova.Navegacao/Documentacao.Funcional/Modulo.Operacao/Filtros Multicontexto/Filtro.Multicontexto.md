@@ -1,7 +1,7 @@
 # Filtro Multicontexto (Seletor de Contexto de Trabalho)
 
 **Módulo:** Operação
-**Histórias:** [ECP-1494](https://farmarcas.atlassian.net/browse/ECP-1494) — Header Global do Portal
+**Histórias:** [ECP-1568](https://farmarcas.atlassian.net/browse/ECP-1568) — Filtro Multicontexto: seletor de Rede, Grupo e Loja (o header que o abriga é a [ECP-1494](https://farmarcas.atlassian.net/browse/ECP-1494), ver [Header-Global.md](../../Shell/Header-Global.md))
 **Componente reaproveitado de:** [ECP-1281](https://farmarcas.atlassian.net/browse/ECP-1281) (filtro dependente Rede→Loja), [ECP-1291](https://farmarcas.atlassian.net/browse/ECP-1291) (cascata de Grupo de lojas)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 5, 5.1, 5.2, 5.3
 **Status:** Em desenvolvimento
@@ -99,9 +99,13 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 - **Grupo de lojas** não tem tabela própria pra este filtro — a fonte é a mesma configuração de Estoque Centralizado (nome do grupo, lojas vinculadas, tipo de atendimento e de estoque). (ver [[project_grupo_de_lojas_estoque_centralizado]])
 - **GE (Grupo Econômico)** — usado no filtro *de Indicadores*, não neste seletor — vem da tabela Postgres `pharmacy_economic_group` (`CNPJ`, `Group` int, `id`), 1 linha por loja, join por `CNPJ`. Nem toda loja tem registro nessa tabela — ausência de linha significa "sem GE", não erro. (ver [[project_grupo_economico_source_table]])
 - **Endpoints do filtro (identificados via débito técnico ECP-1468, na versão atual de produção do filtro de Indicadores — a reconfirmar quando ECP-1494 reaproveitar o componente):**
-  - `GET /backoffice/sales-and-marketing/v2/dashboard/indicators/filters` — retorna `networks` (Redes do usuário), `groups` (GEs), e as flags `viewEconomicGroup`/`viewNetwork`/`viewStore` (ex.: `viewStore: false` quando o vínculo é de 1 loja só). **Não retorna mais a lista de lojas** (`stores` vem vazio) — isso foi movido pro endpoint paginado abaixo.
+  - `GET /backoffice/sales-and-marketing/v2/dashboard/indicators/filters` — retorna `networks` (Redes do usuário), `groups` (GEs), e as flags `viewEconomicGroup`/`viewNetwork`/`viewStore` (ex.: `viewStore: false` quando o vínculo é de 1 loja só). No `main` do BFF (2026-10-01) o campo `stores` **não vem vazio**: o comando pagina internamente (9999 por página) e devolve todas as lojas agrupadas por UF — o requisito de lista paginada (ECP-1468) deve usar o endpoint paginado abaixo; o código de ECP-1468 não foi localizado nos clones. As flags `viewEconomicGroup`/`viewNetwork`/`viewStore` são strings `hidden`/`locked`/`editable` (regra: 1 loja ou menos → Loja oculta; 1 Rede ou menos → Rede travada; Grupo: 0 oculto, 1 travado, 2+ editável).
   - `POST /backoffice/sales-and-marketing/v1/dashboard/indicators/advanced-filters/stores-filter` — body `{networks, groups, states, search, page, perPage}`, resposta `{stores[], total, page, count, last, regs}`. `page` sempre reinicia em 1 quando a busca ou a seleção de Rede muda; scroll incrementa `page` até `last: true`; `total` alimenta o texto "Todas as Lojas"/"X selecionados".
   - **Aplicar a seleção:** "Selecionar todos" manda `pharmacyIds: []` (vazio = todas as lojas do vínculo/das Redes marcadas); seleção específica manda `pharmacyIds[]` com os ids marcados — esse formato precisa persistir entre telas (ex.: Indicadores → Detalhamento de Ruptura).
+
+- **Escopo por perfil (BFF, literal):** `IsAdmin = Roles.Contains("admin")` e `IsNetworkUser = Roles.Contains("network_manager")` são enviados ao serviço de farmácias (`pharmacy/stores-filter`, `economicgroup/networks-filter`, `pharmacy/states-filter`, `GET /pharmacy/pharmacies-for-user-ids`). A regra por perfil roda no `ecomm-api-pharmacy-dotnet` (não lido); pela doc do core: Admin sem filtro, `network_manager` por vínculo de Rede, `pharmacy_owner`/`order_manager` por vínculo de loja (inferido).
+- **Bug conhecido no BFF:** alguns preparos de requisição usam `Groups != null || Groups?.Count != 0` (sempre verdadeiro) e ignoram Rede/Grupo/Estado, resolvendo todas as lojas do usuário; só `PrepareBodyRequestAsync` está correto.
+- **`groups` nos endpoints do BFF = Grupo Econômico (GE)**, não o grupo de lojas do Estoque Centralizado — a fonte do atalho "Grupo de lojas" não foi localizada.
 
 ## 6. Cenários de borda
 
@@ -118,11 +122,16 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 
 ## 7. Pendências / perguntas em aberto
 
+- [ ] Localizar a fonte do atalho "Grupo de lojas" (Estoque Centralizado): `groups` nos endpoints do BFF é o GE.
+- [ ] Confirmar o endpoint paginado `stores-filter` como fonte única da lista de lojas (o `GET filters` atual devolve todas).
+
 - [ ] Confirmar que ECP-1494 (header global novo) reaproveita literalmente os endpoints do ECP-1468 (seção 5) e não uma implementação nova — os endpoints hoje existem pro filtro da tela de Indicadores em produção, ainda não confirmados no contexto do header global.
 - [ ] Status do `SessionPermissionGuard` (permissões finas `offer:*`/`product:*`/`order:*`/`pharmacy:*`) — confirmar se segue desabilitado por design ou se é pendência técnica.
 - [x] ~~Fonte exata de "quais Redes/Lojas o usuário tem vínculo"~~ — **pista forte encontrada em 2026-10-01**: a resolução de escopo (PharmacyId/PharmacyNetworkId/Groups/Networks/States) acontece no **BFF** `ecomm-bff-backoffice-indicator-dotnet` (`ValidationOrderLayerService.PrepareBodyRequestAsync`), via `GetPharmaciesUserCommand`/`PostStoresFilterCommand` — **antes** de qualquer chamada ao serviço Order. Repo clonado em `Documents/GitHub/ecomm-bff-backoffice-indicator-dotnet`. Ainda não li o código literal desses dois commands — próximo passo se for confirmar de vez.
 
 ## Changelog
+
+- **2026-10-05** — História própria do seletor (ECP-1568); o ECP-1494 passou a ser só o header global. Corrigido que o `GET filters` atual devolve todas as lojas; registrados escopo por perfil (literal), visibilidade por contagem e o bug de `||`.
 
 - **2026-09-30 (correção)** — 4.2 e 4.6 estavam conflitantes: 4.2 dizia que o filtro de Rede "fica fixo mostrando 1 opção" quando o usuário tem Rede única, enquanto 4.6 (mais recente) já documentava que nesse caso não há seletor de Rede nenhum, só a logo read-only. Removida a informação desatualizada de 4.2 (mantido só o critério de Loja, que continua válido) — 4.6 é a fonte única pra esse comportamento. 4.3 atualizada com a paginação de lojas (débito técnico ECP-1468), que substitui o recálculo client-side descrito na v1 deste doc. Seção 5 e cenários de borda atualizados com os endpoints reais — inclusive um segundo conflito da mesma natureza encontrado ao revisar (linha "1 única loja" dizia que a Rede some junto com a Loja, o que contradizia 4.6; corrigido pro mesmo padrão). Títulos de tópicos deixaram de incluir data de definição (fica só no Changelog).
 - **2026-09-30** — Criação do documento (v1), a partir da PRD v1.9 (seções 5, 5.1–5.3) + ECP-1281 + ECP-1291 + decisão de identidade de Rede no header (2026-09-28).
