@@ -40,7 +40,7 @@ Não mostram o status tracker — mostram o motivo do cancelamento no lugar.
 
 ### 3.5 Status final dentro do modal
 
-Ao chegar em status final (Concluído ou Cancelado), o modal permanece aberto com o pedido no novo status e a confirmação visual; ele só fecha quando o usuário o fecha. O pedido só sai da lista de "Em andamento" quando o modal é fechado: nesse momento passa para "Finalizados" e os contadores das abas são atualizados. O comportamento pós-ação é entregue nas Histórias de avanço de status e de cancelamento ([Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md)).
+Ao chegar em status final (Concluído ou Cancelado), o modal permanece aberto com o pedido no novo status e a confirmação visual; ele só fecha quando o usuário o fecha. O pedido sai da lista de "Em andamento" no mesmo instante em que é concluído ou cancelado: passa para "Finalizados" e os contadores das abas são atualizados, sem esperar o modal ser fechado. O comportamento pós-ação é entregue nas Histórias de avanço de status e de cancelamento ([Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md)).
 
 ### 3.6 "Loja responsável" = "Filial responsável" (resolvido 2026-10-01)
 
@@ -91,6 +91,7 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 
 ## Changelog
 
+- **2026-10-05 (2)** — O pedido concluído ou cancelado sai de "Em andamento" e vai para "Finalizados" no mesmo instante da ação (não mais ao fechar o modal); o modal segue aberto até o usuário fechar (3.5).
 - **2026-10-05** — O fechamento automático do modal em status final deixa de existir (3.5): o modal permanece aberto e só fecha por ação do usuário; o pedido sai de "Em andamento" quando o modal é fechado.
 - **2026-10-02 (2)** — Adicionada a regra de navegação ◀ / ▶ depois que o pedido sai da lista (3.9) e o momento da saída da lista (quando o modal fecha).
 
