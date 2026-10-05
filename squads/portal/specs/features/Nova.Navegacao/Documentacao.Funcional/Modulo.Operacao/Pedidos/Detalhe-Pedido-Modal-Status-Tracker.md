@@ -50,7 +50,7 @@ Mesmo conceito, exibido em lugares diferentes conforme o tipo de entrega — nã
 
 ### 3.7 Receitas médicas
 
-Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" — o Portal só baixa, sem preview. Estados do download: "Baixando...", ✓ por alguns segundos com "Download concluído", e em falha "Não foi possível baixar. Tente novamente." com snackbar "Erro ao baixar. Verifique a sua conexão."
+Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" — o Portal só baixa, sem preview. Estados do download: "Baixando...", ✓ por 5 segundos com "Download concluído", e em falha "Não foi possível baixar. Tente novamente." com snackbar "Erro ao baixar. Verifique a sua conexão."
 
 É somente consulta: não bloqueia avançar, imprimir ou cancelar o pedido, e não há status, badge, alerta nem ação obrigatória associada à receita. Os campos legados por produto (`PrescriptionUrl`, `PrescriptionFileName`, `PrescriptionVisualized`) e o endpoint de "visualizada" não fazem parte do Portal novo. Regra de origem: ECP-1481 e PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10); formatos aceitos no envio: JPG, PNG ou PDF, até 2 MB.
 

@@ -51,7 +51,7 @@ Não existe e não faz parte deste ciclo. **Reforçado em 2026-10-01:** o códig
 
 ### 2.8 Saída do pedido da lista ao concluir ou cancelar
 
-Ao concluir ou cancelar, o modal permanece aberto por alguns segundos com a confirmação visual e então fecha. O pedido só sai da lista de "Em andamento" quando o modal fecha: nesse momento passa para "Finalizados" e os contadores das duas abas são atualizados. A navegação ◀ / ▶ do modal passa a seguir a fila em aberto (ver [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.9).
+Ao concluir ou cancelar, o modal permanece aberto por 5 segundos com a confirmação visual e então fecha. O pedido só sai da lista de "Em andamento" quando o modal fecha: nesse momento passa para "Finalizados" e os contadores das duas abas são atualizados. A navegação ◀ / ▶ do modal passa a seguir a fila em aberto (ver [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.9).
 
 ## 3. Nível de integração / fonte de dados
 
@@ -113,6 +113,7 @@ Ao concluir ou cancelar, o modal permanece aberto por alguns segundos com a conf
 
 ## Changelog
 
+- **2026-10-05** — Duração do modal aberto após concluir/cancelar definida: 5 segundos.
 - **2026-10-02** — Adicionado o momento da saída do pedido da lista (2.8): só quando o modal fecha, com contadores atualizados.
 
 - **2026-10-01 (2)** — Adiciona a query de Cancelados reaproveitável (seção 3.1), com nota honesta sobre ser validada por número, não confirmada no código-fonte do backend.
