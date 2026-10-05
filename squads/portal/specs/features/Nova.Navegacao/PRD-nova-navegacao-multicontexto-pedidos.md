@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 2.0
+**Versão:** 2.8
 
 ---
 
@@ -38,6 +38,43 @@
 - **Reforça o fechamento automático do modal em status final** (6.6) — o protótipo ainda não tinha essa implementação; comportamento confirmado como correto, prompt de ajuste já enviado pra incluir no protótipo.
 - Adiciona textos exatos de confirmação por caso (6.5): Conferência→Na fila usa "Ao liberar este pedido para a separação, você não poderá mais fazer edições nos itens."; pular etapa usa "Ao confirmar, o sistema entende que os itens já foram separados fisicamente e o pedido estará pronto para [entrega/retirada]."; concluir usa o texto já documentado em 6.8.
 - **Nota de arquitetura, fora do escopo de produto desta versão:** há uma mudança em estudo no modelo de notificação de pedido parado — um novo FAB substituiria o modelo de toast/banner atual (seção 6.7). Ainda sem desenho fechado; não alterar 6.7 até a UX fechar o formato.
+
+**v2.1 (2026-10-02)** — Revalidação contra a nova versão do protótipo Claude Design e fechamento das regras de Pedidos que faltavam para a escrita das Histórias de desenvolvimento (agora fatiadas por elemento de tela, com front e back em cada card):
+- **Filtro "Itens" (6.1.1):** a opção "Alto custo" foi retirada por decisão de produto; o grupo passa a ter "Só medicamentos" e "Com receita (Rx)".
+- **Cliente recorrente (6.3):** estrela ao lado do nome do cliente para quem tem 20 ou mais pedidos concluídos na loja (CNPJ) do pedido, histórico completo, sem recorte por data. Só pedido concluído conta; a contagem é por loja.
+- **Ícone Rx (6.3):** aparece na coluna Resumo quando o pedido tem arquivo de receita enviado — regra pelo envio do arquivo, sem cruzar com o cadastro do produto. Mesma regra do filtro "Com receita (Rx)".
+- **Receitas no detalhe (6.6):** somente consulta e download, em todas as etapas, sem nenhum bloqueio, status ou alerta; nomes "Receita 1", "Receita 2"..., "Enviado em" = criação do pedido (ECP-1481 define a regra no Portal atual; vale também no Portal novo).
+- **Exportar (6.2):** mantém a estrutura do relatório de pedidos atual; solicitação assíncrona enviada por e-mail, com períodos de 7, 30, 90 dias ou personalizado.
+- **Estados de carregamento e erro (6.9):** skeleton, filtro lento, falha ao aplicar filtro, erro de página, troca de aba e falha de download passam a fazer parte das Histórias de construção da tela/tabela.
+- **Fechamento automático do modal em status final (6.6):** implementado no protótipo.
+- **Pendências do protótipo que continuam sem refletir a regra:** limite de "Parado" em 30 min (a regra é 60), snackbar "Desfazer" (não existe), estrela de cliente por flag fixa (a regra é a de cliente recorrente acima).
+
+**v2.2 (2026-10-02)** — Fecha as regras que ficaram em aberto na v2.1:
+- **Tag "Novo" (6.3):** pedido ainda não aberto (sem evento de visualização; não esteve em foco). Vale para pedidos ativos; a visualização é do pedido, não por usuário. Quando chegam pedidos novos com a tela aberta, a aba "Em andamento" ganha a tag "Novos" e o aviso "N novos pedidos chegaram".
+- **Ordenação (6.3):** padrão de "Em andamento" por prazo — atrasados (vermelho, do mais atrasado ao menos), amarelos (do mais próximo de atrasar ao mais distante) e demais (do mais próximo de entrar no amarelo ao mais distante), aplicada sempre que o usuário entra na tela; padrão de "Finalizados" do encerramento mais recente ao mais antigo. Ordenação por clique segue restrita a Data/Hora e Total.
+- **Filtro "Só medicamentos" (6.1.1):** pedido em que todos os itens são medicamento, conforme a classificação do catálogo (`IsMedicamento` em `CatalogueDb.products`).
+- **"Teste interno":** a exclusão do motivo "Teste interno" vale só para os indicadores da Home. Listagem de Finalizados, contador e relatórios (inclusive o Exportar de Pedidos) exibem esses pedidos.
+- **Segmentos sem contador (6.1):** o filtro segmentado não tem contador por opção; os contadores ficam só nas macro-abas "Em andamento" e "Finalizados".
+- **Finalizados (6.1):** confirmado como concluídos e cancelados.
+
+**v2.3 (2026-10-02)** — Fecha as pendências de ordenação e prazo:
+- **Prazo/countdown (6.4):** o prazo-limite é a previsão de entrega/retirada calculada pelo **app** no fechamento do pedido (criação + tempo de retirada/entrega parametrizado pela loja no Portal, no fuso do consumidor; spec do App FR-047). A contagem parte sempre da criação; se a previsão ultrapassa o horário de funcionamento, vai para o próximo dia de funcionamento (ex.: amanhã às 09:00) e o countdown respeita essa data e hora.
+- **Ordenação por clique (6.3):** passa a valer para **Prazo, Data/Hora e Total (valor)**; é um card separado da ordenação padrão.
+- **Entrada na tela (6.3):** sempre que o usuário entra, os filtros da tela são refeitos e a ordenação padrão é aplicada.
+- **Busca (6.2):** resultados com pedidos em aberto primeiro (ordem padrão dos abertos, por prazo) e depois os fechados (ordem padrão dos fechados, encerramento mais recente primeiro).
+
+**v2.4 (2026-10-02)** — Movimentação de pedidos e atualização da lista:
+- **Status final dentro do modal (6.5/6.6/6.8):** ao concluir ou cancelar, o modal permanece aberto por alguns segundos com a confirmação visual e fecha; só nesse momento o pedido sai de "Em andamento", passa para "Finalizados" e os contadores das duas abas são atualizados.
+- **Navegação ◀ / ▶ após o pedido sair da lista (6.6):** segue a fila em aberto, na ordenação dos abertos — ▶ mostra o próximo pedido da fila em aberto e ◀ o anterior da fila em aberto; nunca volta ao pedido recém-fechado.
+- **Atualização da lista (6.3):** a lista deve refletir quase em tempo real as mudanças dos pedidos (status, grupo, contadores, permanência na lista), por ações de outros atendentes, do ERP ou do cliente. Mecanismo e latência são decisão de engenharia; a chegada de pedidos novos segue o aviso "N novos pedidos chegaram".
+
+**v2.5 (2026-10-02)** — **Ordenação por cabeçalho e busca (6.3):** a ordenação por clique é regra geral — refaz a listagem inteira ordenando pela coluna clicada, esteja ou não com busca ativa. Com busca ativa, vale para todos os resultados, misturando pedidos em aberto e fechados; a regra "abertos primeiro, fechados depois" é só a ordem padrão da busca.
+
+**v2.6 (2026-10-05)** — **Comportamento da busca (6.2/6.3):** com busca ativa, a tela mostra uma lista única de resultados, de forma direta — as macro-abas (Em andamento/Finalizados) e o filtro segmentado ficam ocultos e voltam ao sair da busca; acima da tabela aparece a faixa "Resultados da busca para 'X'" com "N pedidos encontrados" e o botão "Todos os filtros". Os resultados respeitam só a ordenação (padrão: abertos por prazo, depois fechados por encerramento). Com busca ativa, a ordenação por cabeçalho vale para **Data/Hora e Total**; **Prazo não ordena** (a lista mistura tempo restante e data de encerramento). A tag "Buscando em todo o histórico" deixa de existir.
+
+**v2.7 (2026-10-05)** — **Ordenação por Prazo na busca (6.3):** como a busca não tem barra segmentada nem abas, o Prazo volta a ordenar também na lista de resultados: ordena os pedidos em aberto pelo tempo restante e os fechados pela data de encerramento, mantendo abertos antes dos fechados; Data/Hora e Total ordenam a lista toda.
+
+**v2.8 (2026-10-05)** — **Notificações (6.7) fechadas pela UX:** toasts empilhados em qualquer tela do Portal — "Pedido Atrasado" (temporário, um por pedido) e "Pedido parado" (persistente); até 3 individuais, a partir de 4 as 2 mais antigas + agrupador "Existem +N pedidos atrasados e/ou parados"; "Ver pedido" abre o detalhe e "Ver pedidos" abre Pedidos com os filtros Parado e Atrasado. O FAB em estudo deixa de existir. **Prazo-limite (6.4):** o Portal já recebe a previsão (`EstimateTimeFinish`) por pedido; sem dependência da squad do App. **Modal aberto (6.6):** pedido alterado por outra pessoa com o modal aberto atualiza o status tracker e exibe o toast de sucesso; com o modal fechado, a linha atualiza sem retorno visual.
 
 ---
 
@@ -173,13 +210,14 @@ Dois níveis, no formato de segmented bar (navbar + filtro de opções):
 - **Macro-abas:** "Em andamento (N)" / "Finalizados (N)" — contam quantos pedidos existem em cada bucket dentro do contexto selecionado.
 - **Filtro segmentado dentro de "Em andamento":** Todos / Conferência / Na fila / Em separação / Liberados — single-select, funcionam como filtro da listagem (não trocam de tela). Default: "Todos".
 - **Filtro segmentado dentro de "Finalizados":** Todos / Concluídos / Cancelados, com um badge "Limite 30 dias" ao lado.
+- Os segmentos **não têm contador**; os contadores ficam só nas macro-abas.
 
 ### 6.1.1 Painel avançado de filtros ("Todos os filtros")
 
 Confirmado para v1. Botão "Todos os filtros" abre um painel com 5 grupos (aplicação em conjunto, botões Limpar/Aplicar):
 
-- **Itens:** Só medicamentos, Alto custo, Com receita.
-- **Tipo de pedido:** Entrega, Retirada.
+- **Tipo (itens):** Só medicamentos (pedido em que todos os itens são medicamento, conforme `IsMedicamento` do catálogo de produtos), Com receita (Rx).
+- **Tipo de entrega:** Entrega, Retirada.
 - **Prazo:** Atrasado, 20 min para atrasar, Em tempo, Parado.
 - **Status de pagamento:** Pago, Cobrar, Com troco.
 - **Método de pagamento:** Pix, Dinheiro, Maquininha.
@@ -190,7 +228,8 @@ Filtros ativos aparecem como badges removíveis acima da tabela, com contador no
 
 - **Pedidos ativos** (qualquer status de "Em andamento"): **sem limite de período** — aparecem na listagem até mudarem de status, não importa há quanto tempo foram criados.
 - **Pedidos finalizados** (Concluídos/Cancelados): só os dos **últimos 30 dias** aparecem na listagem por padrão. Passado esse limite, o pedido some da lista.
-- **Busca:** o campo de busca (nome do cliente, CNPJ, nº do pedido) varre **todo o histórico**, ignorando completamente o limite de 30 dias — é a via de acesso a qualquer pedido finalizado mais antigo.
+- **Busca:** o campo de busca (nome do cliente, CPF, nome da loja, CNPJ da loja, nº do pedido) varre **todo o histórico**, ignorando completamente o limite de 30 dias — é a via de acesso a qualquer pedido finalizado mais antigo. Os resultados mostram primeiro os pedidos em aberto (ordem padrão dos abertos, por prazo) e depois os fechados (ordem padrão dos fechados). Com busca ativa a tela mostra uma lista única de resultados — macro-abas e filtro segmentado ficam ocultos e voltam ao sair da busca — com a faixa "Resultados da busca para 'X'" e "N pedidos encontrados".
+- **Exportar:** botão "Exportar" no cabeçalho solicita o relatório de pedidos do contexto selecionado, mantendo a estrutura do relatório atual — períodos "Últimos 7 dias", "Últimos 30 dias", "Últimos 90 dias" ou "Personalizado"; geração assíncrona, resultado enviado por e-mail ao usuário.
 - **Empty state:** 4 cenários desenhados — (1) Gestor sem pedidos ativos no contexto selecionado (CTA "Criar nova promoção"); (2) Balconista sem pedidos na fila; (3) filtro/aba aplicada sem resultado (CTA "Exportar relatório" / "Resetar filtros aplicados"); (4) busca sem correspondência, com aviso explícito de que a busca varreu todo o histórico ("A busca passou por todo o histórico, independente do período") e CTA "Limpar busca" / "Resetar filtro incluído".
 
 ### 6.3 Colunas e comportamento da tabela
@@ -198,7 +237,14 @@ Filtros ativos aparecem como badges removíveis acima da tabela, com contador no
 - Colunas conforme protótipo validado: Prazo, Data/Hora, Cliente, Status, Resumo, Tipo, Loja, Total (mesma base já especificada em `ECP-1312`).
 - As duas últimas colunas ficam fixas durante o scroll horizontal.
 - Toda a área da linha é clicável e abre o detalhe do pedido — não só um botão/ícone específico.
-- **Sem ordenação por coluna, com exceção de Data/Hora e Total** — essas duas colunas são ordenáveis (clique no cabeçalho); as demais seguem a regra já fechada para a Lista de Termos Buscados (`ECP-1339`) e não reordenam a lista.
+- **Cliente recorrente:** estrela ao lado do nome do cliente quando ele tem 20 ou mais pedidos concluídos (`Delivered`/`Withdrawn`) na loja (CNPJ) do pedido, considerando todo o histórico, sem recorte por data. A contagem é por loja: o mesmo cliente pode ser recorrente em uma loja e não em outra.
+- **Ícone Rx:** na coluna Resumo, ao lado da quantidade de itens, quando o pedido tem arquivo de receita enviado pelo app. A regra é pelo envio do arquivo, não pelo cadastro do produto (a lógica de exigência de receita está no app).
+- **Tag "Novo":** pedido ainda não aberto (sem evento de visualização), ao lado do horário na coluna Data/Hora; a visualização é do pedido (o primeiro atendente que abre o marca para todos) e a tag some ao abrir o detalhe. Com a tela aberta, a chegada de pedidos novos coloca a tag "Novos" na aba "Em andamento" e mostra o aviso "N novos pedidos chegaram".
+- **Atualização da lista:** com a tela aberta, a lista reflete quase em tempo real as mudanças dos pedidos já listados (status, saída de "Em andamento" para "Finalizados", saída do segmento/filtro ativo, contadores); pedidos novos entram pelo aviso "N novos pedidos chegaram", sem linhas inseridas sozinhas; a ordenação não é refeita por essas atualizações.
+- **Ordenação por cabeçalho (regra geral):** clicar em Prazo, Data/Hora ou Total refaz a listagem inteira ordenada pela coluna, com ou sem busca; na busca, abertos e fechados se misturam (a regra "abertos primeiro" é só a ordem padrão) e o Prazo ordena abertos pelo tempo restante e fechados pela data de encerramento, abertos antes dos fechados.
+- **Entrada na tela:** sempre que o usuário entra, os filtros da tela são refeitos (aba "Em andamento", segmento "Todos", sem filtros do painel e sem busca) e a ordenação padrão é aplicada.
+- **Ordenação padrão** (aplicada sempre que o usuário entra na tela): "Em andamento" por prazo — primeiro os atrasados (do mais atrasado ao menos atrasado), depois os amarelos (do mais próximo de atrasar ao mais distante), depois os demais (do mais próximo de entrar no amarelo ao mais distante); "Finalizados" do encerramento (conclusão/cancelamento) mais recente ao mais antigo.
+- **Sem ordenação por coluna, com exceção de Prazo, Data/Hora e Total (valor)** — essas colunas são ordenáveis (clique no cabeçalho); as demais seguem a regra já fechada para a Lista de Termos Buscados (`ECP-1339`) e não reordenam a lista.
 
 ### 6.4 Modelo de SLA e prazo (preditivo, não reativo)
 
@@ -237,19 +283,19 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 - Nomenclatura de pagamento: **COBRAR** (dinheiro, Pix ou maquininha — débito/crédito) vs. **PAGO** (crédito, débito ou Pix já processado).
 - Tag **"Editado"** = pedido teve item removido ou substituído (consistente com o modelo já fechado em `PRD-edicao-pedidos-etapa-revisao.md`).
 - Pedidos cancelados não mostram o status tracker — mostram o motivo do cancelamento no lugar.
-- **Fecha automaticamente ao chegar em status final** (Concluído ou Cancelado) — confirmado na daily de 2026-09-24, para evitar inconsistência visual de deixar o modal aberto mostrando um pedido que já saiu da lista ativa.
+- **Fecha automaticamente ao chegar em status final** (Concluído ou Cancelado) — confirmado na daily de 2026-09-24, para evitar inconsistência visual de deixar o modal aberto mostrando um pedido que já saiu da lista ativa. O modal fica aberto por alguns segundos com a confirmação visual e só então fecha; o pedido sai de "Em andamento" e vai para "Finalizados" nesse momento, com os contadores atualizados. A navegação ◀ / ▶ depois disso segue a fila em aberto (próximo/anterior da fila em aberto, nunca o pedido recém-fechado).
+- **Receitas médicas:** seção "Receita médica (Rx)" aparece em **todas as etapas** quando o pedido tem receita enviada pelo app. Cada receita é nomeada "Receita 1", "Receita 2"... (ordem de envio, nunca o nome do arquivo), com "Enviado em" igual à data/hora de criação do pedido; ações: baixar cada receita ou "Baixar todos" — o Portal não abre preview. É somente consulta: **não bloqueia** avançar, imprimir ou cancelar o pedido, e não gera status, badge nem alerta. Regra já vigente no Portal atual pela ECP-1481 e no PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10).
 
 ### 6.7 Notificações (toast)
 
-Modelo in-app apenas — **sem** WhatsApp automático nem central de notificações (seguem fora de escopo, seção 3). **Reconfirmado na daily de arquitetura de 2026-09-24:** WhatsApp para pedido parado voltou a ser mencionado como tecnicamente viável (API da Meta), mas Matheus manteve a decisão de não implementar agora — não é complexo de adicionar depois, se necessário. Também foi aprovada a base de **notificações em tempo real** (websocket/push em vez de polling de endpoint) como direção de arquitetura — a implementação deve deixar o caminho preparado para uma futura central de notificações, mas **a central em si não é entregue neste ciclo**.
+Modelo in-app apenas — sem WhatsApp automático nem central de notificações (fora de escopo deste ciclo). Base de notificações em tempo real (websocket/push, não polling) aprovada como direção de arquitetura.
 
-- Toast fica fixo até o usuário fechar manualmente pelo "x" — não some sozinho.
-- Se o usuário fechar a aba/tela e voltar a abrir, o toast reaparece enquanto o pedido continuar parado.
-- Pedido sem movimentação por mais de 60 minutos gera o toast "Pedido parado" — visível em qualquer aba do Portal, não só na tela de Pedidos.
-- Acima de 2 toasts simultâneos, agrupam em "Existem +N pedidos parados" (evita empilhar a fila de mensagens).
-- Reincide a cada hora adicional parada (1h, 2h, 3h...).
+- **Pedido Atrasado** (vermelho): "Pedido para [retirada/entrega] de [cliente] acabou de exceder o tempo limite de separação." + "Ver pedido". Temporário, um por pedido.
+- **Pedido parado** (amarelo): pedido sem movimentação por mais de 60 minutos — "Pedido para [retirada/entrega] de [cliente] com 1 hora sem movimentação." + "Ver pedido". Persistente: fica até o usuário fechar pelo "x" e reaparece ao reabrir a aba/tela enquanto continuar parado; reincide a cada hora adicional parada.
+- **Agrupamento:** os 3 primeiros toasts são individuais; a partir de 4, aparecem as 2 mais antigas individualmente e 1 agrupador "Existem +N pedidos atrasados e/ou parados" + "Ver pedidos" (um único restante aparece individual). Ex.: 5 pedidos parados = 2 individuais + "Existem +3 pedidos parados".
+- **Navegação:** "Ver pedido" abre o detalhe; "Ver pedidos" abre a tela de Pedidos com os filtros de Parado e Atrasado ativados.
 
-**Importante: "qualquer aba do Portal" é literal, não só dentro do módulo de Operação.** O toast é global — aparece mesmo se o usuário estiver no módulo de Configuração (Estoque/Configurações de uma loja específica), que opera em contexto único. Não conflita com o modelo de módulos: o toast não depende do contexto selecionado na tela atual, só do fato de existir um pedido parado dentro do que o usuário tem acesso a ver.
+**Importante: "qualquer tela do Portal" é literal, não só dentro do módulo de Operação.** O toast é global — aparece mesmo se o usuário estiver no módulo de Configuração (Estoque/Configurações de uma loja específica), que opera em contexto único. Não conflita com o modelo de módulos: o toast não depende do contexto selecionado na tela atual, só do fato de existir um pedido atrasado ou parado dentro do que o usuário tem acesso a ver.
 
 ### 6.8 Cancelamento de pedido
 
@@ -260,6 +306,16 @@ Modelo in-app apenas — **sem** WhatsApp automático nem central de notificaç�
 - Pedido cancelado registra quem cancelou e o motivo, exibido no lugar do status tracker (ver 6.6). **Verificado no protótipo:** confirmação de conclusão (Liberados → Concluído) segue exatamente o texto "Concluir pedido #[nº]? O pedido será finalizado e marcado como concluído. Esta ação não pode ser desfeita."
 
 **Reforço sobre o cálculo do estorno — reaproveita o que já foi fechado em `PRD-edicao-pedidos-etapa-revisao.md` (seção 8.1):** se o pedido já sofreu um **estorno parcial** durante a Conferência (item removido/reduzido, com estorno automático via Braspag do valor da diferença — só se aplica a pedidos pagos no app), o cancelamento **não** deve estornar o valor original do pedido de novo. O cancelamento estorna só o **valor restante ainda não estornado** (total pago menos o que já foi devolvido no ajuste parcial). Isso vale mesmo quando o cancelamento acontece bem depois da Conferência (ex.: a partir de Concluído, ver acima) — o histórico de estornos parciais já realizados precisa ser consultado antes de calcular o valor do estorno total.
+
+### 6.9 Estados de carregamento e erro
+
+- **Troca de aba (Em andamento/Finalizados):** spinner sobre a lista durante a carga; o filtro segmentado volta para "Todos".
+- **Aplicação do filtro do header:** skeleton em macro-abas e tabela até a resposta.
+- **Filtro lento (mais de 8 s):** aviso persistente "Ainda carregando..." com "Tentar novamente" e botão de fechar.
+- **Falha ao aplicar o filtro:** o filtro volta à seleção anterior e aparece aviso persistente "Não foi possível aplicar o filtro" com "Tentar novamente".
+- **Falha ao carregar a página:** tela "Não foi possível carregar essa página" / "Verifique sua conexão e tente novamente." com "Tentar novamente".
+- **Falha ao carregar a lista de lojas do filtro:** o próprio painel mostra "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente" (escopo do Filtro Multicontexto).
+- **Falha no download de receita:** "Não foi possível baixar. Tente novamente." com snackbar de erro.
 
 ## 7. Cenários de borda
 

@@ -1,7 +1,7 @@
 # Pedidos — Avanço de Status e Cancelamento
 
 **Módulo:** Operação
-**Histórias:** [ECP-1517](https://farmarcas.atlassian.net/browse/ECP-1517) — Avanço de Status e Cancelamento de Pedido
+**Histórias:** [ECP-1517](https://farmarcas.atlassian.net/browse/ECP-1517) (Avanço de status do pedido), [ECP-1559](https://farmarcas.atlassian.net/browse/ECP-1559) (Cancelamento de pedido)
 **Referência UX:** [ECP-1449](https://farmarcas.atlassian.net/browse/ECP-1449) (Avanço de status e cancelamento)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 6.5, 6.8
 **Componente novo:** Split Button (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
@@ -48,6 +48,10 @@ Conferência **não** tem opção de pular etapa — só o caminho sequencial (C
 ### 2.7 Sem reversão de status ("Desfazer"/undo)
 
 Não existe e não faz parte deste ciclo. **Reforçado em 2026-10-01:** o código do protótipo tinha um snackbar de "Desfazer" aparecendo depois de qualquer avanço de status — Matheus confirmou que essa funcionalidade não existe e é sobra de uma versão anterior do protótipo, não reflete decisão de produto nenhuma. Não implementar undo.
+
+### 2.8 Saída do pedido da lista ao concluir ou cancelar
+
+Ao concluir ou cancelar, o modal permanece aberto por alguns segundos com a confirmação visual e então fecha. O pedido só sai da lista de "Em andamento" quando o modal fecha: nesse momento passa para "Finalizados" e os contadores das duas abas são atualizados. A navegação ◀ / ▶ do modal passa a seguir a fila em aberto (ver [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.9).
 
 ## 3. Nível de integração / fonte de dados
 
@@ -108,6 +112,8 @@ Não existe e não faz parte deste ciclo. **Reforçado em 2026-10-01:** o códig
 - [ ] **Localizar o serviço real que hoje serve a contagem de Cancelados** (pra confirmar se a query da seção 3.1 bate com o que o backend realmente faz, não só com o número final exibido).
 
 ## Changelog
+
+- **2026-10-02** — Adicionado o momento da saída do pedido da lista (2.8): só quando o modal fecha, com contadores atualizados.
 
 - **2026-10-01 (2)** — Adiciona a query de Cancelados reaproveitável (seção 3.1), com nota honesta sobre ser validada por número, não confirmada no código-fonte do backend.
 - **2026-10-01** — Revalidado contra o código-fonte do protótipo Claude Design: confirma "Teste interno" como 10º motivo; adiciona textos exatos de confirmação por caso; reforça que só "Na fila → Liberados" tem pular etapa (o protótipo tinha um pulo de Conferência por engano); reforça que não existe "Desfazer"/undo (o protótipo tinha um, por engano — sobra de versão anterior).
