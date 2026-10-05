@@ -38,9 +38,9 @@ Pedido teve item removido ou substituído — consistente com o modelo já fecha
 
 Não mostram o status tracker — mostram o motivo do cancelamento no lugar.
 
-### 3.5 Fechamento automático em status final
+### 3.5 Status final dentro do modal
 
-Ao chegar em status final (Concluído ou Cancelado), o modal fecha automaticamente após um breve intervalo (cerca de 700 ms), para o usuário ver a confirmação visual — evita deixar aberto um pedido que já saiu da lista ativa. O pedido só sai da lista de "Em andamento" quando o modal fecha: nesse momento passa para "Finalizados" e os contadores das abas são atualizados. O comportamento pós-ação é entregue nas Histórias de avanço de status e de cancelamento ([Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md)).
+Ao chegar em status final (Concluído ou Cancelado), o modal permanece aberto com o pedido no novo status e a confirmação visual; ele só fecha quando o usuário o fecha. O pedido só sai da lista de "Em andamento" quando o modal é fechado: nesse momento passa para "Finalizados" e os contadores das abas são atualizados. O comportamento pós-ação é entregue nas Histórias de avanço de status e de cancelamento ([Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md)).
 
 ### 3.6 "Loja responsável" = "Filial responsável" (resolvido 2026-10-01)
 
@@ -78,7 +78,7 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 |---|---|
 | Pedido do tipo Retirada | Taxa de entrega oculta |
 | Navego pro próximo pedido (▶) com o pedido atual em último da lista | Botão ▶ desabilitado |
-| Pedido avança pra status final durante a visualização | Modal fecha automaticamente (ver 3.5) |
+| Pedido avança pra status final durante a visualização | Modal permanece aberto até o usuário fechar (ver 3.5) |
 | Pedido sem receita enviada | Seção "Receita médica (Rx)" não aparece |
 | Pedido com receita não baixada | Avançar, imprimir e cancelar seguem normalmente, sem bloqueio |
 | `canceledReason` vazio | Trata como cancelamento via ERP, não como erro |
@@ -91,6 +91,7 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 
 ## Changelog
 
+- **2026-10-05** — O fechamento automático do modal em status final deixa de existir (3.5): o modal permanece aberto e só fecha por ação do usuário; o pedido sai de "Em andamento" quando o modal é fechado.
 - **2026-10-02 (2)** — Adicionada a regra de navegação ◀ / ▶ depois que o pedido sai da lista (3.9) e o momento da saída da lista (quando o modal fecha).
 
 - **2026-10-02** — Adicionadas a seção de receitas médicas (3.7, regra da ECP-1481 reaproveitada: todas as etapas, só consulta e download, sem bloqueio nem alerta, "Receita N", "Enviado em" = criação do pedido) e as interações da linha/informações do modal (3.8). Fechamento automático do modal agora está implementado no protótipo e é entregue nas Histórias de avanço e cancelamento. Pendência de fonte do detalhe resolvida (`GET backoffice/orders/{orderId}`).

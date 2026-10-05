@@ -24,7 +24,7 @@ Notificações in-app em formato de toast, empilhadas no canto superior direito 
 
 ### 2.2 Persistência
 
-O toast de pedido parado fica fixo até o usuário fechar manualmente pelo "x" e reaparece ao reabrir a aba/tela enquanto o pedido continuar parado. O toast de pedido atrasado é temporário e aparece uma única vez por pedido.
+O toast de pedido parado fica fixo até o usuário fechar manualmente pelo "x" e reaparece ao reabrir a aba/tela enquanto o pedido continuar parado. O toast de pedido atrasado é temporário (some sozinho após 7 segundos) e aparece uma única vez por pedido.
 
 ### 2.3 Agrupamento
 
@@ -57,18 +57,18 @@ Visível em **qualquer tela do Portal**, não só na tela de Pedidos — inclusi
 | 3 pedidos parados ao mesmo tempo | 3 toasts individuais |
 | 5 pedidos parados ao mesmo tempo | 2 toasts individuais (os mais antigos) + "Existem +3 pedidos parados" |
 | Pedido parado recebe movimentação | Toast correspondente some |
-| Pedido atrasado | Toast temporário, uma única vez por pedido |
+| Pedido atrasado | Toast temporário (some sozinho após 7 segundos), uma única vez por pedido |
 | Usuário navegando entre telas do Portal com toast ativo | Toast visível em qualquer tela, incluindo módulo de Configuração |
 | Pedido resolvido com o toast ainda aberto em outra aba | A definir |
 
 ## 5. Pendências / perguntas em aberto
 
-- [ ] Duração do toast temporário de pedido atrasado.
 - [ ] Arquitetura exata do canal de tempo real (protocolo/serviço) — só aprovada a direção, não a implementação.
 - [ ] Comportamento exato quando o pedido resolve com toast aberto em múltiplas abas simultaneamente.
 
 ## Changelog
 
+- **2026-10-05** — Duração do toast temporário de pedido atrasado definida: 7 segundos; pendência removida.
 - **2026-10-05** — Decisão do PO: o toast de pedido parado não traz a frase "Loja avisada via Whatsapp" (não há aviso automático por WhatsApp); pendência removida.
 - **2026-10-05** — Modelo de notificação fechado pela UX (toasts): adicionado o toast "Pedido Atrasado" (temporário, um por pedido), "Pedido parado" persistente, agrupamento (3 individuais; a partir de 4, as 2 mais antigas + agrupador) e navegação "Ver pedido"/"Ver pedidos". O aviso de mudança em estudo (FAB) deixa de existir.
 - **2026-10-01** — Adiciona aviso de mudança em estudo: um FAB vai substituir o modelo de toast/banner (Matheus, ao revalidar o protótipo).

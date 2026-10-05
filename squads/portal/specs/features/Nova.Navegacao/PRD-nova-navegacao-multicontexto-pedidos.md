@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 2.9
+**Versão:** 2.10
 
 ---
 
@@ -77,6 +77,8 @@
 **v2.8 (2026-10-05)** — **Notificações (6.7) fechadas pela UX:** toasts empilhados em qualquer tela do Portal — "Pedido Atrasado" (temporário, um por pedido) e "Pedido parado" (persistente); até 3 individuais, a partir de 4 as 2 mais antigas + agrupador "Existem +N pedidos atrasados e/ou parados"; "Ver pedido" abre o detalhe e "Ver pedidos" abre Pedidos com os filtros Parado e Atrasado. O FAB em estudo deixa de existir. **Prazo-limite (6.4):** o Portal já recebe a previsão (`EstimateTimeFinish`) por pedido; sem dependência da squad do App. **Modal aberto (6.6):** pedido alterado por outra pessoa com o modal aberto atualiza o status tracker e exibe o toast de sucesso; com o modal fechado, a linha atualiza sem retorno visual.
 
 **v2.9 (2026-10-05)** — **Modal de status final (6.5/6.6/6.8):** a duração com o modal aberto após concluir ou cancelar é de **5 segundos**. **Notificações (6.7):** o toast de pedido parado não traz a frase "Loja avisada via Whatsapp" — o texto é só tipo de pedido, nome do cliente e tempo sem movimentação, já que não existe aviso automático por WhatsApp.
+
+**v2.10 (2026-10-05)** — **Decisão do PO:** o fechamento automático do modal de detalhe em status final (Concluído/Cancelado) deixa de existir — vale para as seções 6.5, 6.6 e 6.8; a duração de 5 segundos da v2.9 deixa de valer. O modal só fecha por ação do usuário. **Toasts (6.7):** o toast temporário de pedido atrasado some sozinho após **7 segundos**.
 
 ---
 
@@ -285,7 +287,7 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 - Nomenclatura de pagamento: **COBRAR** (dinheiro, Pix ou maquininha — débito/crédito) vs. **PAGO** (crédito, débito ou Pix já processado).
 - Tag **"Editado"** = pedido teve item removido ou substituído (consistente com o modelo já fechado em `PRD-edicao-pedidos-etapa-revisao.md`).
 - Pedidos cancelados não mostram o status tracker — mostram o motivo do cancelamento no lugar.
-- **Fecha automaticamente ao chegar em status final** (Concluído ou Cancelado) — confirmado na daily de 2026-09-24, para evitar inconsistência visual de deixar o modal aberto mostrando um pedido que já saiu da lista ativa. O modal fica aberto por 5 segundos com a confirmação visual e só então fecha; o pedido sai de "Em andamento" e vai para "Finalizados" nesse momento, com os contadores atualizados. A navegação ◀ / ▶ depois disso segue a fila em aberto (próximo/anterior da fila em aberto, nunca o pedido recém-fechado).
+- **Modal em status final (Concluído ou Cancelado):** o modal permanece aberto com o pedido no novo status e a confirmação visual, e só fecha quando o usuário o fecha; o pedido sai de "Em andamento" e vai para "Finalizados" quando o modal é fechado, com os contadores atualizados. A navegação ◀ / ▶ segue a fila em aberto (próximo/anterior da fila em aberto, nunca o pedido recém-fechado).
 - **Receitas médicas:** seção "Receita médica (Rx)" aparece em **todas as etapas** quando o pedido tem receita enviada pelo app. Cada receita é nomeada "Receita 1", "Receita 2"... (ordem de envio, nunca o nome do arquivo), com "Enviado em" igual à data/hora de criação do pedido; ações: baixar cada receita ou "Baixar todos" — o Portal não abre preview. É somente consulta: **não bloqueia** avançar, imprimir ou cancelar o pedido, e não gera status, badge nem alerta. Regra já vigente no Portal atual pela ECP-1481 e no PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10).
 
 ### 6.7 Notificações (toast)
