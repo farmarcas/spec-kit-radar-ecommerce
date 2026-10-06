@@ -1,12 +1,12 @@
 # Pedidos — Tabela: Colunas, Indicadores de Linha e Semáforo de SLA
 
 **Módulo:** Operação
-**Histórias:** [ECP-1515](https://farmarcas.atlassian.net/browse/ECP-1515) (Tabela com dados reais e paginação), [ECP-1550](https://farmarcas.atlassian.net/browse/ECP-1550) (Coluna Prazo: contagem regressiva e semáforo de SLA), [ECP-1551](https://farmarcas.atlassian.net/browse/ECP-1551) (Indicador de cliente recorrente), [ECP-1552](https://farmarcas.atlassian.net/browse/ECP-1552) (Ícone Rx), [ECP-1562](https://farmarcas.atlassian.net/browse/ECP-1562) (Tag Novo para pedidos ainda não abertos), [ECP-1563](https://farmarcas.atlassian.net/browse/ECP-1563) (Ordenação padrão da lista), [ECP-1565](https://farmarcas.atlassian.net/browse/ECP-1565) (Ordenação por coluna: Prazo, Data/Hora e Total), [ECP-1516](https://farmarcas.atlassian.net/browse/ECP-1516) (interações da linha: clique, tooltips)
+**Histórias:** [ECP-1515](https://farmarcas.atlassian.net/browse/ECP-1515) (Tabela com dados reais, paginação e ordenação padrão — unificada com a ECP-1563), [ECP-1550](https://farmarcas.atlassian.net/browse/ECP-1550) (Coluna Prazo: contagem regressiva e semáforo de SLA), [ECP-1551](https://farmarcas.atlassian.net/browse/ECP-1551) (Indicador de cliente recorrente), [ECP-1552](https://farmarcas.atlassian.net/browse/ECP-1552) (Ícone Rx), [ECP-1562](https://farmarcas.atlassian.net/browse/ECP-1562) (Tag Novo para pedidos ainda não abertos), [ECP-1563](https://farmarcas.atlassian.net/browse/ECP-1563) (Ordenação padrão da lista — o card que cria a listagem já entrega a lista ordenada), [ECP-1565](https://farmarcas.atlassian.net/browse/ECP-1565) (Ordenação por coluna: Prazo, Data/Hora e Total), [ECP-1516](https://farmarcas.atlassian.net/browse/ECP-1516) (interações da linha: clique, tooltips)
 **Referência UX:** [ECP-1312](https://farmarcas.atlassian.net/browse/ECP-1312) (Tabela: colunas e layout)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 6.3, 6.4
 **Relacionado:** [Listagem-Macro-Abas-Filtros-Periodo.md](Listagem-Macro-Abas-Filtros-Periodo.md)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-02
+**Última atualização:** 2026-10-06
 
 ---
 
@@ -16,30 +16,31 @@ A tabela precisa ser **preditiva, não reativa**: o objetivo é sinalizar antes 
 
 ## 2. Colunas e comportamento
 
-- Colunas: Prazo, Data/Hora, Cliente, Status, Resumo, Tipo, Loja, Total — as 2 últimas (Loja e Total) fixas no scroll horizontal.
+- Colunas: Prazo, Data/Hora, Cliente, Status, Resumo, Tipo, Loja, Total e a coluna da seta ">" (abrir o detalhe) — as 2 últimas, **Total e a coluna da seta**, ficam fixas no scroll horizontal, com sombra de separação. **Não há coluna "Orig." (App/Portal)** por enquanto. Em telas grandes a tabela tem largura máxima de 1600 px, alinhada à esquerda (Figma).
   - **Data/Hora:** data e hora de criação.
-  - **Cliente:** nome + telefone; estrela quando cliente recorrente (2.2).
-  - **Status:** chip do status; Cancelado com ícone de cancelamento.
-  - **Resumo:** quantidade de itens, "(editado)" quando houve ajuste de itens, ícone Rx quando há receita (2.3) e situação do pagamento — "Pago" ou "Cobrar" ("Cobrar (com troco)" quando aplicável).
-  - **Tipo:** Entrega ou Retirada + horário previsto ("Hoje às HH:MM"); em pedidos finalizados, a segunda linha mostra o horário de encerramento.
+  - **Cliente:** nome + telefone; estrela quando cliente recorrente (2.1); nome truncado por largura.
+  - **Status:** chip com o status no plural, como na interface ("Conferência", "Na fila", "Em separação", "Liberados", "Concluídos", "Cancelados"); "Cancelados" com ícone de cancelamento.
+  - **Resumo:** quantidade de itens, "(editado)" quando houve item removido ou substituído, "Rx" quando há receita (2.2) e a situação do pagamento — "Pago" (com check) ou "Cobrar"; quando há troco, "Cobrar" vem com o ícone de carteira, com o tooltip "Troco".
+  - **Tipo:** Entrega ou Retirada (com ícone) + horário previsto na segunda linha — "Hoje às HH:MM" ou "DD/MM às HH:MM" nos demais dias. Em pedidos finalizados, a segunda linha mostra o horário de encerramento (regra documentada; o Figma mantém a previsão — em aberto, ver pendências).
   - **Loja:** nome + CNPJ.
   - **Total:** valor total do pedido com frete; riscado quando Cancelado.
-- Paginação "Mostrar mais": "Mostrando X de Y" (lote inicial de 25) e botão que acrescenta o próximo lote.
-- Linha inteira clicável, abre o detalhe do pedido (ECP-1516); linha do pedido aberto destacada. Tooltips: nome completo do cliente quando truncado (mais de 22 caracteres) e lista de itens (`2x Nome · 1x Nome`) na coluna Resumo.
-- Ordenação por clique em **Prazo, Data/Hora e Total (valor)**, como regra geral: refaz a listagem inteira ordenada pela coluna, com ou sem busca (na busca, abertos e fechados se misturam); demais colunas não reordenam. Na lista da busca (que mistura abertos e fechados), o Prazo ordena os abertos pelo tempo restante e os fechados pela data de encerramento, abertos antes dos fechados; Data/Hora e Total ordenam a lista toda. Em Prazo, crescente = menor tempo restante primeiro (atrasados primeiro); em Finalizados, a coluna Prazo mostra a data de encerramento e ordena por ela.
+- Variantes de pedido que a tabela considera: pago online, pago offline (Cobrar), entrega, retirada, frete grátis, troco, cliente recorrente, parado, atrasado, editado, receita (Rx) e novo.
+- Paginação "Mostrar mais": "Mostrando X de Y" (lote inicial de 25) e botão que acrescenta o próximo lote; quando X = Y o botão não aparece.
+- Linha inteira clicável, abre o detalhe do pedido (ECP-1516); linha do pedido aberto destacada. Tooltips (Figma): estrela "Cliente Recorrente"; ícone de carteira "Troco"; "Rx" "Receita obrigatória"; tag Parado "Pedido com mais de 1 hora sem movimentação". Tooltips anteriores ao handoff, sem desenho no Figma (ver pendências): nome completo do cliente quando truncado e lista de itens (`2x Nome · 1x Nome`) na coluna Resumo.
+- Ordenação por clique em **Prazo, Data/Hora e Total (valor)**, como regra geral: refaz a listagem inteira ordenada pela coluna, com ou sem busca (na busca, abertos e fechados se misturam); demais colunas não reordenam. Na lista da busca (que mistura abertos e fechados), o Prazo ordena os abertos pelo tempo restante e os fechados pela data de encerramento, abertos antes dos fechados; Data/Hora e Total ordenam a lista toda. Em Prazo, crescente = menor tempo restante primeiro (atrasados primeiro). **Na aba "Finalizados" a coluna Prazo (que mostra a data de encerramento) não é ordenável**; só Data/Hora e Total.
 - **Entrada na tela:** sempre que o usuário entra, os filtros da tela são refeitos e a ordenação padrão é aplicada.
 - **Ordenação padrão** (aplicada sempre que o usuário entra na tela): "Em andamento" por prazo — atrasados (vermelho) do mais atrasado ao menos atrasado; depois amarelos, do mais próximo de atrasar ao mais distante; depois os demais, do mais próximo de entrar no amarelo ao mais distante (equivale a ordenar o tempo restante até o prazo, do menor ao maior). "Finalizados": do encerramento (conclusão ou cancelamento) mais recente ao mais antigo.
 - **Tag "Novo":** pedido ainda não aberto (sem evento de visualização), ao lado do horário na coluna Data/Hora; some ao abrir o detalhe. A visualização é do pedido, não por usuário.
 - **Atualização da lista (ECP-1566):** com a tela aberta, a lista reflete quase em tempo real as mudanças dos pedidos já listados — status da linha; saída de "Em andamento" para "Finalizados" (e contadores) quando o pedido é concluído/cancelado por outro atendente, pelo ERP ou pelo cliente; saída da lista quando o pedido deixa de corresponder ao segmento/filtros ativos. Não refaz a ordenação. Hoje o Portal Angular atualiza por consulta periódica a cada 1 minuto (`interval(1 * 60 * 1000)`); a direção de arquitetura aprovada é tempo real (websocket/push). Mecanismo e latência: decisão de engenharia.
-- **Chegada de pedidos novos:** com a tela aberta, a aba "Em andamento" ganha a tag "Novos" e aparece o aviso "N novos pedidos chegaram"; ao clicar, os novos entram no topo da lista, a tela volta para "Em andamento" (segmento "Todos", sem busca) e a tag da aba some.
+- **Chegada de pedidos novos (ECP-1562):** com a tela aberta, a aba "Em andamento" ganha a tag "Novos" e aparece o snackbar **"Pedidos novos adicionados à fila"**, **sem âncora** (a lista não rola até os pedidos novos). As notificações do legado **persistem**: banner (com a notificação do navegador), title tag (o título da aba alterna com "[NOVO PEDIDO]") e notificação sonora — fluxo atual descrito na seção 4. O item Pedidos da sidebar mostra o badge "Novos" + contador vermelho, que **substitui o container "Novos pedidos aguardando" da Home**; regra do contador: pedidos novos = ainda não abertos, no escopo do contexto (a confirmar, ver pendências). Como os pedidos novos entram na lista e se a pill "N novos pedidos chegaram" continua existindo estão em aberto.
 
 ### 2.1 Indicadores de linha — cliente recorrente
 
-Estrela ao lado do nome quando o cliente tem **20 ou mais pedidos concluídos** (`Delivered`/`Withdrawn`) na **loja (CNPJ) do pedido**, em todo o histórico, sem recorte por data. Pedidos cancelados ou em andamento não contam; quem completa o 20º concluído passa a ser recorrente naquela loja; a estrela depende da loja da linha, não do conjunto do contexto. Aparece nas duas macro-abas. Chave de identificação do cliente (id do consumidor ou CPF) e estratégia de contagem (pré-computada ou na consulta) são decisão de engenharia.
+Estrela amarela (tooltip "Cliente Recorrente") ao lado do nome quando o cliente tem **20 ou mais pedidos concluídos** (`Delivered`/`Withdrawn`) na **loja (CNPJ) do pedido**, em todo o histórico, sem recorte por data. Pedidos cancelados ou em andamento não contam; quem completa o 20º concluído passa a ser recorrente naquela loja; a estrela depende da loja da linha, não do conjunto do contexto. Aparece nas duas macro-abas. Chave de identificação do cliente (id do consumidor ou CPF) e estratégia de contagem (pré-computada ou na consulta) são decisão de engenharia.
 
 ### 2.2 Indicadores de linha — ícone Rx
 
-Ícone "Rx" ao lado da quantidade de itens quando o pedido tem **arquivo de receita enviado** (lista `Prescriptions` do pedido não vazia). A regra é pelo envio do arquivo, sem cruzar com o cadastro do produto — a lógica de exigência de receita está no app. Aparece em todas as etapas e nas duas macro-abas. O mesmo indicador alimenta a opção "Com receita (Rx)" do painel de filtros.
+Etiqueta "Rx" (borda amarela, tooltip "Receita obrigatória") ao lado da quantidade de itens quando o pedido tem **arquivo de receita enviado** (lista `Prescriptions` do pedido não vazia). A regra é pelo envio do arquivo, sem cruzar com o cadastro do produto — a lógica de exigência de receita está no app. Aparece em todas as etapas e nas duas macro-abas. O mesmo indicador alimenta a opção "Com receita" do painel de filtros.
 
 ## 3. Regras de negócio — Semáforo de SLA
 
@@ -47,11 +48,11 @@ Estrela ao lado do nome quando o cliente tem **20 ou mais pedidos concluídos** 
 
 - **Amarelo:** faltando 20 minutos pro prazo estimado de entrega/retirada — é a mesma referência de tempo do "Atrasado", não duas coisas diferentes.
 - **Vermelho/"Atrasado":** o pedido já excedeu o tempo de entrega/retirada. Cada loja pode configurar um tempo diferente (ex.: default 30 min) — todo pedido atrasado fica vermelho, independente de estar "Parado" ou não.
-- Coluna Prazo: pedidos ativos mostram "Finalizar em:" + contagem regressiva (ex.: "1h 03min") ou "Atrasado em:" + tempo de atraso; pedidos finalizados mostram "Concluído em:" + data (Concluído) ou "Finalizado em:" + data (Cancelado), sem semáforo.
+- Coluna Prazo: pedidos ativos mostram "Finalizar em:" + contagem regressiva (ex.: "1h 03min") ou "Atrasado em:" + tempo de atraso; pedidos finalizados mostram "Concluído em:" + data (Concluído) ou "Finalizado em:" + data (Cancelado), sem semáforo. Formato do tempo (Figma): "N min" abaixo de 60 minutos, "Xh YYmin" a partir de 60 minutos e "N dias" quando o atraso passa de 24 horas. Fundo da célula: vermelho (atrasado), amarelo (20 minutos ou menos para o prazo), cinza claro (dentro do prazo) e branco (finalizado).
 
 ### 3.2 Eixo 2 — movimentação (tag "Parado")
 
-Sem nenhuma movimentação por **mais de 60 minutos fixos**, sem personalização por loja neste ciclo (fica para 2027). Tooltip da tag: "Sem movimentação há X". O filtro "Parado" (painel de filtros) cruza todos os status ativos — Conferência, Na fila, Em separação, Liberados.
+Sem nenhuma movimentação por **mais de 60 minutos fixos**, sem personalização por loja neste ciclo (fica para 2027). A tag "Parado" aparece ao lado do valor do prazo, sobre qualquer cor da célula, com o tooltip "Pedido com mais de 1 hora sem movimentação". O filtro "Parado" (painel de filtros) cruza todos os status ativos — Conferência, Na fila, Em separação, Liberados.
 
 ### 3.3 Independência dos eixos
 
@@ -69,6 +70,7 @@ Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras
 - **Prazo-limite / countdown:** prazo-limite = previsão de entrega/retirada do pedido (a mesma exibida na coluna Tipo e a que o app mostra): criação + tempo de retirada/entrega parametrizado pela loja no Portal, no fuso do consumidor (spec do App, FR-047 e FAQ); se passar do horário de funcionamento, vai para o próximo dia de funcionamento (ex.: amanhã às 09:00) e o countdown respeita essa data e hora. Countdown = prazo-limite − agora; a contagem parte sempre da criação.
 - **O Portal já recebe o prazo-limite por pedido:** `POST /order/v3/get-orders` (`GetOrdersV3Command`) devolve `EstimateTimeFinish` (instante da previsão), calculado por `GetEstimateTimeCommand` (criação + tempo da loja respeitando o horário de funcionamento; retirada: `pharmacyTimeEstimation`; entrega: `EstimatedShippingMinutes` da faixa de raio que cobre a distância). O cálculo é feito na leitura, uma chamada por pedido (peso em listas grandes — ponto de engenharia); não devolve minutos restantes nem o estado do semáforo. No pedido, o app grava na criação só `Shipping.EstimatedDescription` (texto) e `Shipping.EstimateShippingMinutes`; `DeliverUntil` não é a previsão (nulo na criação, preenchido no aceite do fluxo antigo).
 - **Tag "Novo":** `PATCH /order/{orderId}/visualized` grava `Visualized = { TriggeredAt, TriggeredBy, PreviusStatus }`; a listagem já devolve `visualized`. O filtro "novo" atual (`ApplyStatusFilter`, `OrderStatus.New`/`NewConference`) considera pedidos em `Pending`/Conferência com `Visualized == null`; pedido de pagamento online só conta com transação aprovada. O Portal Angular detecta a chegada comparando o contador `New` em consultas periódicas.
+- **Fluxo reaproveitado — aviso de pedido novo (Portal Angular, `features/orders/orders.component.ts` + `order-notification-banner.service.ts`):** a cada 1 minuto (`interval(1 * 60 * 1000)`) a tela consulta o contador `New`; se ele subiu em relação ao último, mostra o banner "N novos pedidos chegaram" / "novo pedido chegou" com a ação "Atualizar fila" (volta à primeira aba e esconde o banner), toca o som `SoundType.Order`, abre a notificação do navegador ("Novo Pedido Recebido | <loja>", com número, total e previsão do pedido mais recente, `requireInteraction`; ao clicar abre a fila) e inicia a title tag, que alterna a cada 2 s o título da aba entre "Radar - E-commerce" e "[NOVO PEDIDO] Radar - E-commerce" (sem contador) até o banner ser fechado ou haver navegação. É o que "persiste" na decisão do PO; o que muda é o snackbar "Pedidos novos adicionados à fila" e o badge na sidebar.
 - **Ordenação:** a listagem V3 ordena em memória, depois de buscar e paginar, por `CreatedAt`, `UpdatedAt` ou `EstimateTimeFinish` (só os pedidos já buscados); não ordena por total (calculado em `Payment.Cost`) nem por data de encerramento dos fechados. A listagem anterior de uma loja só (`GetOrdersCommand`) ordena no banco antes de paginar.
 - **Não confirmado:** onde roda o cálculo do semáforo (front, com tick, ou pré-computado no back).
 
@@ -82,7 +84,11 @@ Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras
 | Cliente com 19 pedidos concluídos na loja | Sem estrela; com 20, estrela |
 | Cliente com 25 concluídos na loja A e 3 na loja B | Estrela nos pedidos da loja A, não nos da B |
 | Pedido sem receita enviada | Sem ícone Rx |
-| Clique em coluna sem ordenação (Prazo, Cliente, Status, Resumo, Tipo, Loja) | Nada acontece |
+| Clique em coluna sem ordenação (Cliente, Status, Resumo, Tipo, Loja) | Nada acontece |
+| Clique no cabeçalho de Prazo na aba "Finalizados" | Nada acontece — só Data/Hora e Total ordenam em Finalizados |
+| Scroll horizontal da tabela | Total e a coluna da seta ">" ficam fixas |
+| Pedido com troco | "Cobrar" com ícone de carteira (tooltip "Troco") na coluna Resumo |
+| Pedidos novos chegam com a tela aberta | Tag "Novos" na aba, snackbar "Pedidos novos adicionados à fila" (sem âncora), banner/title tag/sonora do legado e badge "Novos" na sidebar |
 
 ## 6. Pendências / perguntas em aberto
 
@@ -91,9 +97,16 @@ Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras
 - [ ] Volumetria/performance da tabela para grupos com muitas lojas/pedidos simultâneos (PRD seção 9) e custo da contagem de recorrência por linha.
 - [ ] Avaliar com a engenharia gravar o instante da previsão no pedido ou calculá-lo em lote, em vez de uma chamada por pedido na listagem.
 - [ ] Definir o que o modal mostra quando o pedido aberto é alterado por outra pessoa ou pelo ERP, e a latência aceitável de "quase em tempo real".
+- [ ] 2ª linha da coluna Tipo em Finalizados: o documento diz horário de encerramento; o Figma mostra a previsão de entrega/retirada.
+- [ ] Pill "N novos pedidos chegaram": continua existindo ou é substituída pelo snackbar "Pedidos novos adicionados à fila" com as linhas já inseridas? Define como os pedidos novos entram na lista.
+- [ ] Contador do badge "Novos" na sidebar: confirmar a regra (pedidos novos = ainda não abertos, no escopo do contexto) e quando zera.
+- [ ] Título da aba do navegador: o legado alterna entre "Radar - E-commerce" e "[NOVO PEDIDO] Radar - E-commerce" sem contador; confirmar se a reconstrução mantém a alternância ou mostra um contador.
+- [ ] Tooltips de nome truncado e de lista de itens da coluna Resumo: sem desenho no Figma; confirmar se permanecem.
+- [ ] Coluna "Orig." (App/Portal): fora por enquanto; se voltar, precisa de posição, valores e fonte do dado.
 
 ## Changelog
 
+- **2026-10-06** — Handoff Figma e respostas do PO: colunas fixas = Total + coluna da seta ">" (antes Loja e Total); sem coluna "Orig."; Prazo não ordenável em Finalizados; tooltips do Figma ("Cliente Recorrente", "Troco", "Receita obrigatória", Parado = "Pedido com mais de 1 hora sem movimentação"); Resumo com "Cobrar" + ícone de carteira em vez de "Cobrar (com troco)"; chips de status no plural; formato do tempo e cores da célula do Prazo; pedidos novos sem âncora, com snackbar "Pedidos novos adicionados à fila", banner/title tag/sonora do legado (fluxo registrado na seção 4) e badge "Novos" na sidebar (substitui o container da Home); listagem e ordenação padrão entregues juntas (ECP-1515 + ECP-1563); pendências novas (Tipo 2ª linha em Finalizados, pill, contador do badge, título da aba, tooltips, "Orig.").
 - **2026-10-05 (3)** — Prazo-limite: o Portal já recebe `EstimateTimeFinish` por pedido na listagem V3 (sem dependência da squad do App); registrados o custo por linha e a limitação de ordenação em memória.
 
 - **2026-10-05 (2)** — Na busca, o Prazo volta a ordenar (ECP-1565).

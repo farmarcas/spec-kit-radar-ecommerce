@@ -5,7 +5,7 @@
 **Referência UX:** [ECP-1453](https://farmarcas.atlassian.net/browse/ECP-1453) (Demanda UX — Hub de Lojas)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 5, 5.3, 5.4
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-05
+**Última atualização:** 2026-10-06
 
 ---
 
@@ -29,11 +29,15 @@ Admin vê todas as lojas da Rede; Gestor vê apenas as lojas às quais está vin
 
 A aba só aparece e é acessível para o perfil Admin. Isso é uma **redução em relação a hoje**, onde Gestor de Rede também acessa Banners (Manual seção 2, menu de Rede inclui Banners) — confirmado por Matheus em 2026-09-23. Bloqueio precisa valer por rota (URL direta), não só ocultação da aba.
 
-### 3.3 Seleção de loja → contexto single-store
+### 3.3 Seleção de loja → contexto single-store (em standby)
 
-Selecionar uma loja estabelece o contexto de trabalho single-store daquela loja, isolado do contexto multicontexto do módulo de Operação — entra em Estoque/Configurações já filtrado pra essa loja.
+Selecionar uma loja estabelecerá o contexto de trabalho single-store daquela loja, isolado do contexto multicontexto do módulo de Operação — entra em Estoque/Configurações já filtrado pra essa loja. Fica em standby junto com o módulo de Configuração (Operação é construído primeiro) e não faz parte do recorte atual da ECP-1496.
 
-### 3.4 Uma loja pertence a no máximo 1 grupo
+### 3.4 Header da Gestão de Lojas
+
+O header desta tela (logo da Rede + "Gestão de Lojas") pertence ao módulo de Configuração e não faz parte do header global de Operação (ver [Header-Global.md](../Shell/Header-Global.md)); ele é definido aqui, quando o módulo sair de standby. A decisão do PO de 2026-10-06 (logo da Rede + "Gestão de Lojas", inclusive multi-Rede) vale para este módulo; o header na lista de Redes antes de abrir uma Rede segue em aberto.
+
+### 3.5 Uma loja pertence a no máximo 1 grupo
 
 Regra pré-existente de Estoque Centralizado — sem cascata cruzada entre grupos (ver [[project_grupo_de_lojas_estoque_centralizado]]).
 
@@ -49,7 +53,7 @@ Regra pré-existente de Estoque Centralizado — sem cascata cruzada entre grupo
 |---|---|
 | Admin acessa Gestão de Lojas | Vê "Lojas da rede" (toda a Rede) + aba "Anúncios do App" |
 | Gestor acessa Gestão de Lojas | Vê "Lojas da rede" (só suas lojas) — aba "Anúncios do App" não aparece nem é acessível por URL |
-| Seleciona uma loja na listagem | Entra no contexto daquela loja pra Estoque/Configurações |
+| Seleciona uma loja na listagem | Entra no contexto daquela loja pra Estoque/Configurações (em standby, ver 3.3) |
 
 ## 6. Pendências / perguntas em aberto
 
@@ -61,6 +65,7 @@ Regra pré-existente de Estoque Centralizado — sem cascata cruzada entre grupo
 
 ## Changelog
 
+- **2026-10-06 (2)** — Respostas do PO sobre o handoff: o header da Gestão de Lojas é do módulo de Configuração (standby) e sai do header global de Operação (nova seção 3.4); a seleção de loja para Estoque/Configurações fica marcada como standby (3.3).
 - **2026-10-06** — Decisões do PO aplicadas: ECP-1496 passa a se chamar "Estrutura da tela e lista de Redes" e deixa de incluir a seleção de loja para Estoque/Configurações (standby); header logo + "Gestão de Lojas"; Balconista redirecionado para Pedidos; coluna Grupo sempre; busca com debounce de 2 s; exportar a Rede inteira.
 - **2026-10-05** — Gestão de Lojas fatiada em 4 Histórias (ECP-1496 reescrita; ECP-1572, ECP-1573, ECP-1574 criadas) e subtarefas ECP-1499 a 1501 substituídas; registradas as correções do legado e as pendências de produto. Nova loja, Estoque, Configurações e Anúncios do App ficam fora até o módulo de Configuração entrar.
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1496/ECP-1453 e da PRD seções 5, 5.3, 5.4.

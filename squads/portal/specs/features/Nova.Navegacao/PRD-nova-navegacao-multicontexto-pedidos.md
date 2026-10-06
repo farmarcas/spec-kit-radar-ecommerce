@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 2.12
+**Versão:** 2.13
 
 ---
 
@@ -84,6 +84,19 @@
 
 **v2.12 (2026-10-06)** — **Regras gerais e Gestão de Lojas (PO):** toda busca digitada (Pedidos, seletor de lojas, Gestão de Lojas) dispara ao digitar qualquer caractere com debounce de 2 segundos. Módulo de Operação é construído primeiro; o módulo de Configuração (incluindo as ações por loja "Estoque da loja"/"Configurações da loja", Anúncios do App, Nova loja, "Buscar rede"/"Exportar redes") fica em standby. Gestão de Lojas (5.4): header com logo da Rede + "Gestão de Lojas" (Figma), Balconista redirecionado para Pedidos ao tentar a rota, coluna "Grupo" sempre exibida, "Exportar lojas" exporta a Rede inteira no escopo do usuário.
 
+**v2.13 (2026-10-06)** — **Handoff Figma e respostas do PO.** Aplica ao corpo as decisões da auditoria do handoff (Figma `Rk122pjyt9mhUX8tlfkBRy`) e as respostas do PO; valores do Figma (números, percentuais, durações de exemplo) não são regra.
+- **Contexto (5.1, 5.2):** o contexto de trabalho passa a ser sempre dois seletores, **Redes** e **Lojas** (o menu único de 3 níveis deixa de existir); "Seleção por grupo" é um atalho dentro de Lojas e **não é desenvolvida agora**; "Reverter alterações" vira **"Restaurar padrão"** e é da multinavegação (não de Pedidos); Gestor de Rede com 1 Rede única vê a logo; o contador "marcadas/total" e o "Selecionar todos" contam as lojas de Ofertas independente da tela; "Limpar" nos painéis desmarca tudo. O header da Gestão de Lojas é do módulo de Configuração (standby) e sai do escopo de Operação.
+- **Pedidos × Ofertas (5.2, 5.3):** usuário com lojas de Vendas e de Ofertas vê Pedidos; as lojas de Ofertas aparecem desabilitadas, com o aviso "Pedidos existem apenas para lojas de Categoria Vendas.", no painel de Lojas quando a tela é Pedidos (critério da criação da tela de Pedidos); usuário só com lojas de Ofertas não vê o item Pedidos (não há empty state por "só Ofertas"); acesso indevido por URL redireciona para a primeira tela a que o usuário tem acesso.
+- **Sidebar e header (5.1, 5.6):** itens e agrupamentos do Figma (Indicadores, Pedidos, Promoções; "GESTÃO DE LOJAS": "Configuração & Estoque" e "Usuários"; "ÁREA ADMIN": "Produtos"); padrão colapsado com overlay só por hover; badge "Novos" + contador no item Pedidos; perfil Admin no menu do usuário = "Administração e Sistema"; menu do usuário existe, painel do sino não; tooltip "Ajuda" em desenho.
+- **Tabela e listagem (6.1.1, 6.3):** colunas fixas = Total + coluna da seta ">"; sem coluna "Orig." (App/Portal); Prazo não é ordenável em Finalizados; painel de filtros com os grupos ITENS ("Só medicamentos", "Com receita"), TIPO DE PEDIDO, PRAZO, STATUS DO PAGAMENTO e MÉTODO DE PAGAMENTO, chips com check, rodapé "Limpar"/"Aplicar"; listagem e ordenação padrão entregues juntas (ECP-1515 + ECP-1563 unificados).
+- **Novos pedidos (6.3):** sem âncora; snackbar "Pedidos novos adicionados à fila"; banner, title tag e sonora do legado persistem; badge "Novos" + contador na sidebar substitui o container "Novos pedidos aguardando" da Home.
+- **Avanço de status (6.5):** os ícones de navegação do modal são ▲ / ▼ (não ◀ / ▶); diálogo de confirmação **só no pulo de etapa**, que inclui Conferência → Liberados (modal própria da Conferência); Conferência → Na fila e Concluir não têm diálogo; "Em separação" = "Liberar para entrega" (Entrega) / "Liberar para retirada" (Retirada); snackbar `Status atualizado para "X"` por 10 segundos, sem "Desfazer". Substitui as regras antigas de que Conferência não tem pular etapa e de que Conferência → Na fila e Concluir exigem confirmação.
+- **Detalhe e cancelamento (6.6, 6.8):** botão de imprimir gera um PDF com os detalhes do pedido; "8º pedido" não entra; composição do total considera frete grátis, "Total (cobrar do cliente)", troco e pago online/offline; receitas como "Receita N", aviso amarelo informativo "Valide as receitas antes de liberar o pedido." sem regra nem bloqueio e "Baixar todos" só com mais de 1 receita; o modal de cancelamento não traz o aviso "O cliente será notificado e o estorno processado" (a regra de negócio continua); "Cancelado por" mostra "sistema" quando o cancelamento veio do ERP.
+- **Toasts (6.7):** agrupamento a partir da 3ª notificação — 2 toasts individuais (os mais antigos) + 1 agrupador com N = total − 2, inclusive "+1 pedido atrasado e/ou parado" no singular.
+- **Home de Indicadores (5.5):** lista aprovada de cards de Vendas e de Ofertas, ainda sem Figma (a UX atualiza esta semana); faixa etária, gênero e região ficam fora desta rodada; ECP-1512 quebrado em Filtro de GE e Macro-abas; o texto "Atualizado há 5 minutos" cai (pendente de confirmação).
+- **Pendências novas (9):** 2ª linha da coluna Tipo em Finalizados; pill "N novos pedidos chegaram"; regra do contador do badge "Novos"; título da aba com contador × alternância; lupa × debounce; texto da modal Conferência → Liberados; itens extras do Figma no detalhe; empty states fora do Figma.
+- **Limpeza:** removida a pendência do FAB em estudo (encerrada na v2.8) e corrigidos trechos antigos que contradiziam as decisões (ordenação restrita a Data/Hora e Total, critério "Prazo não ordena", empty state de loja de Ofertas, diálogo em 3 casos).
+
 ---
 
 ## 1. Contexto
@@ -98,18 +111,19 @@ Este PRD documenta o modelo de contexto ("Multicontexto") que rege o módulo de 
 
 ## 2. Objetivo
 
-1. Definir como o contexto de Rede/Loja/Grupo é selecionado e propagado dentro do módulo de Operação — hoje ele só afeta a Home; no modelo novo, afeta **todas** as telas do módulo (Home, Pedidos, Promoções) ao mesmo tempo.
+1. Definir como o contexto de Redes e Lojas é selecionado e propagado dentro do módulo de Operação — hoje ele só afeta a Home; no modelo novo, afeta **todas** as telas do módulo (Home, Pedidos, Promoções) ao mesmo tempo.
 2. Especificar a nova tela de Pedidos (listagem em tabela + detalhe), incluindo os filtros, a regra de exibição por período, o modelo de SLA e as regras de avanço de status.
 
 ## 3. Escopo
 
 ### Dentro do escopo (v1)
 - Modelo conceitual de 2 módulos (Operação × Configuração) e a diferença de contexto (múltiplo × único) entre eles.
-- Seletor de contexto de trabalho (Rede, Grupo de lojas/Estoque Centralizado, Loja individual) — reaproveitando as regras já fechadas em `ECP-1281` (filtro dependente Rede→Loja) e `ECP-1291` (cascata de Grupo de lojas), agora persistente em todo o módulo de Operação.
+- Seletor de contexto de trabalho, sempre em dois seletores — **Redes** e **Lojas** — reaproveitando as regras já fechadas em `ECP-1281` (filtro dependente Rede→Loja), agora persistente em todo o módulo de Operação, com "Restaurar padrão". A "Seleção por grupo" dentro de Lojas (`ECP-1291`) não é desenvolvida agora.
 - Nova Visão de Pedidos: macro-abas (Em andamento/Finalizados) + filtro segmentado por status, regra de exibição de pedidos ativos (sem limite de período) vs. finalizados (30 dias), busca (histórico completo, ignora o filtro de período).
 - Painel avançado de filtros ("Todos os filtros"): Itens, Tipo de pedido, Prazo, Status de pagamento, Método de pagamento — ver seção 6.1.1.
-- Colunas e comportamento da tabela de pedidos (scroll horizontal com colunas fixas, linha inteira clicável, ordenação restrita a Data/Hora e Total).
-- Detalhe do pedido: navegação anterior/próximo, avanço de status (com e sem confirmação), modelo de SLA preditivo em minutos absolutos com 3 estados (amarelo/parado/atrasado).
+- Colunas e comportamento da tabela de pedidos (scroll horizontal com colunas fixas — Total e a seta ">" —, linha inteira clicável, ordenação por Prazo, Data/Hora e Total).
+- Detalhe do pedido: navegação anterior/próximo (▲ / ▼), avanço de status (confirmação só no pulo de etapa), modelo de SLA preditivo em minutos absolutos com 3 estados (amarelo/parado/atrasado).
+- Home de Indicadores: apenas a lista de cards e as decisões já fechadas (seção 5.5); o detalhamento segue nas Histórias de cada card.
 - Fluxo de cancelamento de pedido (motivo + confirmação), reaproveitando as opções já existentes no Portal hoje.
 - Modelo de notificação em toast (persistência, agrupamento, escalonamento por hora) — sem WhatsApp automático nem central de notificações, que seguem fora de escopo (ver abaixo).
 
@@ -119,6 +133,8 @@ Este PRD documenta o modelo de contexto ("Multicontexto") que rege o módulo de 
 - "Mover pedido para trás" (reverter status) — ainda é ideia da UX, sem desenho; não faz parte deste ciclo.
 - O Módulo de Configuração em si (Hub de Lojas, fluxo "Gestão de lojas — Config e estoque juntos") — mencionado aqui só como contraponto conceitual; será detalhado em PRD próprio quando entrar em priorização.
 - Fluxo de Promoções dentro do novo modelo de módulos — mesma lógica de multicontexto do módulo de Operação, mas os protótipos ainda não estão maduros o suficiente para detalhar aqui.
+- "Seleção por grupo" (Grupo de lojas) dentro do seletor de Lojas — cascata, coluna e opção "sem grupo" não são desenvolvidas agora.
+- Painel do sino de notificações — não existe ainda; o tooltip "Ajuda" está em desenho pela UX.
 - Modelo de SLA da Home de Indicadores — decisão de percentual vs. minutos absolutos será tomada separadamente quando a Home entrar em pauta.
 
 ## 4. Personas
@@ -136,7 +152,7 @@ Módulo de Operação                         Módulo de Configuração
 
 Contexto: MÚLTIPLO                         Contexto: ÚNICO
 Seletor de contexto de trabalho            Hub de Lojas
-(Rede / Grupo de lojas / Loja)             (escolhe 1 loja antes de entrar)
+(dois seletores: Redes e Lojas)            (escolhe 1 loja antes de entrar)
      │                                            │
      ▼                                            ▼
 Contexto se propaga por TODAS             Usuário opera dentro do
@@ -152,18 +168,25 @@ também recebem o mesmo contexto)
 
 O seletor reaproveita integralmente o que já foi especificado em cards anteriores — não é um componente novo do zero:
 
-- **Rede → Loja:** filtro dependente (`ECP-1281`) — marcar uma Rede recalcula, no cliente, as opções disponíveis no dropdown de Loja.
-- **Grupo de lojas (Estoque Centralizado):** atalho de seleção dentro do filtro de Loja (`ECP-1291`) — marcar um grupo marca todas as lojas dele (cascata para baixo); desmarcar uma loja de um grupo cheio joga o checkbox do grupo para o estado parcial (cascata para cima); uma loja pertence a no máximo 1 grupo, sem cascata cruzada entre grupos.
+- **Dois seletores, sempre: Redes e Lojas.** No header, dois botões — "Todas as Redes ▾" e "Todas as Lojas ▾" — cada um abre o próprio painel; não existe menu único de 3 níveis. O painel de Redes tem busca, "Selecionar todos", lista de Redes, contador "marcadas/total", "Limpar" e "Aplicar"; o painel de Lojas tem busca por nome ou CNPJ, "Selecionar todos", lista agrupada por UF com a etiqueta do módulo (Vendas/Ofertas), contador "marcadas/total", "Limpar" e "Aplicar".
+- **Rede → Loja:** filtro dependente (`ECP-1281`) — marcar uma Rede refaz a lista de Lojas disponíveis no painel de Lojas. O efeito do "Aplicar" de Redes sobre as Lojas já aplicadas replica o comportamento do design.
+- **"Limpar" desmarca tudo** nos dois painéis. O contador "marcadas/total" e o "Selecionar todos" **contam as lojas de Ofertas independente da tela** em que o usuário está.
+- **Seleção por grupo (Grupo de lojas / Estoque Centralizado):** é um atalho de seleção **dentro do painel de Lojas** (`ECP-1291`) — **não é desenvolvida agora** (cascata, coluna "Seleção por grupo" e "sem grupo" ficam para depois).
+- **Restaurar padrão:** link da multinavegação (não específico de Pedidos), visível quando o contexto aplicado (Redes/Lojas) é diferente do padrão; ao clicar, volta à seleção padrão.
+- **Pedidos × Ofertas:** só lojas de Vendas geram Pedidos. Quando a tela é Pedidos, as lojas de Ofertas aparecem **desabilitadas** no painel de Lojas, com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; nas demais telas a lista traz Vendas e Ofertas. Esse critério é validado na criação da tela de Pedidos, não no card do filtro.
 - **GE (Grupo Econômico):** filtro adicional, só para perfil Admin. **Definido em 2026-09-24:** fica no header da tela de Indicadores, não no header global do módulo de Operação.
+- Erros, loading e estados vazios da lista de Redes/Lojas seguem o card do filtro (`ECP-1568`) e os critérios do `ECP-1281`; a paginação da lista é resolvida pelo backend.
+- A busca digitada nos painéis dispara ao digitar, com debounce de 2 segundos, sem Enter.
 
-**Navegação Lojas de Vendas × Loja de Ofertas dentro de Indicadores (definido em 2026-09-24):** as sub-abas simples "Vendas"/"Ofertas" do modelo atual (Manual seção 5) viram macro-abas com contador de lojas — ex.: "Lojas de Vendas (25)" / "Loja de Ofertas (2)". Indicadores segue fora do escopo detalhado deste PRD (mantido com os mesmos recursos de hoje), mas essa navegação interage com o seletor de contexto multicontexto: cada aba reflete só as lojas do módulo correspondente dentro do contexto (Rede/Grupo/Loja) selecionado.
+**Navegação Lojas de Vendas × Loja de Ofertas dentro de Indicadores (definido em 2026-09-24):** as sub-abas simples "Vendas"/"Ofertas" do modelo atual (Manual seção 5) viram macro-abas com contador de lojas — ex.: "Lojas de Vendas (25)" / "Loja de Ofertas (2)". Indicadores segue fora do escopo detalhado deste PRD (mantido com os mesmos recursos de hoje), mas essa navegação interage com o seletor de contexto multicontexto: cada aba reflete só as lojas do módulo correspondente dentro do contexto (Redes/Lojas) selecionado.
 
 **Mudança de comportamento em relação a hoje:** atualmente o contexto de Rede/Loja só é aplicado na Home de Indicadores. No modelo novo, o contexto selecionado passa a valer para **todo o módulo de Operação** — trocar de contexto em qualquer tela (Home, Pedidos, Promoções) atualiza as outras também, dentro da mesma sessão de navegação.
 
-**Bloco de identidade de Rede no header (definido em 2026-09-28):** a exibição do lado esquerdo do header varia conforme a quantidade de Redes vinculadas ao usuário:
-- **1 única Rede vinculada:** o header mostra a logo + nome dessa Rede (ex.: "Acfarma ·"), reaproveitando o asset de logo já usado hoje no Portal — não existe seletor de Rede pra escolher, já que só há uma opção.
-- **Múltiplas Redes vinculadas:** o header mostra o seletor "Todas as Redes ▾" no lugar da logo fixa, já que não há uma única marca pra representar.
-- **Dentro da tela de Gestão de Lojas:** o bloco de contexto (seletor de Loja, e de Rede quando multi-rede) é substituído pelo texto "Gestão de Lojas" — mas a logo de Rede única continua aparecendo quando aplicável (ex.: "Acfarma · Gestão de Lojas"); no caso multi-rede, o seletor de Rede some e só resta o texto "Gestão de Lojas".
+**Bloco de identidade de Rede e seletores no header do módulo de Operação:** o lado esquerdo do header varia conforme as Redes e as Lojas vinculadas ao usuário:
+- **Gestor de Rede e Admin (várias Redes):** os dois botões "Todas as Redes ▾" e "Todas as Lojas ▾".
+- **1 única Rede vinculada** (inclusive Gestor de Rede com uma Rede só): o botão de Redes dá lugar à logo + nome dessa Rede (ex.: "Acfarma ·"), reaproveitando o asset de logo já usado hoje no Portal, seguida do botão "Todas as Lojas ▾" — não existe seletor de Rede para escolher, já que só há uma opção.
+- **1 Rede e 1 loja:** texto "Rede · Loja (Cidade)" (ex.: "Acfarma · Bocaiuva (Palotina)"), sem seletor.
+- O header da Gestão de Lojas é do módulo de Configuração (em standby) e não faz parte do escopo de Operação (ver 5.4).
 
 ### 5.2 Contexto por funcionalidade
 
@@ -171,7 +194,7 @@ Confirmado em 2026-09-23 — mapeamento de qual tipo de seletor cada funcionalid
 
 | Funcionalidade | Componente de contexto |
 |---|---|
-| Pedidos | Seletor multicontexto **de Vendas** |
+| Pedidos | Seletor multicontexto, com as lojas de Ofertas desabilitadas (só Vendas geram Pedidos) |
 | Promoções | Seletor multicontexto |
 | Indicadores (Home) | Seletor multicontexto |
 | Usuários | Seletor multicontexto |
@@ -182,7 +205,10 @@ Confirmado em 2026-09-23 — mapeamento de qual tipo de seletor cada funcionalid
 
 **Usuários entra no grupo multicontexto** — diferente do que a seção 5 registrava até aqui (que falava só em Pedidos/Promoções/Home para o módulo de Operação). Isso amplia o modelo: gerenciar usuários passa a ser possível através de múltiplas lojas/redes ao mesmo tempo, não só dentro de uma loja ou de uma Rede isolada como é hoje (ver `Manual-Portal-Radar-Ecommerce.md`, seção 11). Escopo por perfil, confirmado: **Admin** vê todos os usuários da plataforma; **Gestor de Rede** vê só os usuários vinculados à(s) sua(s) Rede(s). Estoque e Configurações confirmam o modelo de contexto único já descrito para o Módulo de Configuração.
 
-**Nota "de Vendas" no seletor de Pedidos:** o qualificador reflete que só lojas no módulo **Vendas** geram Pedidos no Portal — lojas no módulo Ofertas não aparecem/não fazem sentido nesse contexto (ver `Manual-Portal-Radar-Ecommerce.md`, seção 3, "Módulo Vendas x Módulo Ofertas").
+**Pedidos e lojas de Ofertas:** só lojas no módulo **Vendas** geram Pedidos no Portal (ver `Manual-Portal-Radar-Ecommerce.md`, seção 3, "Módulo Vendas x Módulo Ofertas"). Regras fechadas em 2026-10-06:
+- O usuário que tem lojas de Vendas **e** de Ofertas **vê o item Pedidos**; na tela de Pedidos as lojas de Ofertas ficam desabilitadas no painel de Lojas, com a faixa "Pedidos existem apenas para lojas de Categoria Vendas." (critério da criação da tela de Pedidos).
+- O usuário que tem **só lojas de Ofertas não vê o item Pedidos** no menu; por isso não existe empty state por "só Ofertas".
+- Se esse usuário abrir a rota de Pedidos por URL, vale a regra geral de acesso indevido (5.3): vai para a primeira tela a que tem acesso.
 
 **Produtos (Catálogo) também não se encaixa no modelo multi/único de loja:** é um catálogo único, compartilhado entre todas as Redes da plataforma (`Manual-Portal-Radar-Ecommerce.md`, seção 12) — não existe "Rede/Loja" para filtrar, o cadastro é o mesmo pra todo mundo. Acesso exclusivo do Admin (regra já vigente hoje, seção 5.3).
 
@@ -198,6 +224,8 @@ Confirmado em 2026-09-23 — mapeamento de qual tipo de seletor cada funcionalid
 - **Lojas da rede** — listagem de lojas com Grupo, Telefone, Estado, Cidade, ERP conectado até, Módulo ativado, botão "Nova Loja", filtro por Módulo, atalho para Grupo de Lojas e Exportar Lojas. Equivale à tela "Lojas" de hoje (Manual seção 3).
 - **Anúncios do App** — gestão de Banners (Admin only, ver acima).
 
+O módulo de Configuração está em standby (Operação é construído primeiro); o header da Gestão de Lojas (logo da Rede, texto "Gestão de Lojas") pertence a esse módulo e fica fora do escopo de Operação — ver `Documentacao.Funcional/Modulo.Configuracao/Gestao-de-Lojas.md`.
+
 ### 5.3 Regras de acesso por perfil (módulo de Operação)
 
 Confirmado em 2026-09-23:
@@ -206,8 +234,27 @@ Confirmado em 2026-09-23:
 - **Gestor:** acessa tudo, mas o seletor de contexto só oferece as Redes/Lojas às quais está vinculado. Único menu que não acessa é o de Produtos/Catálogo — regra já vigente hoje (`Manual-Portal-Radar-Ecommerce.md`, seção 2: Catálogo é exclusivo do perfil Admin).
 - **Balconista (Contato cliente):** não visualiza Indicadores (Home) — vê só Pedidos e Promoções. **Confirmado (2026-09-23): perde o acesso a Estoque** que tem hoje (Manual seção 2, menu reduzido = Pedidos/Promoções/Estoque) — é remoção intencional no modelo novo, não omissão.
 - **Balconista em Promoções:** vê o menu, mas escopado só à própria loja (é o único perfil vinculado a 1 loja só, então na prática o seletor multicontexto não se aplica a ele aqui) e **sem ações destrutivas** (mesma regra já vigente hoje — vê a listagem completa e exporta relatório, mas não tem "Nova promoção", cancelar ou destacar oferta; Manual seção 9).
+- **Acesso indevido por URL:** a rota que o perfil não pode acessar (ou cujo item de menu não aparece para ele) redireciona para a **primeira tela a que o usuário tem acesso**; esconder o item do menu não basta, a rota também é protegida.
 
 **Hub de Lojas (Módulo de Configuração) também filtra por perfil, confirmado:** a listagem de lojas exibidas no Hub respeita o mesmo acesso do seletor de contexto — Admin vê todas as lojas da Rede, Gestor só as suas lojas vinculadas.
+
+### 5.5 Home de Indicadores — cards aprovados (2026-10-06)
+
+Indicadores segue sem redesenho detalhado neste PRD; cada card é uma História própria (1 card por elemento, com front e back). **Ainda não há Figma desses cards:** a UX atualiza o handoff nesta semana, então layout, rótulos e textos finais estão pendentes; os textos vindos do legado são "texto atual", não definição. Faixa etária, gênero e região ficaram **de fora desta rodada**. A Home tem a mesma estrutura em todos os perfis; ranking das lojas, região e lojas com retirada aparecem também para o Gestor de loja, que vê só os dados das próprias lojas.
+
+- **Indicadores Vendas:** Ruptura de estoque (container na Home + tela de Detalhamento); Top produtos vendidos; Total de pedidos em aberto; Volume dos pedidos em aberto; Pedidos em aberto por status (rosca, **com Conferência**); Tempo médio para iniciar o primeiro atendimento; Tempo total de atendimento; Média de itens por cesta; Formas de pagamento; Métodos de entrega (legenda "Receber em casa" / "Retirada"); Loja sem delivery (= lojas com retirada ativa = lojas que oferecem **somente** retirada, sem entrega em domicílio).
+- **Indicadores Ofertas:** Ofertas criadas; Ofertas ativadas; Taxa de conversão; Total de vendas realizadas; Conversão PDV/App; Top produtos ativados; Lojas sem ofertas.
+- **Abas do gráfico:** "Faturamento", "Pedidos cancelados" e "Pedidos concluídos", cada uma com o total do período no cartão da aba (R$ no faturamento, contagem nas demais).
+- **Container "Novos pedidos aguardando" não entra** na Home: é substituído pelo badge "Novos" + contador no item Pedidos da sidebar (5.6).
+- O texto de última atualização da Home ("Atualizado há 5 minutos") cai; qualquer texto de atualização fica em aberto (9).
+- Header da página: título "Indicadores", filtro de GE (só Admin), período e "Exportar", com as macro-abas "Lojas de Vendas [N]" / "Loja de Ofertas [N]"; o `ECP-1512` foi quebrado em dois: **Filtro de GE** e **Macro-abas**.
+- Fora desta rodada, a decidir pelo PO: Ticket médio, estrutura/layout da Home, ranking das lojas, card "Cancelamentos" e Exportar pedidos faturados. O cartão "Volume dos pedidos cancelados" sai (não será criado).
+
+### 5.6 Sidebar e header (Shell)
+
+**Sidebar** (Figma, validada pelo PO): no topo, Indicadores, Pedidos (tag "Novos" + badge vermelho com a contagem) e Promoções; seção **"GESTÃO DE LOJAS"** com "Configuração & Estoque" (item único, leva à Gestão de Lojas) e "Usuários"; seção **"ÁREA ADMIN"** com "Produtos" (só Admin). Padrão **colapsado** (64 px), com overlay de menu aberto (288 px) acionado **somente por hover** (sem toque nem teclado). O ECP-1495 trata só a exibição/ocultação dos itens conforme o perfil, inclusive o menu de Configuração; a regra do badge "Novos" fica para a construção da tela de Pedidos. O item Pedidos não aparece para o usuário só com lojas de Ofertas (5.2).
+
+**Header, lado direito:** sino de notificações (sem painel por enquanto), ajuda ("?", tooltip "Ajuda" em desenho pela UX) e menu do usuário (já desenhado), com nome e perfil. O rótulo do perfil Admin no menu do usuário segue o nome do perfil do sistema, **"Administração e Sistema"** (pode truncar).
 
 ## 6. Nova Visão de Pedidos (tabela)
 
@@ -222,37 +269,41 @@ Dois níveis, no formato de segmented bar (navbar + filtro de opções):
 
 ### 6.1.1 Painel avançado de filtros ("Todos os filtros")
 
-Confirmado para v1. Botão "Todos os filtros" abre um painel com 5 grupos (aplicação em conjunto, botões Limpar/Aplicar):
+Confirmado para v1, com os rótulos do Figma. Botão "Todos os filtros" abre um painel com 5 grupos (rótulos em caixa alta, seleção múltipla por chips, aplicação em conjunto; rodapé fixo com "Limpar" e "Aplicar"):
 
-- **Tipo (itens):** Só medicamentos (pedido em que todos os itens são medicamento, conforme `IsMedicamento` do catálogo de produtos), Com receita (Rx).
-- **Tipo de entrega:** Entrega, Retirada.
-- **Prazo:** Atrasado, 20 min para atrasar, Em tempo, Parado.
-- **Status de pagamento:** Pago, Cobrar, Com troco.
-- **Método de pagamento:** Pix, Dinheiro, Maquininha.
+- **ITENS:** "Só medicamentos" (pedido em que todos os itens são medicamento, conforme `IsMedicamento` do catálogo de produtos), "Com receita".
+- **TIPO DE PEDIDO:** Entrega, Retirada.
+- **PRAZO:** Atrasado, 20 min para atrasar, Em tempo, Parado.
+- **STATUS DO PAGAMENTO:** Pago, Cobrar, Com troco.
+- **MÉTODO DE PAGAMENTO:** Pix, Dinheiro, Maquininha.
 
-Filtros ativos aparecem como badges removíveis acima da tabela, com contador no botão ("Todos os filtros · 2") e opção "Limpar filtros".
+Chip selecionado com borda azul e ícone de check. O painel tem cerca de 380 px de largura e o conteúdo, no máximo cerca de 440 px de altura, com rolagem interna (o rodapé permanece visível). Filtros ativos aparecem como badges removíveis acima da tabela, com a quantidade de filtros no botão "Todos os filtros" (bolinha com o número) e a opção "Limpar filtros".
 
 ### 6.2 Regra de exibição por período
 
 - **Pedidos ativos** (qualquer status de "Em andamento"): **sem limite de período** — aparecem na listagem até mudarem de status, não importa há quanto tempo foram criados.
 - **Pedidos finalizados** (Concluídos/Cancelados): só os dos **últimos 30 dias** aparecem na listagem por padrão. Passado esse limite, o pedido some da lista.
-- **Busca:** o campo de busca (nome do cliente, CPF, nome da loja, CNPJ da loja, nº do pedido) varre **todo o histórico**, ignorando completamente o limite de 30 dias — é a via de acesso a qualquer pedido finalizado mais antigo. Os resultados mostram primeiro os pedidos em aberto (ordem padrão dos abertos, por prazo) e depois os fechados (ordem padrão dos fechados). Com busca ativa a tela mostra uma lista única de resultados — macro-abas e filtro segmentado ficam ocultos e voltam ao sair da busca — com a faixa "Resultados da busca para 'X'" e "N pedidos encontrados".
+- **Busca:** o campo de busca (nome do cliente, CPF, nome da loja, CNPJ da loja, nº do pedido) dispara ao digitar qualquer caractere, com debounce de 2 segundos e sem Enter, e varre **todo o histórico**, ignorando completamente o limite de 30 dias — é a via de acesso a qualquer pedido finalizado mais antigo. Os resultados mostram primeiro os pedidos em aberto (ordem padrão dos abertos, por prazo) e depois os fechados (ordem padrão dos fechados). Com busca ativa a tela mostra uma lista única de resultados — macro-abas e filtro segmentado ficam ocultos e voltam ao sair da busca — com a faixa "Resultados da busca para 'X'" e "N pedidos encontrados".
 - **Exportar:** botão "Exportar" no cabeçalho solicita o relatório de pedidos do contexto selecionado, mantendo a estrutura do relatório atual — períodos "Últimos 7 dias", "Últimos 30 dias", "Últimos 90 dias" ou "Personalizado"; geração assíncrona, resultado enviado por e-mail ao usuário.
-- **Empty state:** 4 cenários desenhados — (1) Gestor sem pedidos ativos no contexto selecionado (CTA "Criar nova promoção"); (2) Balconista sem pedidos na fila; (3) filtro/aba aplicada sem resultado (CTA "Exportar relatório" / "Resetar filtros aplicados"); (4) busca sem correspondência, com aviso explícito de que a busca varreu todo o histórico ("A busca passou por todo o histórico, independente do período") e CTA "Limpar busca" / "Resetar filtro incluído".
+- **Empty state:** 4 cenários do protótipo (sem desenho no Figma) — (1) Gestor sem pedidos ativos no contexto selecionado (CTA "Criar nova promoção"); (2) Balconista sem pedidos na fila; (3) filtro/aba aplicada sem resultado (CTA "Exportar relatório" / "Resetar filtros aplicados"); (4) busca sem correspondência, com aviso explícito de que a busca varreu todo o histórico ("A busca passou por todo o histórico, independente do período") e CTA "Limpar busca" / "Resetar filtro incluído".
 
 ### 6.3 Colunas e comportamento da tabela
 
 - Colunas conforme protótipo validado: Prazo, Data/Hora, Cliente, Status, Resumo, Tipo, Loja, Total (mesma base já especificada em `ECP-1312`).
-- As duas últimas colunas ficam fixas durante o scroll horizontal.
+- As duas últimas colunas ficam fixas durante o scroll horizontal: **Total** e a **coluna da seta ">"** de abrir o detalhe (com sombra de separação). Não há coluna "Orig." (App/Portal) por enquanto.
 - Toda a área da linha é clicável e abre o detalhe do pedido — não só um botão/ícone específico.
+- **Variantes de pedido** que a tabela, o detalhe e os tooltips consideram: pago online, pago offline ("Cobrar"), entrega, retirada, frete grátis, troco, cliente recorrente, parado, atrasado, editado, receita (Rx) e novo.
+- **Resumo:** quantidade de itens, "(editado)" quando houve item removido ou substituído, "Rx" quando há receita e a situação do pagamento — "Pago" (com check) ou "Cobrar"; quando há troco, "Cobrar" vem com o ícone de carteira (tooltip "Troco").
+- **Tooltips da linha (Figma):** estrela = "Cliente Recorrente"; ícone de carteira = "Troco"; "Rx" = "Receita obrigatória"; tag Parado = "Pedido com mais de 1 hora sem movimentação".
 - **Cliente recorrente:** estrela ao lado do nome do cliente quando ele tem 20 ou mais pedidos concluídos (`Delivered`/`Withdrawn`) na loja (CNPJ) do pedido, considerando todo o histórico, sem recorte por data. A contagem é por loja: o mesmo cliente pode ser recorrente em uma loja e não em outra.
 - **Ícone Rx:** na coluna Resumo, ao lado da quantidade de itens, quando o pedido tem arquivo de receita enviado pelo app. A regra é pelo envio do arquivo, não pelo cadastro do produto (a lógica de exigência de receita está no app).
-- **Tag "Novo":** pedido ainda não aberto (sem evento de visualização), ao lado do horário na coluna Data/Hora; a visualização é do pedido (o primeiro atendente que abre o marca para todos) e a tag some ao abrir o detalhe. Com a tela aberta, a chegada de pedidos novos coloca a tag "Novos" na aba "Em andamento" e mostra o aviso "N novos pedidos chegaram".
-- **Atualização da lista:** com a tela aberta, a lista reflete quase em tempo real as mudanças dos pedidos já listados (status, saída de "Em andamento" para "Finalizados", saída do segmento/filtro ativo, contadores); pedidos novos entram pelo aviso "N novos pedidos chegaram", sem linhas inseridas sozinhas; a ordenação não é refeita por essas atualizações.
-- **Ordenação por cabeçalho (regra geral):** clicar em Prazo, Data/Hora ou Total refaz a listagem inteira ordenada pela coluna, com ou sem busca; na busca, abertos e fechados se misturam (a regra "abertos primeiro" é só a ordem padrão) e o Prazo ordena abertos pelo tempo restante e fechados pela data de encerramento, abertos antes dos fechados.
+- **Tag "Novo":** pedido ainda não aberto (sem evento de visualização), ao lado do horário na coluna Data/Hora; a visualização é do pedido (o primeiro atendente que abre o marca para todos) e a tag some ao abrir o detalhe.
+- **Chegada de pedidos novos:** com a tela aberta, a chegada de pedidos novos coloca a tag "Novos" na aba "Em andamento" e exibe o snackbar **"Pedidos novos adicionados à fila"**, **sem âncora** (a lista não rola até os pedidos novos). As notificações que já existem no legado **persistem**: banner (com a notificação do navegador), title tag (o título da aba alterna com "[NOVO PEDIDO]") e notificação sonora. Em paralelo, o item Pedidos da sidebar mostra o badge "Novos" + contador vermelho, que **substitui o container "Novos pedidos aguardando" da Home**. Se a pill "N novos pedidos chegaram" continua existindo, o que o contador conta e como o título da aba mostra o contador estão em aberto (9).
+- **Atualização da lista:** com a tela aberta, a lista reflete quase em tempo real as mudanças dos pedidos já listados (status, saída de "Em andamento" para "Finalizados", saída do segmento/filtro ativo, contadores); a ordenação não é refeita por essas atualizações. Como os pedidos novos entram na lista está em aberto (9).
+- **Ordenação por cabeçalho (regra geral):** clicar em Prazo, Data/Hora ou Total refaz a listagem inteira ordenada pela coluna, com ou sem busca; na busca, abertos e fechados se misturam (a regra "abertos primeiro" é só a ordem padrão) e o Prazo ordena abertos pelo tempo restante e fechados pela data de encerramento, abertos antes dos fechados. **Na aba "Finalizados" o Prazo não é ordenável** (só Data/Hora e Total); a ordem padrão por encerramento permanece.
 - **Entrada na tela:** sempre que o usuário entra, os filtros da tela são refeitos (aba "Em andamento", segmento "Todos", sem filtros do painel e sem busca) e a ordenação padrão é aplicada.
-- **Ordenação padrão** (aplicada sempre que o usuário entra na tela): "Em andamento" por prazo — primeiro os atrasados (do mais atrasado ao menos atrasado), depois os amarelos (do mais próximo de atrasar ao mais distante), depois os demais (do mais próximo de entrar no amarelo ao mais distante); "Finalizados" do encerramento (conclusão/cancelamento) mais recente ao mais antigo.
-- **Sem ordenação por coluna, com exceção de Prazo, Data/Hora e Total (valor)** — essas colunas são ordenáveis (clique no cabeçalho); as demais seguem a regra já fechada para a Lista de Termos Buscados (`ECP-1339`) e não reordenam a lista.
+- **Ordenação padrão** (entregue junto com a criação da listagem; aplicada sempre que o usuário entra na tela): "Em andamento" por prazo — primeiro os atrasados (do mais atrasado ao menos atrasado), depois os amarelos (do mais próximo de atrasar ao mais distante), depois os demais (do mais próximo de entrar no amarelo ao mais distante); "Finalizados" do encerramento (conclusão/cancelamento) mais recente ao mais antigo.
+- **Sem ordenação por coluna, com exceção de Prazo (exceto em Finalizados), Data/Hora e Total (valor)** — essas colunas são ordenáveis (clique no cabeçalho); as demais (Cliente, Status, Resumo, Tipo, Loja) seguem a regra já fechada para a Lista de Termos Buscados (`ECP-1339`) e não reordenam a lista.
 
 ### 6.4 Modelo de SLA e prazo (preditivo, não reativo)
 
@@ -274,33 +325,39 @@ Modelo de semáforo com 3 estados, em 2 eixos independentes:
 
 ### 6.5 Avanço de status do pedido
 
-- Ação principal: **botão split** — um botão primário com a ação padrão (avançar 1 etapa sequencial) e um chevron acoplado que abre um menu com a alternativa de **pular direto para "Liberados"**.
-- **Transições sequenciais intermediárias acontecem sem diálogo de confirmação.**
-- **Diálogo de confirmação obrigatório em 3 casos, com texto específico por caso:**
-  1. Conferência → Na fila (é o commit do rascunho de edição, ver `PRD-edicao-pedidos-etapa-revisao.md`) — texto: "Ao liberar este pedido para a separação, você não poderá mais fazer edições nos itens."
-  2. Qualquer ação de "pular etapa" — texto: "Ao confirmar, o sistema entende que os itens já foram separados fisicamente e o pedido estará pronto para [entrega/retirada]."
-  3. Qualquer transição para um **status final** — Liberados → Concluído (irreversível, "Esta ação não pode ser desfeita") e Cancelamento a partir de **qualquer status, incluindo Concluído** (ver 6.8), pelo mesmo motivo: é status final.
-- **O único "pular etapa" válido é Na fila → Liberados direto.** Conferência **não** tem opção de pular etapa — só o caminho sequencial (Conferência → Na fila). **Reforçado em 2026-10-01** depois de encontrar no código do protótipo um pulo (por engano) de Conferência direto pra Liberados; Matheus confirmou que está errado e não deve ser considerado.
-- **Reverter status ("mover para trás") não está desenhado e não faz parte deste PRD** — segue como ideia registrada pela UX para avaliação futura. **Reforçado em 2026-10-01:** o protótipo tinha um "Desfazer" (undo) via snackbar depois de avançar status — confirmado que essa funcionalidade não existe e é sobra de uma versão anterior do protótipo, não reflete nenhuma decisão de produto.
+- Ação principal: **botão split** — um botão primário com a ação da etapa (avançar 1 etapa sequencial) e um chevron acoplado que abre um menu com a alternativa de **pular direto para "Liberados"**. O botão primário por etapa (Figma):
+  - **Conferência:** "Liberar para fila" (com chevron — pular para Liberados);
+  - **Na fila:** "Separar pedido" (com chevron: menu "PULAR DIRETO PARA" → "Liberados", com o texto de apoio "Ignorar a separação e marcar como pronto");
+  - **Em separação:** "Liberar para entrega" em pedido de Entrega e "Liberar para retirada" em pedido de Retirada;
+  - **Liberados:** "Concluir pedido" (botão verde).
+- **Transições sequenciais acontecem sem diálogo de confirmação** — inclusive **Conferência → Na fila** e **Concluir pedido** (Liberados → Concluído).
+- **Diálogo de confirmação somente no "pular etapa"**, em dois casos, cada um com a própria modal:
+  1. **Na fila → Liberados** — título "Avançar pedido direto para Liberados?"; texto "Ao confirmar, o sistema entenderá que os itens já foram separados fisicamente e o pedido está pronto para entrega/retirada."; botões "Voltar" e "Sim, avançar pedido".
+  2. **Conferência → Liberados** — o usuário **pode** pular da Conferência direto para Liberados; aparece uma modal de confirmação **diferente** da anterior, própria da Conferência (texto e botões em aberto, ver 9).
+- **Cancelamento** tem a própria modal de motivo (6.8); não há diálogo adicional.
+- **Snackbar após cada transição:** `Status atualizado para "<novo status>"` ("Na fila", "Em separação", "Liberados"), "Pedido concluído!" ao concluir e "Pedido cancelado!" ao cancelar, por **10 segundos**.
+- **Reverter status ("mover para trás") não está desenhado e não faz parte deste PRD** — segue como ideia registrada pela UX para avaliação futura. **Não existe "Desfazer"** (undo) no snackbar; o "Desfazer" que aparece na seção "Futuro" do Figma e no protótipo é sobra de uma versão anterior, não decisão de produto.
 
 ### 6.6 Detalhe do pedido
 
 - Abre como modal, largura máxima 1180px, altura dinâmica de até 90% da viewport.
-- Navegação **◀ / ▶ "próximo pedido"** dentro do próprio modal, sem precisar fechar e reabrir — desabilitada no primeiro e no último pedido da lista carregada.
+- Navegação **▲ (anterior) / ▼ (próximo)** dentro do próprio modal, sem precisar fechar e reabrir — desabilitada no primeiro e no último pedido da lista carregada.
+- Barra superior do modal: botões ▲ ▼, título "Pedido #<número>", botão de **imprimir** (gera um **PDF com os detalhes do pedido**) e botão "x" para fechar. O "8º pedido" do card Cliente no Figma não entra.
+- Variantes de pedido consideradas no detalhe: frete grátis, troco, pago online e pago offline (Cobrar), entrega e retirada. A composição do total mostra subtotal, taxa de entrega (valor ou "Grátis" quando o frete é grátis; oculta na Retirada) e "Total (cobrar do cliente)" (na Retirada, "Total"); com troco, o valor pago pelo cliente e o troco.
 - Comportamento condicional por tipo de entrega: **Retirada** oculta o campo de taxa de entrega. **"Loja responsável" = "Filial responsável" (resolvido 2026-10-01):** é o mesmo conceito, só exibido em lugares diferentes conforme o tipo. Pra **Retirada**, o campo aparece dentro do container único de endereço/pagamento (rotulado "Loja responsável", junto com CNPJ e endereço da loja). Pra **Entrega**, existe um card lateral dedicado "Loja responsável" — esse card fica **oculto na Retirada** (porque a informação já está no container principal), não duplicado.
 - Nomenclatura de pagamento: **COBRAR** (dinheiro, Pix ou maquininha — débito/crédito) vs. **PAGO** (crédito, débito ou Pix já processado).
 - Tag **"Editado"** = pedido teve item removido ou substituído (consistente com o modelo já fechado em `PRD-edicao-pedidos-etapa-revisao.md`).
-- Pedidos cancelados não mostram o status tracker — mostram o motivo do cancelamento no lugar.
-- **Modal em status final (Concluído ou Cancelado):** o modal permanece aberto com o pedido no novo status e a confirmação visual, e só fecha quando o usuário o fecha; o pedido sai de "Em andamento" e vai para "Finalizados" no mesmo instante em que é concluído ou cancelado, com os contadores atualizados. A navegação ◀ / ▶ segue a fila em aberto (próximo/anterior da fila em aberto, nunca o pedido recém-fechado).
-- **Receitas médicas:** seção "Receita médica (Rx)" aparece em **todas as etapas** quando o pedido tem receita enviada pelo app. Cada receita é nomeada "Receita 1", "Receita 2"... (ordem de envio, nunca o nome do arquivo), com "Enviado em" igual à data/hora de criação do pedido; ações: baixar cada receita ou "Baixar todos" — o Portal não abre preview. É somente consulta: **não bloqueia** avançar, imprimir ou cancelar o pedido, e não gera status, badge nem alerta. Regra já vigente no Portal atual pela ECP-1481 e no PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10).
+- Pedidos cancelados não mostram o status tracker — mostram a caixa "Pedido cancelado" com o motivo do cancelamento e quem cancelou ("Cancelado por"; quando o cancelamento veio do ERP/automático, mostra **"sistema"**).
+- **Modal em status final (Concluído ou Cancelado):** o modal permanece aberto com o pedido no novo status e a confirmação visual, e só fecha quando o usuário o fecha; o pedido sai de "Em andamento" e vai para "Finalizados" no mesmo instante em que é concluído ou cancelado, com os contadores atualizados. A navegação ▲ / ▼ segue a fila em aberto (próximo/anterior da fila em aberto, nunca o pedido recém-fechado).
+- **Receitas médicas:** seção "Receita médica (Rx)" aparece em **todas as etapas** quando o pedido tem receita enviada pelo app. Cada receita é nomeada "Receita 1", "Receita 2"... (ordem de envio, nunca o nome do arquivo), com "Enviado em" igual à data/hora de criação do pedido; ações: baixar cada receita ou "Baixar todos" (este só aparece quando há **mais de 1** receita) — o Portal não abre preview. A seção traz o aviso amarelo **"Valide as receitas antes de liberar o pedido."**, apenas **informativo**, sem regra, lógica nem bloqueio. É somente consulta: **não bloqueia** avançar, imprimir ou cancelar o pedido, e não gera status nem badge. Regra já vigente no Portal atual pela ECP-1481 e no PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10).
 
 ### 6.7 Notificações (toast)
 
 Modelo in-app apenas — sem WhatsApp automático nem central de notificações (fora de escopo deste ciclo). Base de notificações em tempo real (websocket/push, não polling) aprovada como direção de arquitetura.
 
-- **Pedido Atrasado** (vermelho): "Pedido para [retirada/entrega] de [cliente] acabou de exceder o tempo limite de separação." + "Ver pedido". Temporário, um por pedido.
+- **Pedido Atrasado** (vermelho): "Pedido para [retirada/entrega] de [cliente] acabou de exceder o tempo limite de separação." + "Ver pedido". Temporário (some sozinho após 7 segundos), um por pedido.
 - **Pedido parado** (amarelo): pedido sem movimentação por mais de 60 minutos — "Pedido para [retirada/entrega] de [cliente] com 1 hora sem movimentação." + "Ver pedido". Persistente: fica até o usuário fechar pelo "x" e reaparece ao reabrir a aba/tela enquanto continuar parado; reincide a cada hora adicional parada.
-- **Agrupamento:** os 3 primeiros toasts são individuais; a partir de 4, aparecem as 2 mais antigas individualmente e 1 agrupador "Existem +N pedidos atrasados e/ou parados" + "Ver pedidos" (um único restante aparece individual). Ex.: 5 pedidos parados = 2 individuais + "Existem +3 pedidos parados".
+- **Agrupamento (a partir da 3ª notificação):** aparecem até **2** toasts individuais (os 2 mais antigos) e 1 agrupador "Existem +N pedidos atrasados e/ou parados" + "Ver pedidos", com N = total − 2; com N = 1 o texto é "Existem +1 pedido atrasado e/ou parado". Ex.: 3 notificações = 2 individuais + "+1"; 5 pedidos parados = 2 individuais + "Existem +3 pedidos parados".
 - **Navegação:** "Ver pedido" abre o detalhe; "Ver pedidos" abre a tela de Pedidos com os filtros de Parado e Atrasado ativados.
 
 **Importante: "qualquer tela do Portal" é literal, não só dentro do módulo de Operação.** O toast é global — aparece mesmo se o usuário estiver no módulo de Configuração (Estoque/Configurações de uma loja específica), que opera em contexto único. Não conflita com o modelo de módulos: o toast não depende do contexto selecionado na tela atual, só do fato de existir um pedido atrasado ou parado dentro do que o usuário tem acesso a ver.
@@ -309,33 +366,38 @@ Modelo in-app apenas — sem WhatsApp automático nem central de notificações 
 
 - **Ação disponível a partir de qualquer status do pedido, incluindo Concluído** — não fica restrita aos status ativos (Conferência até Liberados). **Confirmado por Matheus em 2026-09-24**, corrigindo a versão anterior deste documento, que dizia "Conferência até Liberados".
 - Abre modal pedindo o motivo do cancelamento. Lista de motivos (**10 opções, confirmada em 2026-10-01**): Endereço incorreto, Cliente não estava no local indicado, Cliente não precisava mais dos itens, Cliente solicitou produto por engano, Pedido duplicado, Pedido atrasado, Pedido indisponível, Suspeita de fraude, Sem estoque, **Teste interno**. As primeiras 9 já existem no Portal hoje (`Manual-Portal-Radar-Ecommerce.md`); "Teste interno" é a adição confirmada por Matheus (apareceu de forma consistente em ambos os protótipos antes da confirmação).
-- O modal informa: "O cliente será notificado e o estorno processado" — cancelamento dispara notificação ao cliente e processamento de estorno (quando aplicável).
-- **Exige confirmação** (é status final, mesma regra da seção 6.5) e não pode ser desfeito.
-- Pedido cancelado registra quem cancelou e o motivo, exibido no lugar do status tracker (ver 6.6). **Verificado no protótipo:** confirmação de conclusão (Liberados → Concluído) segue exatamente o texto "Concluir pedido #[nº]? O pedido será finalizado e marcado como concluído. Esta ação não pode ser desfeita."
+- O modal tem ícone de cancelamento, título "Cancelar pedido: #<número>", a lista de motivos (seleção única) e os botões "Cancelar" e "Confirmar cancelamento" (este bloqueado até um motivo ser escolhido). O modal **não traz** o aviso "O cliente será notificado e o estorno processado"; a regra de negócio continua: o cancelamento dispara notificação ao cliente e processamento de estorno (quando aplicável).
+- O modal de motivo é a confirmação do cancelamento (é status final) — não há outro diálogo — e a ação não pode ser desfeita.
+- Pedido cancelado registra quem cancelou e o motivo, exibidos na caixa "Pedido cancelado" no lugar do status tracker (ver 6.6); "Cancelado por" mostra "sistema" quando o cancelamento veio do ERP/automático. A conclusão (Liberados → Concluído) não tem diálogo (6.5).
 
 **Reforço sobre o cálculo do estorno — reaproveita o que já foi fechado em `PRD-edicao-pedidos-etapa-revisao.md` (seção 8.1):** se o pedido já sofreu um **estorno parcial** durante a Conferência (item removido/reduzido, com estorno automático via Braspag do valor da diferença — só se aplica a pedidos pagos no app), o cancelamento **não** deve estornar o valor original do pedido de novo. O cancelamento estorna só o **valor restante ainda não estornado** (total pago menos o que já foi devolvido no ajuste parcial). Isso vale mesmo quando o cancelamento acontece bem depois da Conferência (ex.: a partir de Concluído, ver acima) — o histórico de estornos parciais já realizados precisa ser consultado antes de calcular o valor do estorno total.
 
 ### 6.9 Estados de carregamento e erro
 
-- **Troca de aba (Em andamento/Finalizados):** spinner sobre a lista durante a carga; o filtro segmentado volta para "Todos".
-- **Aplicação do filtro do header:** skeleton em macro-abas e tabela até a resposta.
+- **Troca de aba (Em andamento/Finalizados):** spinner sobre a lista durante a carga, limitado à área de conteúdo (cabeçalho, macro-abas e barra de filtros continuam visíveis); o filtro segmentado volta para "Todos".
+- **Aplicação do filtro do header:** skeleton em macro-abas e tabela (8 linhas, mesmas colunas da tabela) até a resposta.
 - **Filtro lento (mais de 8 s):** aviso persistente "Ainda carregando..." com "Tentar novamente" e botão de fechar.
 - **Falha ao aplicar o filtro:** o filtro volta à seleção anterior e aparece aviso persistente "Não foi possível aplicar o filtro" com "Tentar novamente".
 - **Falha ao carregar a página:** tela "Não foi possível carregar essa página" / "Verifique sua conexão e tente novamente." com "Tentar novamente".
-- **Falha ao carregar a lista de lojas do filtro:** o próprio painel mostra "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente" (escopo do Filtro Multicontexto).
-- **Falha no download de receita:** "Não foi possível baixar. Tente novamente." com snackbar de erro.
+- **Falha ao carregar a lista de lojas do filtro:** o próprio painel mostra "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente" e o seletor continua mostrando a última seleção válida (escopo do Filtro Multicontexto: card `ECP-1568` e critérios do `ECP-1281`).
+- **Download de receita:** "Baixando arquivo..." com spinner no item; ao concluir, o ícone de check fica por 3 segundos e o snackbar "Download concluído" aparece; em falha, o item fica com borda vermelha e "Não foi possível baixar. Tente novamente." com ícone de recarregar, mais o snackbar "Erro ao baixar. Verifique a sua conexão."
 
 ## 7. Cenários de borda
 
 | Cenário | Regra |
 |---|---|
 | Busca retorna um pedido fora do período exibido na tela (ex.: pedido finalizado há 45 dias) | Comportamento esperado — a busca varre todo o histórico independente do limite de 30 dias dos finalizados. |
-| Usuário troca o contexto (Rede/Loja/Grupo) numa tela do módulo de Operação | O contexto muda para todas as telas do módulo dentro da mesma sessão de navegação (Home, Pedidos, Promoções). |
-| Loja pertence a um Grupo de lojas E o usuário desmarca essa loja individualmente | Checkbox do grupo cai para o estado parcial — não afeta outros grupos (uma loja pertence a no máximo 1 grupo). |
+| Usuário troca o contexto (Redes/Lojas) numa tela do módulo de Operação | O contexto muda para todas as telas do módulo dentro da mesma sessão de navegação (Home, Pedidos, Promoções). |
+| Contexto aplicado diferente do padrão | Aparece "Restaurar padrão" na multinavegação; ao clicar, volta à seleção padrão. |
+| Usuário com lojas de Vendas e de Ofertas abre Pedidos | Vê Pedidos; no painel de Lojas as lojas de Ofertas ficam desabilitadas, com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; o contador "marcadas/total" continua contando as lojas de Ofertas. |
+| Usuário só com lojas de Ofertas | O item Pedidos não aparece no menu; se abrir a rota por URL, vai para a primeira tela a que tem acesso. Não há empty state por "só Ofertas". |
+| Usuário acessa por URL uma rota que o perfil não pode abrir | Redireciona para a primeira tela a que o usuário tem acesso. |
 | Pedido está a 20 min de ficar atrasado, já atrasado, e/ou "parado" (+1h sem movimentação) | Os dois eixos (prazo × movimentação) são independentes e podem coexistir; a UI precisa deixar claro todos os estados que se aplicam, não substituir um pelo outro. |
 | Pedido atrasado mas com movimentação recente (ex.: loja com tempo de entrega curto configurado) | Fica vermelho ("Atrasado") mesmo sem a tag "Parado" — os eixos não dependem um do outro. |
-| Usuário tenta pular etapa (ex.: Na fila → Liberados), concluir (Liberados → Concluído) ou cancelar um pedido | Exibe diálogo de confirmação nos 3 casos da seção 6.5 (pular etapa, Conferência → Na fila, e qualquer transição para status final). |
-| Usuário clica no cabeçalho de uma coluna sem ordenação (Prazo, Cliente, Status, Resumo, Tipo, Loja) | Nada acontece — só Data/Hora e Total são ordenáveis (seção 6.3). |
+| Usuário pula etapa (Na fila → Liberados ou Conferência → Liberados) | Exibe diálogo de confirmação, uma modal para cada caso (seção 6.5). |
+| Usuário avança sequencialmente (inclusive Conferência → Na fila) ou conclui (Liberados → Concluído) | Sem diálogo; aparece o snackbar de status por 10 segundos. |
+| Usuário cancela um pedido | Abre a modal de motivo (confirmação do cancelamento), sem diálogo adicional (seção 6.8). |
+| Usuário clica no cabeçalho de uma coluna sem ordenação (Cliente, Status, Resumo, Tipo, Loja) | Nada acontece — só Prazo, Data/Hora e Total são ordenáveis (seção 6.3); em "Finalizados" o Prazo também não ordena. |
 | Usuário cancela um pedido que já está Concluído, e esse pedido já teve estorno parcial durante a Conferência | Cancelamento é permitido; o estorno cobre só o valor restante (total pago menos o já estornado no ajuste parcial), não o valor original do pedido (ver 6.8). |
 | Grupo com volume alto de lojas/pedidos simultâneos | Sem volumetria exata validada; hoje o grupo com melhor performance no app opera na faixa de 200 pedidos em tela (maioria já encerrados) sem problema. Poucos corner cases esperados de grupos com muitas lojas, mas **precisa de validação de engenharia antes do rollout amplo** (ver seção 9). |
 
@@ -353,7 +415,21 @@ Esses itens não bloqueiam o PRD, mas devem virar cards próprios de "criação 
 
 - **Modelo de SLA da Home de Indicadores:** percentual (modelo já usado em `ECP-1313`/`ECP-1318`) vs. minutos absolutos (modelo deste documento) — decisão separada, a ser tomada quando a Home entrar em pauta.
 - **Volumetria real de pedidos/lojas simultâneas por grupo:** sem número validado; precisa de checagem de engenharia antes de fechar a estratégia de paginação/performance para grupos com muitas lojas.
-- **Modelo de notificação de pedido parado em estudo (adicionado 2026-10-01):** há uma mudança em estudo que substituiria o toast/banner da seção 6.7 por um FAB (floating action button). Ainda sem desenho fechado — a seção 6.7 continua valendo como está até a UX fechar o novo formato; não implementar o FAB sem esse fechamento.
+- **2ª linha da coluna Tipo em Finalizados:** a regra documentada mostra o horário de encerramento no lugar da previsão; o Figma mantém a previsão de entrega/retirada. Mantida a regra documentada até decisão.
+- **Pill "N novos pedidos chegaram":** continua existindo ou é substituída pelo snackbar "Pedidos novos adicionados à fila" com as linhas já inseridas? O que fazer com o pedido novo na lista depende disso (6.3).
+- **Badge "Novos" na sidebar:** confirmar a regra do contador (hoje: pedidos novos = ainda não abertos, no escopo do contexto) e quando zera.
+- **Título da aba do navegador:** o legado alterna a cada 2 s entre "Radar - E-commerce" e "[NOVO PEDIDO] Radar - E-commerce", sem contador (`NotificationTitleTagService`); confirmar se a reconstrução mantém a alternância ou passa a mostrar um contador.
+- **Busca digitada × lupa:** o Figma desenha um botão de lupa (em "Buscar loja" da Gestão de Lojas, botão azul); a regra é disparar ao digitar com debounce de 2 s, sem Enter — confirmar o papel do botão.
+- **Texto da modal Conferência → Liberados:** a modal própria da Conferência (6.5) ainda não tem título, texto e botões definidos.
+- **Texto "entrega/retirada" no pulo Na fila → Liberados:** o Figma escreve o termo literal; confirmar se o texto varia conforme o tipo do pedido.
+- **Itens extras do Figma no detalhe, sem decisão:** link "Whatsapp" no card Cliente, tag "Pedido parado há …", legenda por fase acima dos itens e tracker com 4 cores (vermelho, amarelo, azul, verde) com a pílula de prazo.
+- **Empty states de Pedidos:** os 4 cenários (6.2) vêm do protótipo, não existem no Figma auditado; textos e CTAs a confirmar com a UX.
+- **Tooltips de nome truncado e de lista de itens da linha:** documentados antes do handoff e ausentes do Figma; confirmar se permanecem.
+- **Edição na Conferência:** o `PRD-edicao-pedidos-etapa-revisao.md` descreve a modal "Liberar pedido para a fila" ao liberar a Conferência; com a decisão de não haver diálogo em Conferência → Na fila, alinhar esse PRD.
+- **Usuários na sidebar:** aparece sob "GESTÃO DE LOJAS" (Figma) e usa o seletor multicontexto (5.2); confirmar se isso muda o módulo/contexto da tela.
+- **Texto de última atualização da Home:** "Atualizado há 5 minutos" cai; definir se haverá qualquer texto de atualização (5.5).
+- **Definição do percentual do card "Cancelamentos"** (cancelados ÷ finalizados, conforme o código do `ECP-1547`): confirmar quando o card for decidido (5.5).
+- **Efeito do "Restaurar padrão" sobre o filtro de GE (Admin) em Indicadores:** a definir.
 
 ### 9.1 Cruzamento com o Manual do Portal atual
 
@@ -363,9 +439,9 @@ Revisão do `Manual-Portal-Radar-Ecommerce.md` (estado atual do Portal em produ�
 
 ## 10. Critérios de aceite (alto nível)
 
-**Dado que** meu usuário tem vínculo com múltiplas lojas, **quando** eu seleciono um contexto (Rede, Grupo ou lojas específicas) numa tela do módulo de Operação, **então** esse mesmo contexto passa a valer em todas as outras telas do módulo (Home, Pedidos, Promoções) até eu trocar de novo.
+**Dado que** meu usuário tem vínculo com múltiplas lojas, **quando** eu seleciono um contexto (Redes e Lojas) numa tela do módulo de Operação, **então** esse mesmo contexto passa a valer em todas as outras telas do módulo (Home, Pedidos, Promoções) até eu trocar de novo.
 
-**Dado que** estou na aba "Em andamento" da tela de Pedidos, **quando** a lista carrega, **então** vejo todos os pedidos ativos do contexto selecionado, sem limite de período, com ordenação disponível apenas para Data/Hora e Total.
+**Dado que** estou na aba "Em andamento" da tela de Pedidos, **quando** a lista carrega, **então** vejo todos os pedidos ativos do contexto selecionado, sem limite de período, com ordenação disponível para Prazo, Data/Hora e Total.
 
 **Dado que** estou na aba "Finalizados", **quando** a lista carrega, **então** só vejo pedidos concluídos/cancelados dos últimos 30 dias, com um indicador visual desse limite.
 
@@ -377,8 +453,12 @@ Revisão do `Manual-Portal-Radar-Ecommerce.md` (estado atual do Portal em produ�
 
 **Dado que** o prazo estimado de entrega ou retirada de um pedido já passou, **quando** eu vejo a listagem ou o detalhe, **então** o pedido aparece destacado em vermelho como "Atrasado" — podendo coexistir com a tag "Parado".
 
-**Dado que** clico para avançar um pedido de "Na fila" direto para "Liberados" (pulando "Em separação"), **quando** confirmo a ação, **então** vejo um diálogo de confirmação antes da mudança ser efetivada — diferente de um avanço sequencial normal, que não pede confirmação.
+**Dado que** clico para pular um pedido direto para "Liberados" (de "Na fila" ou de "Conferência"), **quando** escolho a opção de pular, **então** vejo um diálogo de confirmação (uma modal para cada caso) antes da mudança ser efetivada — diferente de um avanço sequencial normal, que não pede confirmação.
 
-**Dado que** um pedido está em "Liberados" e clico em "Concluir pedido", **ou** clico em "Cancelar pedido" em qualquer status do pedido (incluindo Concluído), **quando** confirmo a ação, **então** vejo um diálogo de confirmação (ação irreversível de status final) antes da mudança ser efetivada; no caso do cancelamento, preciso antes selecionar um motivo dentre as opções já existentes no Portal, e o valor do estorno considera qualquer estorno parcial já feito durante a Conferência.
+**Dado que** um pedido está em "Liberados" e clico em "Concluir pedido", **ou** avanço de "Conferência" para "Na fila", **quando** clico no botão, **então** a mudança é efetivada sem diálogo e vejo o snackbar `Status atualizado para "X"` (ou "Pedido concluído!") por 10 segundos.
 
-**Dado que** clico no cabeçalho da coluna Data/Hora ou Total, **quando** a lista reordena, **então** a ordenação é aplicada; **dado que** clico no cabeçalho de qualquer outra coluna (Prazo, Cliente, Status, Resumo, Tipo, Loja), **então** nada acontece.
+**Dado que** clico em "Cancelar pedido" em qualquer status do pedido (incluindo Concluído), **quando** a modal abre, **então** preciso selecionar um motivo dentre as opções antes de "Confirmar cancelamento", e o valor do estorno considera qualquer estorno parcial já feito durante a Conferência.
+
+**Dado que** clico no cabeçalho da coluna Prazo (fora de "Finalizados"), Data/Hora ou Total, **quando** a lista reordena, **então** a ordenação é aplicada; **dado que** clico no cabeçalho de qualquer outra coluna (Cliente, Status, Resumo, Tipo, Loja) ou no Prazo em "Finalizados", **então** nada acontece.
+
+**Dado que** meu usuário tem lojas de Vendas e de Ofertas, **quando** abro Pedidos, **então** vejo o item no menu e as lojas de Ofertas aparecem desabilitadas no painel de Lojas; **dado que** meu usuário só tem lojas de Ofertas, **então** o item Pedidos não aparece no menu.

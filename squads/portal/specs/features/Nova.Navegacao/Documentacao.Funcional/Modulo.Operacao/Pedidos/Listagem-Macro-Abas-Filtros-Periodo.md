@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 6.1, 6.1.1, 6.2, 6.9
 **Relacionado:** [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md), [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-02
+**Última atualização:** 2026-10-06
 
 ---
 
@@ -17,16 +17,16 @@ A tela de Pedidos hoje não tem filtro, busca nem filtro global de lojas — lac
 ## 2. Estrutura da tela
 
 - **Cabeçalho:** título "Pedidos" + subtítulo contextual — "Pedidos referentes às lojas da categoria Vendas" (filtro em "Todas as Lojas") ou "Pedidos de N lojas selecionadas no filtro global" (singular: "1 loja selecionada"). À direita: campo de busca e botão "Exportar".
-- **Macro-abas:** "Em andamento (N)" / "Finalizados (N)" — contam pedidos em cada bucket, dentro do contexto selecionado no header global. "Em andamento" exibe "+99" acima de 99.
+- **Macro-abas:** "Em andamento (N)" / "Finalizados (N)" — contam pedidos em cada bucket, dentro do contexto selecionado no header global. "Em andamento" exibe "+99" acima de 99; quando há pedidos novos, a tag "Novos" aparece entre o rótulo e o contador (ver [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md)).
 - **Filtro segmentado dentro de "Em andamento":** Todos / Conferência / Na fila / Em separação / Liberados — single-select, default "Todos". Os segmentos não têm contador; os contadores ficam só nas macro-abas.
-- **Filtro segmentado dentro de "Finalizados":** Todos / Concluídos / Cancelados, com badge "Limite 30 dias".
-- **Painel "Todos os filtros"** (5 grupos, aplicação em conjunto, seleção múltipla dentro de cada grupo):
-  - Tipo: Só medicamentos (pedido em que todos os itens são medicamento, conforme `IsMedicamento` do catálogo), Com receita (Rx)
-  - Tipo de entrega: Entrega, Retirada
-  - Prazo: Atrasado, 20 min para atrasar, Em tempo, Parado
-  - Status de pagamento: Pago, Cobrar, Com troco
-  - Método de pagamento: Pix, Dinheiro, Maquininha
-- **Faixa de filtros aplicados:** badges removíveis por opção ativa, contador no botão ("Todos os filtros · 2"), ação "Limpar filtros".
+- **Filtro segmentado dentro de "Finalizados":** Todos / Concluídos / Cancelados, com a tag "Limite 30 dias" à direita dos chips.
+- **Painel "Todos os filtros"** (Figma; 5 grupos com rótulo em caixa alta, chips de seleção múltipla, aplicação em conjunto; chip selecionado com borda azul e ícone de check; rodapé fixo com "Limpar" e "Aplicar"; painel de cerca de 380 px de largura e conteúdo de no máximo cerca de 440 px de altura, com rolagem interna):
+  - ITENS: Só medicamentos (pedido em que todos os itens são medicamento, conforme `IsMedicamento` do catálogo), Com receita
+  - TIPO DE PEDIDO: Entrega, Retirada
+  - PRAZO: Atrasado, 20 min para atrasar, Em tempo, Parado
+  - STATUS DO PAGAMENTO: Pago, Cobrar, Com troco
+  - MÉTODO DE PAGAMENTO: Pix, Dinheiro, Maquininha
+- **Faixa de filtros aplicados:** badges removíveis por opção ativa, bolinha com a quantidade de filtros no botão "Todos os filtros", ação "Limpar filtros". A barra com o filtro segmentado e a faixa fica fixa (sticky) no topo da lista quando a tabela rola.
 
 ## 3. Regras de negócio
 
@@ -41,11 +41,13 @@ A tela de Pedidos hoje não tem filtro, busca nem filtro global de lojas — lac
 - O filtro segmentado, o painel "Todos os filtros", a busca e o contexto do header se combinam (E). Entre grupos do painel os filtros se combinam (E); dentro de um grupo as opções somam (OU).
 - A troca de macro-aba volta o filtro segmentado para "Todos".
 - Sempre que o usuário entra na tela, os filtros da tela são refeitos (aba "Em andamento", segmento "Todos", sem filtros do painel, sem busca) e a ordenação padrão é aplicada; o contexto do header é mantido.
-- "Restaurar filtros iniciais" limpa painel, busca e volta o segmento para "Todos".
-- "Parado" usa a mesma definição da tag "Parado" (mais de 60 minutos sem movimentação) e cruza todos os status ativos; "Com receita (Rx)" usa o mesmo indicador do ícone Rx (arquivo de receita enviado); "Com troco" = pagamento em dinheiro com valor de troco informado.
+- "Restaurar filtros iniciais" limpa painel, busca e volta o segmento para "Todos" (é distinto do "Restaurar padrão" do contexto de Redes/Lojas, que é da multinavegação — ver [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md) 4.8).
+- "Parado" usa a mesma definição da tag "Parado" (mais de 60 minutos sem movimentação) e cruza todos os status ativos; "Com receita" usa o mesmo indicador do ícone Rx (arquivo de receita enviado); "Com troco" = pagamento em dinheiro com valor de troco informado.
 - "Na fila" corresponde aos estados `created` ou `confirmed` do backend; "Conferência" ao estado `conference`.
 
 ### 3.3 Empty states
+
+Os 4 cenários abaixo vêm do protótipo; não existem no Figma auditado (ver pendências). Não há empty state por "só lojas de Ofertas": o usuário que só tem lojas de Ofertas não vê o item Pedidos no menu.
 
 1. Gestor sem pedidos ativos no contexto — "Nenhum pedido aberto no momento" / "Sua fila está vazia. Que tal aproveitar este momento para criar uma oferta especial e atrair novos clientes para sua loja?" + ação "Criar nova promoção".
 2. Balconista sem pedidos na fila — "Sua fila está vazia. Nenhum pedido aguardando" / "Pedidos novos aparecem aqui automaticamente. Enquanto isso, que tal convidar os clientes do balcão para baixar nosso app e conferir as ofertas?"
@@ -68,8 +70,8 @@ A tela de Pedidos hoje não tem filtro, busca nem filtro global de lojas — lac
 
 ### 3.6 Estados de carregamento e erro
 
-- **Troca de aba:** spinner sobre a lista; o filtro segmentado volta para "Todos".
-- **Aplicação do filtro do header:** skeleton em macro-abas e tabela.
+- **Troca de aba:** spinner centralizado sobre a lista, limitado à área de conteúdo (cabeçalho, macro-abas e barra de filtros continuam visíveis); o filtro segmentado volta para "Todos".
+- **Aplicação do filtro do header:** skeleton em macro-abas e tabela (8 linhas, mesmas colunas da tabela).
 - **Filtro lento (mais de 8 s):** aviso persistente "Ainda carregando..." com "Tentar novamente" e botão de fechar.
 - **Falha ao aplicar o filtro:** volta à seleção anterior + aviso persistente "Não foi possível aplicar o filtro" com "Tentar novamente".
 - **Falha ao carregar a página:** "Não foi possível carregar essa página" / "Verifique sua conexão e tente novamente." + "Tentar novamente"; cabeçalho sem busca e exportar.
@@ -121,7 +123,9 @@ Confirmados em código em 2026-10-05; cada ponto está embutido como "Ponto de a
 | Cenário | Regra |
 |---|---|
 | Busca retorna pedido fora do período exibido (finalizado há 45 dias) | Aparece normalmente — busca ignora o limite de 30 dias |
-| Filtro de Pedidos aplicado numa loja do módulo Ofertas | Empty state — Pedidos não existe para lojas Ofertas (ver [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md)) |
+| Usuário com lojas de Vendas e de Ofertas abre Pedidos | Vê Pedidos; as lojas de Ofertas ficam desabilitadas no painel de Lojas, com a faixa "Pedidos existem apenas para lojas de Categoria Vendas." — critério da criação desta tela (ver [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md) 4.3) |
+| Usuário só com lojas de Ofertas | Item Pedidos não aparece no menu; não há empty state por "só Ofertas" |
+| Critério de entrada na tela | Os filtros de Redes/Lojas persistem entre navegações anteriores; ordenação padrão e filtros do painel são entregues com a tabela; os cenários de erro do filtro ficam no ECP-1568; loading/erro da listagem ficam nesta tela |
 | Pedido ativo criado há mais de 30 dias | Aparece na lista e no contador de "Em andamento" |
 | Troca de aba com segmento selecionado | Segmento volta para "Todos" |
 | Grupo com volume alto de lojas/pedidos simultâneos | Sem volumetria validada — precisa de checagem de engenharia antes do rollout amplo (PRD seção 9) |
@@ -132,9 +136,14 @@ Confirmados em código em 2026-10-05; cada ponto está embutido como "Ponto de a
 - [ ] Estratégia para a classificação "Só medicamentos": cruzar com o catálogo (`CatalogueDb.products.IsMedicamento`, pelo `productId` do item) na consulta ou copiar a classificação para o pedido (decisão de engenharia).
 - [ ] Volumetria real de pedidos/lojas simultâneas por grupo — sem número validado (PRD seção 9).
 - [ ] Estrutura exata (colunas) do relatório de pedidos a preservar na exportação.
+- [ ] Empty states (3.3): os 4 cenários vêm do protótipo e não existem no Figma auditado; confirmar textos e ações com a UX. O mesmo vale para a busca ativa/vazia e para o menu e modal de Exportar.
+- [ ] Busca digitada × lupa: o Figma desenha uma lupa no campo; a regra é disparar ao digitar, com debounce de 2 segundos e sem Enter — confirmar o papel do ícone/botão.
+- [ ] Título da aba do navegador com contador × título que alterna (pedidos novos): confirmar no legado e com o PO (ver [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md)).
+- [ ] Botão "Cancelar" citado na nota do Figma do filtro lento ("Tentar novamente" / "Cancelar"): só "Tentar novamente" e "x" estão desenhados.
 
 ## Changelog
 
+- **2026-10-06 (2)** — Handoff Figma e respostas do PO: painel de filtros com os rótulos do Figma (ITENS, TIPO DE PEDIDO, PRAZO, STATUS DO PAGAMENTO, MÉTODO DE PAGAMENTO; "Com receita" sem "(Rx)"), chips com check, "Limpar"/"Aplicar", dimensões e rolagem interna, bolinha de contagem no botão; tag "Limite 30 dias" à direita dos chips; critério Pedidos × Ofertas (Vendas+Ofertas vê Pedidos com lojas de Ofertas desabilitadas; só-Ofertas não vê o item) substitui o empty state; spinner limitado à área de conteúdo e skeleton de 8 linhas; empty states, lupa × debounce e título da aba registrados como pendência.
 - **2026-10-06** — Busca digitada com debounce de 2 segundos (regra geral do PO para todo filtro de busca digitada).
 - **2026-10-05 (2)** — Adicionada a seção 4.5 com os pontos de atenção do BFF de pedidos legado (escopo vindo do cliente, paginação, janela de 7 dias para concluídos, busca V1, exportar com erro engolido, ausência de tempo real).
 - **2026-10-05 (3)** — Seção 4.1 passa a documentar a listagem multi-loja V3 (a mais próxima do que o Portal precisa), com o que faz e não faz (paginação, total e ordenação); a listagem de uma loja só fica como referência.

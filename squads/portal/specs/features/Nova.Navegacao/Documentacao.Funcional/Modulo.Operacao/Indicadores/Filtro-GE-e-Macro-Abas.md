@@ -1,11 +1,11 @@
 # Indicadores — Filtro de GE e Macro-abas Vendas/Ofertas
 
 **Módulo:** Operação
-**Histórias:** [ECP-1512](https://farmarcas.atlassian.net/browse/ECP-1512) — Indicadores: Filtro de GE e Macro-abas Vendas/Ofertas
-**PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 5.1
+**Histórias:** [ECP-1512](https://farmarcas.atlassian.net/browse/ECP-1512) — Indicadores: Filtro de GE e Macro-abas Vendas/Ofertas, **quebrado em dois cards** (decisão do PO de 2026-10-06): (1) Filtro de GE (header da tela de Indicadores, Admin) e (2) Macro-abas "Lojas de Vendas"/"Loja de Ofertas" + contador
+**PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 5.1 e 5.5
 **Relacionado:** [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md) (seletor de Rede/Grupo/Loja do header — este documento cobre só o que é específico de Indicadores)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-09-30
+**Última atualização:** 2026-10-06
 
 ---
 
@@ -38,7 +38,11 @@ A lista de GEs retornada no filtro deve vir ordenada alfabeticamente (débito t�
 
 ### 3.5 "Restaurar padrão"
 
-Ao lado dos filtros (GE / Rede / Loja), um link "Restaurar padrão" só deve aparecer quando pelo menos um dos filtros estiver com seleção diferente do padrão ("Todos"/"Todas"). Assim que todos voltam a "exibir tudo" — seja clicando no próprio link ou marcando manualmente "Selecionar todos" em cada dropdown — o link deve sumir. **Bug conhecido (ECP-1468):** marcar "Selecionar todos" manualmente reverte o estado mas não esconde o link — só o clique direto em "Restaurar padrão" esconde corretamente hoje.
+No modelo novo, "Restaurar padrão" é da **multinavegação** (não específico de Indicadores nem de Pedidos): aparece ao lado dos seletores de Redes e Lojas do header global quando o contexto aplicado difere do padrão e volta à seleção padrão (ver [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md) 4.8). Hoje, na tela de Indicadores em produção, o link fica ao lado dos filtros (GE / Rede / Loja) e só aparece quando pelo menos um deles está diferente do padrão ("Todos"/"Todas"); assim que todos voltam a "exibir tudo" o link deve sumir. **Bug conhecido (ECP-1468):** marcar "Selecionar todos" manualmente reverte o estado mas não esconde o link — só o clique direto em "Restaurar padrão" esconde corretamente hoje. Se o "Restaurar padrão" da multinavegação também considera o filtro de GE (Admin) está em aberto.
+
+### 3.6 Macro-abas — card próprio
+
+O comportamento das macro-abas (contador, skeleton enquanto o contexto é aplicado) é entregue no card das macro-abas; o card do Filtro de GE trata só do filtro. Os cards de cada indicador da Home (Vendas e Ofertas) estão listados no PRD, seção 5.5; ainda não há Figma desses cards.
 
 ## 4. Nível de integração / fonte de dados
 
@@ -64,4 +68,5 @@ Fonte: débito técnico [ECP-1468](https://farmarcas.atlassian.net/browse/ECP-14
 
 ## Changelog
 
+- **2026-10-06** — Respostas do PO: ECP-1512 quebrado em dois cards (Filtro de GE; Macro-abas); "Restaurar padrão" passa a ser da multinavegação (3.5); comportamento das macro-abas fica no card das macro-abas (3.6).
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1512, PRD seção 5.1, e débito técnico ECP-1468.

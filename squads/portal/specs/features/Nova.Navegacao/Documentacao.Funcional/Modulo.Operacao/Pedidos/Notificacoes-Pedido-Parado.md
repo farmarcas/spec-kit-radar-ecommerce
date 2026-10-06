@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 6.7
 **Relacionado:** [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md) (definições de "Atrasado" e "Parado" — 60 min fixos), ECP-1566 (atualização da lista quase em tempo real)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-05
+**Última atualização:** 2026-10-06
 
 ---
 
@@ -20,7 +20,9 @@ Notificações in-app em formato de toast, empilhadas no canto superior direito 
 
 - **Pedido Atrasado** (ícone vermelho): disparado quando o pedido acaba de exceder o tempo limite de separação/entrega. Texto: "Pedido para [retirada/entrega] de [cliente] acabou de exceder o tempo limite de separação." + ação "Ver pedido". **Temporário, um por pedido.**
 - **Pedido parado** (ícone amarelo): disparado quando o pedido fica mais de **60 minutos fixos** sem movimentação (mesma definição de "Parado" da tabela — ver [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md) §3.2). Texto: "Pedido para [retirada/entrega] de [cliente] com 1 hora sem movimentação." + ação "Ver pedido". **Persistente.**
-- **Agrupador** (ícone amarelo): "Existem +N pedidos atrasados e/ou parados" + ação "Ver pedidos".
+- **Agrupador** (ícone amarelo): "Existem +N pedidos atrasados e/ou parados" + ação "Ver pedidos"; com N = 1, o texto do Figma: "Existem +1 pedido atrasado e/ou parado".
+
+Layout (Figma): toasts de 429 px de largura, empilhados no canto superior direito, acima do conteúdo da tela e do modal de detalhe; o tipo do pedido (retirada/entrega) e o nome do cliente em negrito no texto; link de ação em azul e "x" à direita.
 
 ### 2.2 Persistência
 
@@ -28,7 +30,7 @@ O toast de pedido parado fica fixo até o usuário fechar manualmente pelo "x" e
 
 ### 2.3 Agrupamento
 
-Os 3 primeiros toasts são individuais. Quando há 4 ou mais, aparecem as **2 mais antigas** individualmente e 1 toast agrupador com as demais ("Existem +N …"). Um único restante é exibido como toast individual. Exemplos: 3 pedidos parados → 3 toasts individuais; 5 pedidos parados → 2 individuais + "Existem +3 pedidos parados… Ver pedidos".
+O agrupamento começa **a partir da 3ª notificação**: aparecem até **2** toasts individuais (os 2 mais antigos) e 1 toast agrupador com as demais ("Existem +N …"), com N = total − 2. Exemplos: 2 pedidos → 2 toasts individuais; 3 pedidos → 2 individuais + "Existem +1 pedido atrasado e/ou parado"; 5 pedidos parados → 2 individuais + "Existem +3 pedidos parados… Ver pedidos".
 
 ### 2.4 Navegação
 
@@ -54,7 +56,8 @@ Visível em **qualquer tela do Portal**, não só na tela de Pedidos — inclusi
 
 | Cenário | Regra |
 |---|---|
-| 3 pedidos parados ao mesmo tempo | 3 toasts individuais |
+| 2 pedidos parados ao mesmo tempo | 2 toasts individuais |
+| 3 pedidos parados ao mesmo tempo | 2 toasts individuais (os mais antigos) + "Existem +1 pedido atrasado e/ou parado" |
 | 5 pedidos parados ao mesmo tempo | 2 toasts individuais (os mais antigos) + "Existem +3 pedidos parados" |
 | Pedido parado recebe movimentação | Toast correspondente some |
 | Pedido atrasado | Toast temporário (some sozinho após 7 segundos), uma única vez por pedido |
@@ -65,9 +68,12 @@ Visível em **qualquer tela do Portal**, não só na tela de Pedidos — inclusi
 
 - [ ] Arquitetura exata do canal de tempo real (protocolo/serviço) — só aprovada a direção, não a implementação.
 - [ ] Comportamento exato quando o pedido resolve com toast aberto em múltiplas abas simultaneamente.
+- [ ] Texto do toast de pedido parado nas reincidências (2 h, 3 h…): o Figma mostra "com 1 hora sem movimentação" e, em outra variante, "com mais de 1 hora sem movimentação".
+- [ ] Sino: não há painel do sino nem central de notificações por enquanto (ver [Header-Global.md](../../Shell/Header-Global.md)).
 
 ## Changelog
 
+- **2026-10-06** — Handoff Figma e respostas do PO: agrupamento a partir da 3ª notificação (2 toasts individuais mais antigos + agrupador com N = total − 2, inclusive "+1 pedido atrasado e/ou parado" no singular), substituindo a regra de 3 individuais antes do agrupamento; layout dos toasts (429 px, canto superior direito, acima do modal).
 - **2026-10-05** — Duração do toast temporário de pedido atrasado definida: 7 segundos; pendência removida.
 - **2026-10-05** — Decisão do PO: o toast de pedido parado não traz a frase "Loja avisada via Whatsapp" (não há aviso automático por WhatsApp); pendência removida.
 - **2026-10-05** — Modelo de notificação fechado pela UX (toasts): adicionado o toast "Pedido Atrasado" (temporário, um por pedido), "Pedido parado" persistente, agrupamento (3 individuais; a partir de 4, as 2 mais antigas + agrupador) e navegação "Ver pedido"/"Ver pedidos". O aviso de mudança em estudo (FAB) deixa de existir.

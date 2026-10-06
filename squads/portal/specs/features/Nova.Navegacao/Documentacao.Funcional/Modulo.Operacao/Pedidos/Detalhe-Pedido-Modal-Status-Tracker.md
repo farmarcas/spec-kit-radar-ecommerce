@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 6.6
 **Componente novo:** Status Tracker horizontal (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-02
+**Última atualização:** 2026-10-06
 
 ---
 
@@ -17,7 +17,8 @@ O detalhe do pedido é um modal (não uma tela própria), com navegação embuti
 ## 2. Estrutura
 
 - Modal, largura máxima 1180px, altura dinâmica até 90% da viewport.
-- Navegação ◀ / ▶ "próximo pedido" dentro do próprio modal — desabilitada no primeiro/último pedido da lista carregada.
+- Navegação ▲ (anterior) / ▼ (próximo) dentro do próprio modal — desabilitada no primeiro/último pedido da lista carregada.
+- Barra superior: botões ▲ ▼, título "Pedido #<número>", botão de imprimir (3.10) e botão "x" para fechar.
 - Status tracker horizontal, com destaque vermelho na etapa atual quando o pedido está atrasado.
 
 ## 3. Regras de negócio
@@ -25,6 +26,8 @@ O detalhe do pedido é um modal (não uma tela própria), com navegação embuti
 ### 3.1 Comportamento condicional por tipo de entrega
 
 Retirada oculta o campo de taxa de entrega.
+
+**Variantes de pedido** consideradas no detalhe: pago online, pago offline (Cobrar), entrega, retirada, frete grátis, troco e cliente recorrente. A composição do total mostra subtotal, taxa de entrega (valor ou "Grátis" quando o frete é grátis; oculta na Retirada) e "Total (cobrar do cliente)" na Entrega ou "Total" na Retirada; com troco, mostra o valor com que o cliente paga e o troco.
 
 ### 3.2 Nomenclatura de pagamento
 
@@ -36,7 +39,7 @@ Pedido teve item removido ou substituído — consistente com o modelo já fecha
 
 ### 3.4 Pedidos cancelados
 
-Não mostram o status tracker — mostram o motivo do cancelamento no lugar.
+Não mostram o status tracker — mostram a caixa "Pedido cancelado" com o motivo do cancelamento e "Cancelado por"; quando o cancelamento veio do ERP/automático, "Cancelado por" mostra **"sistema"** (o motivo vazio segue como "Cancelado direto no ERP (pela loja)").
 
 ### 3.5 Status final dentro do modal
 
@@ -50,19 +53,23 @@ Mesmo conceito, exibido em lugares diferentes conforme o tipo de entrega — nã
 
 ### 3.7 Receitas médicas
 
-Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" — o Portal só baixa, sem preview. Estados do download: "Baixando...", ✓ por 5 segundos com "Download concluído", e em falha "Não foi possível baixar. Tente novamente." com snackbar "Erro ao baixar. Verifique a sua conexão."
+Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" (este só aparece quando há **mais de 1** receita) — o Portal só baixa, sem preview; a lista rola dentro do card quando excede a altura. Estados do download: "Baixando arquivo..." com spinner no item; ao concluir, o ícone de check permanece por 3 segundos (Figma) e aparece o snackbar "Download concluído"; em falha, o item fica com borda vermelha com "Não foi possível baixar. Tente novamente." e ícone de recarregar, mais o snackbar "Erro ao baixar. Verifique a sua conexão."
 
-É somente consulta: não bloqueia avançar, imprimir ou cancelar o pedido, e não há status, badge, alerta nem ação obrigatória associada à receita. Os campos legados por produto (`PrescriptionUrl`, `PrescriptionFileName`, `PrescriptionVisualized`) e o endpoint de "visualizada" não fazem parte do Portal novo. Regra de origem: ECP-1481 e PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10); formatos aceitos no envio: JPG, PNG ou PDF, até 2 MB.
+A seção traz o aviso amarelo **"Valide as receitas antes de liberar o pedido."**, apenas **informativo**: sem regra, lógica nem bloqueio. É somente consulta: não bloqueia avançar, imprimir ou cancelar o pedido, e não há status, badge nem ação obrigatória associada à receita. Os campos legados por produto (`PrescriptionUrl`, `PrescriptionFileName`, `PrescriptionVisualized`) e o endpoint de "visualizada" não fazem parte do Portal novo. Regra de origem: ECP-1481 e PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10); formatos aceitos no envio: JPG, PNG ou PDF, até 2 MB.
 
-### 3.9 Navegação ◀ / ▶ depois que o pedido sai da lista
+### 3.9 Navegação ▲ / ▼ depois que o pedido sai da lista
 
-Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação segue a fila em aberto, na ordenação dos abertos: ▶ mostra o próximo pedido da fila em aberto; ◀ mostra o pedido anterior da fila em aberto. O pedido recém-fechado nunca é alvo da navegação (voltar não redireciona para o último que foi fechado).
+Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação segue a fila em aberto, na ordenação dos abertos: ▼ mostra o próximo pedido da fila em aberto; ▲ mostra o pedido anterior da fila em aberto. O pedido recém-fechado nunca é alvo da navegação (voltar não redireciona para o último que foi fechado).
 
 ### 3.8 Interações da linha e informações do modal
 
 - Clique em qualquer ponto da linha abre o detalhe; linha do pedido aberto destacada; tooltips de nome truncado e de itens.
 - Informações: cliente (nome, CPF, telefone), itens, pagamento, entrega/retirada, loja responsável e trilha de auditoria (eventos com responsável, data e hora).
-- Pedido cancelado mostra o motivo e quem cancelou no lugar do tracker; motivo vazio é exibido como "Cancelado direto no ERP (pela loja)".
+- Pedido cancelado mostra o motivo e quem cancelou ("Cancelado por"; "sistema" quando veio do ERP/automático) no lugar do tracker; motivo vazio é exibido como "Cancelado direto no ERP (pela loja)".
+
+### 3.10 Imprimir
+
+O botão de imprimir da barra superior gera um **PDF com os detalhes do pedido**. O "8º pedido" ao lado da estrela do card Cliente (Figma) não entra.
 
 ## 4. Nível de integração / fonte de dados
 
@@ -77,7 +84,7 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 | Cenário | Regra |
 |---|---|
 | Pedido do tipo Retirada | Taxa de entrega oculta |
-| Navego pro próximo pedido (▶) com o pedido atual em último da lista | Botão ▶ desabilitado |
+| Navego pro próximo pedido (▼) com o pedido atual em último da lista | Botão ▼ desabilitado |
 | Pedido avança pra status final durante a visualização | Modal permanece aberto até o usuário fechar (ver 3.5) |
 | Pedido sem receita enviada | Seção "Receita médica (Rx)" não aparece |
 | Pedido com receita não baixada | Avançar, imprimir e cancelar seguem normalmente, sem bloqueio |
@@ -87,10 +94,13 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 
 ## 6. Pendências / perguntas em aberto
 
-- [ ] Nenhuma pendência de produto em aberto neste documento.
+- [ ] Itens do detalhe desenhados no Figma ainda sem decisão do PO (não adotados): link "Whatsapp" no card Cliente; tag "Pedido parado há …" no cabeçalho; legenda por fase acima da lista de itens ("Confira e/ou ajuste os itens do pedido" etc.); tracker com 4 cores (vermelho, amarelo, azul, verde) e pílula de prazo.
+- [ ] Quais fases deixam o botão de imprimir habilitado (o Figma o desenha com aparência desabilitada na Conferência).
+- [ ] Tooltips de nome truncado e de lista de itens (3.8) não existem no Figma; confirmar se permanecem.
 
 ## Changelog
 
+- **2026-10-06** — Handoff Figma e respostas do PO: navegação ▲ / ▼ (antes ◀ / ▶); barra superior com imprimir (gera PDF com os detalhes do pedido); variantes de pedido e composição do total (frete grátis, "Total (cobrar do cliente)", troco); receitas com aviso amarelo informativo "Valide as receitas antes de liberar o pedido.", "Baixar todos" só com mais de 1 receita, "Baixando arquivo...", check por 3 segundos (Figma; antes 5); "Cancelado por" = "sistema" quando veio do ERP; "8º pedido" não entra; itens extras do Figma (Whatsapp, "parado há", legenda por fase, tracker com 4 cores) registrados como pendência.
 - **2026-10-05 (2)** — O pedido concluído ou cancelado sai de "Em andamento" e vai para "Finalizados" no mesmo instante da ação (não mais ao fechar o modal); o modal segue aberto até o usuário fechar (3.5).
 - **2026-10-05** — O fechamento automático do modal em status final deixa de existir (3.5): o modal permanece aberto e só fecha por ação do usuário; o pedido sai de "Em andamento" quando o modal é fechado.
 - **2026-10-02 (2)** — Adicionada a regra de navegação ◀ / ▶ depois que o pedido sai da lista (3.9) e o momento da saída da lista (quando o modal fecha).
