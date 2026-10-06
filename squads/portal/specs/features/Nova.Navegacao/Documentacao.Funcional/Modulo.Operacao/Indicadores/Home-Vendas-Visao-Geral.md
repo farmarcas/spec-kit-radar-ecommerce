@@ -21,9 +21,9 @@ Este documento é o índice dos elementos da Home de Vendas e concentra as regra
 | Elemento | Card | Documento |
 |---|---|---|
 | Faturamento (aba do gráfico) | ECP-1546 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
-| Pedidos cancelados (aba do gráfico + resumo) | ECP-1547 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
+| Pedidos cancelados (aba do gráfico + total do período no cartão da aba) | ECP-1547 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
 | Pedidos concluídos (aba do gráfico) | ECP-1548 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
-| Cancelamentos (card de resumo: GMV perdido, N/M pedidos + percentual, ticket médio dos cancelados) | ECP-1605 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
+| Cancelamentos (container: GMV perdido, N/M pedidos + percentual, ticket médio dos cancelados) | ECP-1605 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
 | Total de pedidos em aberto | ECP-1578 | [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md) |
 | Volume dos pedidos em aberto | ECP-1579 | [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md) |
 | Pedidos em aberto por status (rosca, com Conferência) | ECP-1580 | [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md) |
@@ -139,5 +139,6 @@ A maior parte das consultas de Vendas é LINQ-to-Mongo com filtro no servidor e 
 
 ## Changelog
 
+- **2026-10-06** — Divisão de escopo dos cancelados definida pelo PO: ECP-1547 = gráfico e totais de cancelados; ECP-1605 = container Cancelamentos (índice de elementos ajustado).
 - **2026-10-06** — Inclusão do card "Cancelamentos" (ECP-1605) no índice de elementos; detalhes em [Faturamento-Pedidos.md](Faturamento-Pedidos.md), seção 3.4.
 - **2026-10-06** — Criação do documento (v1), a partir dos cards ECP-1546 a ECP-1548, ECP-1578 a ECP-1587, ECP-1590 e das Histórias do Detalhamento da Ruptura, e das decisões do PO de 2026-10-05 (reconstrução 1:1 com correção embutida, cache) e 2026-10-06 (mesma estrutura de Home nos perfis, Gestor de Loja vê só as próprias lojas, Figma a ser atualizado, itens fora do recorte).
