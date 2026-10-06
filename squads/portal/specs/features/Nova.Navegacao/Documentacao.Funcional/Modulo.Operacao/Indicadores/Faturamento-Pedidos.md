@@ -1,17 +1,19 @@
-# Indicadores — Faturamento, Pedidos Cancelados e Pedidos Concluídos (Home de Vendas)
+# Indicadores — Faturamento, Pedidos Cancelados, Pedidos Concluídos e Cancelamentos (Home de Vendas)
 
 **Módulo:** Operação
-**Histórias:** [ECP-1546](https://farmarcas.atlassian.net/browse/ECP-1546) (Faturamento), [ECP-1547](https://farmarcas.atlassian.net/browse/ECP-1547) (Pedidos Cancelados), [ECP-1548](https://farmarcas.atlassian.net/browse/ECP-1548) (Pedidos Concluídos) — 3 Histórias separadas, 1 doc funcional, por serem o mesmo conjunto de entrega funcional (3 abas do mesmo gráfico da Home)
+**Histórias:** [ECP-1546](https://farmarcas.atlassian.net/browse/ECP-1546) (Faturamento), [ECP-1547](https://farmarcas.atlassian.net/browse/ECP-1547) (Pedidos Cancelados), [ECP-1548](https://farmarcas.atlassian.net/browse/ECP-1548) (Pedidos Concluídos) — 3 Histórias separadas, 1 doc funcional, por serem o mesmo conjunto de entrega funcional (3 abas do mesmo gráfico da Home); [ECP-1605](https://farmarcas.atlassian.net/browse/ECP-1605) (Cancelamentos — card de resumo da Home, mesma regra de pedido cancelado)
 **Referência:** `Manual-Portal-Radar-Ecommerce.md`, seção 5 (tabela de indicadores da Home de Vendas); **Figma:** a ser atualizado pela UX ainda nesta semana (layout, rótulos e textos finais pendentes)
 **Relacionado:** [Home-Vendas-Visao-Geral.md](Home-Vendas-Visao-Geral.md) (estrutura, escopo por perfil, período, âncoras de data e cache), [Filtro-GE-e-Macro-abas.md](Filtro-GE-e-Macro-abas.md), [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md)
 **Status:** Em refinamento (cards em "Pronto para refinamento" no Jira)
-**Última atualização:** 2026-10-06
+**Última atualização:** 2026-10-06 (inclusão do card Cancelamentos, ECP-1605)
 
 ---
 
 ## 1. O que é
 
 Três abas do gráfico de linha da Home de Vendas — **"Faturamento"**, **"Pedidos cancelados"** e **"Pedidos concluídos"** —, cada uma mostrando a evolução do indicador no período selecionado. Cada aba exibe, no próprio cartão da aba (valor ao lado do rótulo), o **total do período**: em R$ no Faturamento e em contagem de pedidos nas outras duas. É reconstrução 1:1 em React, reaproveitando a lógica de backend já validada em produção, com os pontos de correção da seção 5. A entrega de cada História cobre front-end e back-end.
+
+O card **"Cancelamentos"** da Home ([ECP-1605](https://farmarcas.atlassian.net/browse/ECP-1605), reconstrução do card legado ECP-1266) é um elemento à parte do gráfico: resume GMV perdido, pedidos cancelados sobre o total de finalizados (barra e percentual) e ticket médio dos cancelados, e está descrito na seção 3.4.
 
 ## 2. Estrutura e comportamento comum às 3 abas
 
@@ -47,6 +49,16 @@ Três abas do gráfico de linha da Home de Vendas — **"Faturamento"**, **"Pedi
 - **Não exclui "Teste Interno"** — assimetria real em relação a Cancelados; não presumir simetria.
 - Aba "Pedidos concluídos" com o total do período em contagem de pedidos (igual à soma dos pontos da série).
 
+### 3.4 Cancelamentos — card de resumo da Home (ECP-1605)
+
+- Card "Cancelamentos" com três métricas: **GMV perdido** (R$), **Pedidos cancelados** ("N/M pedidos", barra de progresso e percentual) e **Ticket Médio cancelados** (R$). Visível para Admin, Gestor de Rede e Gestor de Loja, com a mesma estrutura de Home; o Gestor de Loja vê só as próprias lojas.
+- **Pedido cancelado:** status `Canceled`, data de referência `Canceled.TriggeredAt` dentro do período (nunca a criação), guard `Status != Canceled.PreviusStatus`, exclui `canceledReason = "Teste Interno"` e só conta com `TransactionReturn` aprovado ou nulo.
+- **Pedido concluído (parte de M):** `Delivered`/`Withdrawn` por `Finished.TriggeredAt`, guard `Status != Finished.PreviusStatus`, `TransactionReturn` aprovado ou nulo; não exclui "Teste Interno".
+- **M (total de finalizados)** = cancelados + concluídos; pedidos em aberto não entram. **Percentual** = cancelados ÷ M × 100 (decisão do PO de 2026-10-06, confirmada no código: `CancellationsOrderMapper.cs`, `FormatPercentage`), até 1 casa decimal, **arredondado sempre para cima**; M = 0 resulta em 0. Cancelados e concluídos são contados pela data do próprio evento, então o percentual não é a taxa de cancelamento dos pedidos criados no período.
+- **GMV perdido** = Σ (valor total do pedido − frete); o valor total é o `Total.Value` registrado no pedido (produtos + custo de pagamento + frete − cupom, já com o ajuste de itens quando houve edição). **Ticket médio** = GMV perdido ÷ cancelados (2 casas; 0 sem cancelados).
+- **Barra de progresso:** só o indicador em vermelho. **Estado vazio:** valores zerados, sem erro. **Período:** dia de Brasília (00:00:00.000 a 23:59:59.999) convertido para UTC.
+- A quantidade de cancelados do card é a mesma do total da aba "Pedidos cancelados" (mesmo filtro nas duas consultas).
+
 ## 4. Nível de integração / fonte de dados
 
 Cadeia de serviços confirmada no código:
@@ -61,6 +73,7 @@ Portal (front) → ecomm-bff-backoffice-indicator-dotnet (orquestração; hoje c
 | Faturamento | — | `.../v2/dashboard/indicators/sales/billing-order` → `orders-revenue-per-{day,week,month,quarter,year,custom}` |
 | Pedidos Cancelados | `cancellations` → `{ LostGmv, CancelledCount, CompletedCount, AverageCancelledTicket }` | `tax-cancellation-order` → `orders-tax-cancellation-per-{day,...}` (retorna `{ Total, Charts[] }`) |
 | Pedidos Concluídos | — | `created-order` → `orders-created-per-{day,...}` (retorna `{ Charts[] }`) |
+| Cancelamentos (card de resumo, ECP-1605) | `cancellations` → `salesIndicators/v1/cancellations` → `{ LostGmv, CancelledOrders { Count, TotalFinalizedOrders, Percentage }, AverageCancelledTicket, IsEmpty }` | — |
 
 **Query reaproveitada — Faturamento** (`ecomm-api-order-dotnet`, `SalesIndicators/Commands/PerDay(/Week/Month/Quarter/Year/Custom)/PostOrdersRevenuePerXCommand.cs`):
 
@@ -92,6 +105,23 @@ public static List<OrderData> GetCancelled(IQueryable<OrderData> source, PostCan
 //        .GroupBy(x => TimeZoneInfo.ConvertTimeFromUtc(x.TriggeredAt, timeZone).Hour) -> { Hour, Canceled = g.Count() }
 ```
 
+**Query reaproveitada — Cancelamentos, card de resumo (ECP-1605)** (`ecomm-api-order-dotnet`, `SalesIndicators/Commands/PostCancellationsOrder/`; BFF `Orders/Commands/CancellationsOrder/`):
+
+```csharp
+// CancellationsOrderQuery.cs:27-54
+GetCancelled: HelpersOrder.ApplyFilters(source, request, "Canceled")
+    .Where(order => order.Canceled != null && order.Status != order.Canceled.PreviusStatus && order.CanceledReason != "Teste Interno")
+GetCompleted (Delivered e Withdrawn): HelpersOrder.ApplyFilters(source, request, status)
+    .Where(order => order.Finished != null && order.Status != order.Finished.PreviusStatus)
+// CancellationsIndicatorAggregator.cs:12-30
+LostGmv = Math.Round(cancelled.Sum(o => o.GetTotalBreakdown().Value - (o.Shipping?.Cost ?? 0m)), 2)
+AverageCancelledTicket = cancelledCount <= 0 ? 0m : Math.Round(lostGmv / cancelledCount, 2)
+// BFF CancellationsOrderMapper.cs:15-30 e IndicatorFormatHelper.cs:12-20
+totalFinalized = cancelledCount + CompletedCount;  Percentage = Math.Ceiling(count / total * 100 * 10) / 10  ("0,0%" quando total <= 0)
+```
+
+**O que faz:** conta cancelados pela data do cancelamento e concluídos pela data de conclusão, na janela do dia de Brasília convertida para UTC (`AdjustDate`, sem desvio de janela), devolve GMV perdido (valor total menos frete), as duas quantidades e o ticket médio; o BFF monta o total de finalizados e o percentual. **O que NÃO faz:** não conta pedidos em aberto; não exclui "Teste Interno" dos concluídos; não conta cancelados com transação recusada ou pendente; não soma frete; não tem o "Pedidos recebidos" do texto do ECP-1266. Front legado: `ed-cancellations-card` (ramo `origin/main` do Angular), nas visões de Rede e de Loja.
+
 **Query reaproveitada — Concluídos** (`.../PostOrdersCreatedPerXCommand.cs`, rota `created-order`): mesmo filtro do Faturamento (`Delivered`/`Withdrawn`, `Finished != null && Status != Finished.PreviusStatus`), agrupando por `Finished.TriggeredAt` em Brasília e contando pedidos.
 
 **Nome enganoso no código:** apesar do nome da rota/comando ("orders-created-per-day", `CreatedOrderCommand`), a lógica real filtra `Delivered`/`Withdrawn` por `Finished.TriggeredAt` — é literalmente o indicador de Concluídos, não de pedidos recém-criados. Não confundir com `new-created-order` (comando `PostNewCreatedOrder`), outro indicador (`New`/`Pending`, retorna só `{Count, IsNewOrder}`, sem cache). Renomear na reconstrução (ex.: `orders-completed-per-day`) é boa oportunidade, não obrigatório.
@@ -104,6 +134,7 @@ public static List<OrderData> GetCancelled(IQueryable<OrderData> source, PostCan
 
 - **Cache e performance (ECP-1546, 1547, 1548):** o cache Redis de 30 minutos não é reaproveitado (chave sem loja/Rede do contexto → dado do contexto anterior por até 30 min; número defasado em até 30 min). A entrega remove esse cache e cria o índice composto pela âncora de cada card: `{ pharmacy._id, status, finished.triggeredAt }` (Faturamento e Concluídos; hoje não existe índice em `finished.triggeredAt`) e `{ pharmacy._id, status, canceled.triggeredAt }` (Cancelados; hoje só existe índice simples em `canceled.triggeredAt`). Somente se o teste de carga exigir: TTL curto (1 a 2 minutos) com chave contendo todo o escopo (loja, Rede, grupo, estado e período, inclusive as datas do personalizado). Detalhes e dados da medição em [Home-Vendas-Visao-Geral.md](Home-Vendas-Visao-Geral.md), seção 8.
 - **Nome enganoso `created-order`:** ver seção 4.
+- **Cancelamentos (ECP-1605):** além do cache e dos índices (mesmos de Cancelados e Concluídos: `{ pharmacy._id, status, canceled.triggeredAt }` e `{ pharmacy._id, status, finished.triggeredAt }`), o card registra: (a) GMV perdido do código = valor total − frete, enquanto o texto do ECP-1266 dizia "valor total"; (b) o back-end devolve o percentual com 1 casa ("60,0%") e a tela legado exibe inteiro sem casa ("60%"); (c) `IsEmpty` é devolvido e não usado (o card mostra zeros); (d) o denominador carrega pedidos inteiros só para contar (candidato a contagem no servidor).
 
 ## 6. Cenários de borda
 
@@ -115,17 +146,25 @@ public static List<OrderData> GetCancelled(IQueryable<OrderData> source, PostCan
 | Pedido re-finalizado por reprocessamento de ERP (sem mudança real de status) | Não conta de novo em Faturamento/Concluídos (guard `previusStatus`) |
 | Sem dado no período | Área do gráfico fica em branco |
 | Troca de período | O card recarrega (chamada nova) |
+| Cancelamentos: pedido criado em 03/08 e cancelado em 08/08 | Conta só no período que contém 08/08 |
+| Cancelamentos: sem pedidos finalizados no período | Percentual 0, "0/0 pedidos", sem erro |
+| Cancelamentos: sem cancelados e com concluídos | Valores zerados, "0/M pedidos", barra vazia, sem erro |
+| Cancelamentos: pedido cancelado com transação recusada ou pendente | Não conta |
 
 ## 7. Critérios de aceite (resumo dos cards)
 
 - Faturamento: gráfico de linha com 1 ponto por período, sem legenda; cartão da aba com o total em R$; tooltip com o valor em R$; troca de período recarrega o card.
 - Cancelados: gráfico + card de resumo (total, GMV perdido, ticket médio); cartão da aba com a contagem; "Teste interno" não entra; frete não entra no valor perdido.
 - Concluídos: gráfico com 1 ponto por período; cartão da aba com a contagem; pedido `Delivered`/`Withdrawn` no período conta; "Teste interno" não exclui.
+- Cancelamentos (ECP-1605): GMV perdido sem frete; "N/M pedidos" com M = cancelados + concluídos; percentual arredondado para cima com até 1 casa; ticket médio dos cancelados; barra só em vermelho; "Teste interno" não entra; cancelamento ancorado na data do evento; estado vazio sem erro; loading e erro por card; Gestor de Loja vê só as próprias lojas.
 
 ## 8. Pendências / perguntas em aberto
 
 - [ ] **Figma:** a ser atualizado pela UX ainda nesta semana (layout, rótulos e textos finais). Os 3 cards ainda trazem, na seção "Figma", o link e a imagem de uma versão anterior do handoff (nó `2-19`).
-- [ ] **Percentual do card "Cancelamentos"** ("Pedidos cancelados N/M pedidos" + percentual): a decisão do PO de 2026-10-06 é usar a definição do ECP-1547/BFF (cancelados ÷ finalizados = cancelados + concluídos, conforme o código, `CompletedCount`), mas o texto do ECP-1547 não descreve o percentual nem o denominador — confirmar e registrar no card.
+- [ ] **Divisão de escopo entre ECP-1547 e ECP-1605:** o ECP-1547 também descreve um "card de resumo" (Total cancelado, GMV perdido e ticket médio) alimentado pela mesma consulta `cancellations`, e não descreve o percentual nem o denominador (cancelados ÷ cancelados + concluídos, confirmado no código); o ECP-1605 cobre o card "Cancelamentos" completo. Proposta: o ECP-1605 entrega o card e a consulta de resumo; o ECP-1547 fica com a aba e a série do gráfico. O PO confirma e o texto do ECP-1547 é alinhado.
+- [ ] **ECP-1605 — "Pedidos recebidos" e script da BOCAIUVA/ALTO SÃO JOÃO** (texto do ECP-1266): não encontrados no código dos repositórios acessados; ainda é necessário? Qual o critério?
+- [ ] **ECP-1605 — composição do GMV perdido** (valor total do pedido − frete: inclui custo de pagamento, abate cupom, usa o valor ajustado em pedido editado) × só valor dos produtos; formato do percentual inteiro ("60%" × "60,0%"); estado vazio dedicado × valores zerados; layout, rótulos, texto do popover e texto de erro (UX).
+- [ ] **Manual do Portal:** a seção 5.1 do `Manual-Portal-Radar-Ecommerce.md` ainda lista a linha "Volume dos pedidos cancelados" e não descreve o card "Cancelamentos"; atualizar o Manual.
 - [ ] **Divergência entre cards sobre o valor do Faturamento:** o ECP-1546 define o valor como `PreçoUnitário × Quantidade`; o ECP-1595 (Detalhamento da Ruptura) informa que a correção do bug ECP-1528 (branch `fix/ECP-1528-faturamento-limite-oferta`, "Pronto para release") passa a usar o valor da linha com preço excedente (`CalculateLineTotal()`) e que a reconstrução deve usar a regra corrigida nos dois lugares. Definir qual regra vale para o Faturamento (e para Top produtos, que soma `Amount × UnitPrice`).
 - [ ] Granularidade/agrupamento por dia, semana e mês de cada período: decidida pelo servidor, mas os rótulos do eixo e a regra por período estão no Figma que será atualizado.
 - [ ] Renomear `orders-created-per-day` (e variantes) na reconstrução — recomendação, não obrigatório.
@@ -134,6 +173,7 @@ public static List<OrderData> GetCancelled(IQueryable<OrderData> source, PostCan
 
 ## Changelog
 
+- **2026-10-06** — Inclusão do card "Cancelamentos" da Home (ECP-1605, reconstrução do ECP-1266): cabeçalho, seção 3.4, linha na tabela de endpoints, query reaproveitada, pontos de correção, cenários de borda, resumo de critérios e pendências. A pendência do percentual do card foi resolvida (cancelados ÷ cancelados + concluídos, confirmado no código) e substituída pela divisão de escopo entre ECP-1547 e ECP-1605.
 - **2026-10-06** — Documento reescrito a partir dos cards publicados ECP-1546/1547/1548 e das decisões do PO de 2026-10-05 e 2026-10-06 (aba com total do período no cartão, remoção do cache de 30 min e índices por âncora de data, Figma a ser atualizado). Substitui `Faturamento-Cancelados-Concluidos.md`. Mantidos do doc anterior: a tabela de endpoints por aba e o achado de nome enganoso de `created-order`.
 - **2026-10-05** — (doc anterior) Corrigido o TTL do cache: 30 min em produção (não 60 min), com a observação de que a chave não inclui o contexto de loja/rede.
 - **2026-10-01** — (doc anterior) Criação do documento, a partir de ECP-1546/1547/1548, `Manual-Portal-Radar-Ecommerce.md` seção 5, e leitura direta do código-fonte de `ecomm-api-order-dotnet`/`ecomm-bff-backoffice-indicator-dotnet`; URLs de produção de Cancelados e Concluídos confirmadas.

@@ -1,7 +1,7 @@
 # Indicadores — Home de Vendas: Visão Geral
 
 **Módulo:** Operação
-**Histórias (índice):** [ECP-1546](https://farmarcas.atlassian.net/browse/ECP-1546), [ECP-1547](https://farmarcas.atlassian.net/browse/ECP-1547), [ECP-1548](https://farmarcas.atlassian.net/browse/ECP-1548), [ECP-1578](https://farmarcas.atlassian.net/browse/ECP-1578), [ECP-1579](https://farmarcas.atlassian.net/browse/ECP-1579), [ECP-1580](https://farmarcas.atlassian.net/browse/ECP-1580), [ECP-1581](https://farmarcas.atlassian.net/browse/ECP-1581), [ECP-1582](https://farmarcas.atlassian.net/browse/ECP-1582), [ECP-1583](https://farmarcas.atlassian.net/browse/ECP-1583), [ECP-1584](https://farmarcas.atlassian.net/browse/ECP-1584), [ECP-1585](https://farmarcas.atlassian.net/browse/ECP-1585), [ECP-1586](https://farmarcas.atlassian.net/browse/ECP-1586), [ECP-1587](https://farmarcas.atlassian.net/browse/ECP-1587), [ECP-1590](https://farmarcas.atlassian.net/browse/ECP-1590) (e as Histórias do Detalhamento da Ruptura) — épico pai [ECP-1461](https://farmarcas.atlassian.net/browse/ECP-1461)
+**Histórias (índice):** [ECP-1546](https://farmarcas.atlassian.net/browse/ECP-1546), [ECP-1547](https://farmarcas.atlassian.net/browse/ECP-1547), [ECP-1548](https://farmarcas.atlassian.net/browse/ECP-1548), [ECP-1578](https://farmarcas.atlassian.net/browse/ECP-1578), [ECP-1579](https://farmarcas.atlassian.net/browse/ECP-1579), [ECP-1580](https://farmarcas.atlassian.net/browse/ECP-1580), [ECP-1581](https://farmarcas.atlassian.net/browse/ECP-1581), [ECP-1582](https://farmarcas.atlassian.net/browse/ECP-1582), [ECP-1583](https://farmarcas.atlassian.net/browse/ECP-1583), [ECP-1584](https://farmarcas.atlassian.net/browse/ECP-1584), [ECP-1585](https://farmarcas.atlassian.net/browse/ECP-1585), [ECP-1586](https://farmarcas.atlassian.net/browse/ECP-1586), [ECP-1587](https://farmarcas.atlassian.net/browse/ECP-1587), [ECP-1590](https://farmarcas.atlassian.net/browse/ECP-1590), [ECP-1605](https://farmarcas.atlassian.net/browse/ECP-1605) (e as Histórias do Detalhamento da Ruptura) — épico pai [ECP-1461](https://farmarcas.atlassian.net/browse/ECP-1461)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 5.1 (Indicadores)
 **Referência:** `Manual-Portal-Radar-Ecommerce.md`, seções 5.1, 5.3, 5.4 e 5.5; **Figma:** a ser atualizado pela UX ainda nesta semana (layout, rótulos e textos finais pendentes) — os rótulos citados nestes documentos são o texto atual do legado
 **Relacionado:** [Filtro-GE-e-Macro-abas.md](Filtro-GE-e-Macro-abas.md), [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md), [Faturamento-Pedidos.md](Faturamento-Pedidos.md), [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md), [Distribuicoes-Pagamento-Entrega-Retirada.md](Distribuicoes-Pagamento-Entrega-Retirada.md), [Ruptura-Estoque-Home-e-Detalhamento.md](Ruptura-Estoque-Home-e-Detalhamento.md), [Home-Ofertas.md](Home-Ofertas.md)
@@ -23,6 +23,7 @@ Este documento é o índice dos elementos da Home de Vendas e concentra as regra
 | Faturamento (aba do gráfico) | ECP-1546 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
 | Pedidos cancelados (aba do gráfico + resumo) | ECP-1547 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
 | Pedidos concluídos (aba do gráfico) | ECP-1548 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
+| Cancelamentos (card de resumo: GMV perdido, N/M pedidos + percentual, ticket médio dos cancelados) | ECP-1605 | [Faturamento-Pedidos.md](Faturamento-Pedidos.md) |
 | Total de pedidos em aberto | ECP-1578 | [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md) |
 | Volume dos pedidos em aberto | ECP-1579 | [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md) |
 | Pedidos em aberto por status (rosca, com Conferência) | ECP-1580 | [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md) |
@@ -138,4 +139,5 @@ A maior parte das consultas de Vendas é LINQ-to-Mongo com filtro no servidor e 
 
 ## Changelog
 
+- **2026-10-06** — Inclusão do card "Cancelamentos" (ECP-1605) no índice de elementos; detalhes em [Faturamento-Pedidos.md](Faturamento-Pedidos.md), seção 3.4.
 - **2026-10-06** — Criação do documento (v1), a partir dos cards ECP-1546 a ECP-1548, ECP-1578 a ECP-1587, ECP-1590 e das Histórias do Detalhamento da Ruptura, e das decisões do PO de 2026-10-05 (reconstrução 1:1 com correção embutida, cache) e 2026-10-06 (mesma estrutura de Home nos perfis, Gestor de Loja vê só as próprias lojas, Figma a ser atualizado, itens fora do recorte).
