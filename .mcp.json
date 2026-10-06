@@ -30,6 +30,29 @@
         "MIXPANEL_SERVICE_ACCOUNT_USERNAME": "${MIXPANEL_SERVICE_ACCOUNT_USERNAME}",
         "MIXPANEL_SERVICE_ACCOUNT_PASSWORD": "${MIXPANEL_SERVICE_ACCOUNT_PASSWORD}"
       }
+    },
+    "mongodb": {
+      "command": "npx.cmd",
+      "args": [
+        "-y",
+        "mongodb-mcp-server"
+      ],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "${MDB_MCP_CONNECTION_STRING}",
+        "MDB_MCP_READ_ONLY": "true",
+        "NODE_OPTIONS": "--require C:/Users/matheus.justino_farm/Documents/GitHub/spec-kit-radar-ecommerce#/.claude/mongodb-dns-preload.cjs"
+      }
+    },
+    "postgres": {
+      "command": "npx.cmd",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "${POSTGRES_CONNECTION_STRING}"
+      ],
+      "env": {
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
     }
   }
 }

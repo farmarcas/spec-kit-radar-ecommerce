@@ -1,0 +1,305 @@
+[
+  {
+    "name": "bff-mobile-main",
+    "domains": [
+      "sp",
+      "cat",
+      "pha",
+      "ord",
+      "pro"
+    ],
+    "count": 5
+  },
+  {
+    "name": "api-mobile-stock",
+    "domains": [
+      "sp",
+      "cat",
+      "pha",
+      "ord"
+    ],
+    "count": 4
+  },
+  {
+    "name": "bff-backoffice-order",
+    "domains": [
+      "sp",
+      "cat",
+      "pha",
+      "ord"
+    ],
+    "count": 4
+  },
+  {
+    "name": "bff-mobile-emphasis",
+    "domains": [
+      "sp",
+      "cat",
+      "pha",
+      "ord"
+    ],
+    "count": 4
+  },
+  {
+    "name": "bff-mobile-search",
+    "domains": [
+      "sp",
+      "cat",
+      "pha",
+      "pro"
+    ],
+    "count": 4
+  },
+  {
+    "name": "api-orchestrator-product",
+    "domains": [
+      "sp",
+      "cat",
+      "pha"
+    ],
+    "count": 3
+  },
+  {
+    "name": "bff-backoffice-promotions",
+    "domains": [
+      "cat",
+      "pha",
+      "pro"
+    ],
+    "count": 3
+  },
+  {
+    "name": "bff-backoffice-stock",
+    "domains": [
+      "sp",
+      "cat",
+      "pha"
+    ],
+    "count": 3
+  },
+  {
+    "name": "bff-mobile-cart",
+    "domains": [
+      "sp",
+      "pha",
+      "ord"
+    ],
+    "count": 3
+  },
+  {
+    "name": "bff-mobile-offer",
+    "domains": [
+      "sp",
+      "cat",
+      "pha"
+    ],
+    "count": 3
+  },
+  {
+    "name": "sub-service-wake-princing",
+    "domains": [
+      "sp",
+      "cat",
+      "pha"
+    ],
+    "count": 3
+  },
+  {
+    "name": "bff-backoffice-indicator",
+    "domains": [
+      "pha",
+      "ord"
+    ],
+    "count": 2
+  },
+  {
+    "name": "bff-backoffice-offer",
+    "domains": [
+      "cat",
+      "pha"
+    ],
+    "count": 2
+  },
+  {
+    "name": "bff-mobile-checkout",
+    "domains": [
+      "pha",
+      "ord"
+    ],
+    "count": 2
+  },
+  {
+    "name": "bff-mobile-order",
+    "domains": [
+      "pha",
+      "ord"
+    ],
+    "count": 2
+  },
+  {
+    "name": "bff-mobile-pharmacy",
+    "domains": [
+      "pha",
+      "ord"
+    ],
+    "count": 2
+  },
+  {
+    "name": "bff-mobile-profile",
+    "domains": [
+      "pha",
+      "ord"
+    ],
+    "count": 2
+  },
+  {
+    "name": "sub-service-erp-data-unified",
+    "domains": [
+      "cat",
+      "pha"
+    ],
+    "count": 2
+  },
+  {
+    "name": "sub-service-order-status-created",
+    "domains": [
+      "pha",
+      "ord"
+    ],
+    "count": 2
+  },
+  {
+    "name": "sub-service-wake-stock",
+    "domains": [
+      "cat",
+      "pha"
+    ],
+    "count": 2
+  },
+  {
+    "name": "api-order",
+    "domains": [
+      "pha"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-backoffice-catalogue",
+    "domains": [
+      "cat"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-backoffice-login",
+    "domains": [
+      "pha"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-backoffice-pharmacy",
+    "domains": [
+      "pha"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-backoffice-users",
+    "domains": [
+      "pha"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-mobile-department",
+    "domains": [
+      "cat"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-mobile-login",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-mobile-payment",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "bff-stock-file-validator",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-offer-indicator",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-order-status-update-by-erp",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-partner-catalogue",
+    "domains": [
+      "cat"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-payment-status",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-pix-status",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-push-notification",
+    "domains": [
+      "pha"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-store-cart",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "sub-service-user-address",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  },
+  {
+    "name": "topic-sub-whatsapp",
+    "domains": [
+      "ord"
+    ],
+    "count": 1
+  }
+]
