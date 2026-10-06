@@ -52,7 +52,7 @@ Se o usuário só tem 1 loja vinculada, o filtro de Loja não é exibido — nã
 
 - Default: todas as opções vêm pré-selecionadas (todas as Redes/Lojas às quais o usuário tem vínculo) — e isso é persistido.
 - Botão "Limpar filtros" volta ao default (tudo selecionado) e recalcula a tela.
-- Lista de Lojas agrupada por Estado (UF), ordenação alfabética (Estado → Razão Social), busca por nome ou CNPJ (ignorando caracteres especiais no CNPJ).
+- Lista de Lojas agrupada por Estado (UF), ordenação alfabética (Estado → Razão Social), busca por nome ou CNPJ (ignorando caracteres especiais no CNPJ), disparada ao digitar qualquer caractere, com debounce de 2 segundos.
 - Lista traz tanto lojas do módulo Vendas quanto do módulo Ofertas — mas se o contexto de Pedidos for filtrado numa loja Ofertas, o resultado é o empty-state já existente (Pedidos só existe pra lojas Vendas).
 - **Lista de Lojas é paginada (scroll infinito), não vem inteira de uma vez** — débito técnico identificado depois da entrega inicial (redes grandes, ex. 840+ lojas, não escalavam com lista completa). Marcar uma ou mais Redes já não recalcula um array client-side: reinicia a busca paginada na página 1, filtrada server-side pelas Redes marcadas — isso substitui o recálculo puramente client-side da versão original do filtro. Ver seção 5 para os endpoints envolvidos.
 
@@ -131,6 +131,7 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 
 ## Changelog
 
+- **2026-10-06** — Regra geral do PO: toda busca digitada dispara ao digitar qualquer caractere, com debounce de 2 segundos (aplicada à busca de lojas do seletor).
 - **2026-10-05** — História própria do seletor (ECP-1568); o ECP-1494 passou a ser só o header global. Corrigido que o `GET filters` atual devolve todas as lojas; registrados escopo por perfil (literal), visibilidade por contagem e o bug de `||`.
 
 - **2026-09-30 (correção)** — 4.2 e 4.6 estavam conflitantes: 4.2 dizia que o filtro de Rede "fica fixo mostrando 1 opção" quando o usuário tem Rede única, enquanto 4.6 (mais recente) já documentava que nesse caso não há seletor de Rede nenhum, só a logo read-only. Removida a informação desatualizada de 4.2 (mantido só o critério de Loja, que continua válido) — 4.6 é a fonte única pra esse comportamento. 4.3 atualizada com a paginação de lojas (débito técnico ECP-1468), que substitui o recálculo client-side descrito na v1 deste doc. Seção 5 e cenários de borda atualizados com os endpoints reais — inclusive um segundo conflito da mesma natureza encontrado ao revisar (linha "1 única loja" dizia que a Rede some junto com a Loja, o que contradizia 4.6; corrigido pro mesmo padrão). Títulos de tópicos deixaram de incluir data de definição (fica só no Changelog).

@@ -54,12 +54,13 @@ Regra pré-existente de Estoque Centralizado — sem cascata cruzada entre grupo
 ## 6. Pendências / perguntas em aberto
 
 - [ ] Handler real da listagem "Lojas da rede" (`GET /customer-management/v1/stores-planinng/networkies/v2/{id}/pharmacies`) e do "Exportar lojas" (`POST .../store-service/stores/export-report/pharmacy-by-network`): não estão em nenhum repositório acessado. A fonte mais próxima da listagem é `GET /pharmacy` do `ecomm-api-pharmacy-dotnet` (busca full-text em nome/CNPJ/cidade/UF, lista de CNPJs com `;`, filtro Módulo, escopo por perfil); o gerador do relatório não foi encontrado.
-- [ ] "Exportar lojas" no modelo novo — herda a busca e o filtro de Módulo da tela? Hoje exporta a Rede inteira no escopo do usuário, por e-mail assíncrono.
 - [ ] Correções do legado embutidas nos cards: lojas duplicadas e total inflado (`DISTINCT p.*` com `sales_module`), loja com `Status` 2 a 62 fora dos filtros de Módulo, SQL montada por concatenação, escopo por perfil frágil (`stores-filter`, `GetPharmaciesRequest` sem `Role`), guard de rota inefetivo, máscara de telefone de 10 dígitos.
-- [ ] Decisões de produto abertas (listadas nos cards): destino de "Estoque da loja"/"Configurações da loja" enquanto o módulo de Configuração não existe; "Buscar rede" e "Exportar redes" na lista de Redes; header após abrir uma Rede no fluxo multi-Rede; coluna "Grupo" sempre ou sob flag piloto; ordenação; busca ao digitar ou ao confirmar.
-- Fora do recorte atual (aguardam o módulo de Configuração): Nova loja, Estoque da loja, Configurações da loja, Anúncios do App/Banners, atalho "Grupo de lojas".
+- [ ] Decisões de produto ainda abertas (listadas nos cards): header na lista de Redes antes de abrir uma Rede; ordenação da lista de lojas; "N lojas cadastradas" e ordem da lista de Redes; fallback visual para Rede sem logo; critérios finos da busca por CNPJ.
+- Decisões do PO (2026-10-06): módulo de Operação primeiro, módulo de Configuração em standby; header com logo da Rede + "Gestão de Lojas" (Figma); Balconista que acessa a rota por URL vai para Pedidos; coluna "Grupo" sempre exibida; busca ao digitar com debounce de 2 segundos; "Exportar lojas" exporta a Rede inteira no escopo do usuário.
+- Fora do recorte atual (aguardam o módulo de Configuração, em standby): ações por loja "Estoque da loja" e "Configurações da loja" (contexto de loja única), Nova loja, Anúncios do App/Banners, "Buscar rede" e "Exportar redes", atalho "Grupo de lojas".
 
 ## Changelog
 
+- **2026-10-06** — Decisões do PO aplicadas: ECP-1496 passa a se chamar "Estrutura da tela e lista de Redes" e deixa de incluir a seleção de loja para Estoque/Configurações (standby); header logo + "Gestão de Lojas"; Balconista redirecionado para Pedidos; coluna Grupo sempre; busca com debounce de 2 s; exportar a Rede inteira.
 - **2026-10-05** — Gestão de Lojas fatiada em 4 Histórias (ECP-1496 reescrita; ECP-1572, ECP-1573, ECP-1574 criadas) e subtarefas ECP-1499 a 1501 substituídas; registradas as correções do legado e as pendências de produto. Nova loja, Estoque, Configurações e Anúncios do App ficam fora até o módulo de Configuração entrar.
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1496/ECP-1453 e da PRD seções 5, 5.3, 5.4.

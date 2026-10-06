@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 2.11
+**Versão:** 2.12
 
 ---
 
@@ -81,6 +81,8 @@
 **v2.10 (2026-10-05)** — **Decisão do PO:** o fechamento automático do modal de detalhe em status final (Concluído/Cancelado) deixa de existir — vale para as seções 6.5, 6.6 e 6.8; a duração de 5 segundos da v2.9 deixa de valer. O modal só fecha por ação do usuário. **Toasts (6.7):** o toast temporário de pedido atrasado some sozinho após **7 segundos**.
 
 **v2.11 (2026-10-05)** — **Decisão do PO:** ao concluir ou cancelar, o pedido sai de "Em andamento" e passa para "Finalizados" imediatamente, com os contadores atualizados (seções 6.5, 6.6 e 6.8); a regra de sair da lista só quando o modal fecha deixa de valer. O modal de detalhe segue aberto até o usuário fechar, e ◀ / ▶ seguem a fila em aberto.
+
+**v2.12 (2026-10-06)** — **Regras gerais e Gestão de Lojas (PO):** toda busca digitada (Pedidos, seletor de lojas, Gestão de Lojas) dispara ao digitar qualquer caractere com debounce de 2 segundos. Módulo de Operação é construído primeiro; o módulo de Configuração (incluindo as ações por loja "Estoque da loja"/"Configurações da loja", Anúncios do App, Nova loja, "Buscar rede"/"Exportar redes") fica em standby. Gestão de Lojas (5.4): header com logo da Rede + "Gestão de Lojas" (Figma), Balconista redirecionado para Pedidos ao tentar a rota, coluna "Grupo" sempre exibida, "Exportar lojas" exporta a Rede inteira no escopo do usuário.
 
 ---
 

@@ -54,7 +54,7 @@ A tela de Pedidos hoje não tem filtro, busca nem filtro global de lojas — lac
 
 ### 3.4 Busca
 
-- Campo no cabeçalho, placeholder "Buscar CNPJ, CPF, loja, cliente...", com ícone de busca e botão de limpar.
+- Campo no cabeçalho, placeholder "Buscar CNPJ, CPF, loja, cliente...", com ícone de busca e botão de limpar; a busca dispara ao digitar qualquer caractere, com debounce de 2 segundos, sem precisar confirmar.
 - Busca por nome do cliente, CPF, nome da loja, CNPJ da loja e número do pedido — correspondência parcial, sem diferenciar maiúsculas de minúsculas.
 - Com busca ativa, a tela mostra uma lista única de resultados: as macro-abas e o filtro segmentado ficam ocultos e voltam, como estavam, ao sair da busca; acima da tabela aparece a faixa "Resultados da busca para 'X'" com "N pedidos encontrados" e o botão "Todos os filtros"; os contadores das abas (totais do contexto) não mudam com a busca. Ordenação por cabeçalho na busca: Prazo, Data/Hora e Total (o Prazo ordena abertos pelo tempo restante e fechados pela data de encerramento, abertos antes dos fechados).
 - Ignora macro-aba, segmento e a janela de 30 dias; mostra pedidos de todos os status — primeiro os em aberto (ordem padrão dos abertos, por prazo) e depois os fechados (ordem padrão dos fechados, encerramento mais recente primeiro). Combina com o painel de filtros e com o contexto do header; o escopo do perfil é respeitado (Balconista só a própria loja).
@@ -135,6 +135,7 @@ Confirmados em código em 2026-10-05; cada ponto está embutido como "Ponto de a
 
 ## Changelog
 
+- **2026-10-06** — Busca digitada com debounce de 2 segundos (regra geral do PO para todo filtro de busca digitada).
 - **2026-10-05 (2)** — Adicionada a seção 4.5 com os pontos de atenção do BFF de pedidos legado (escopo vindo do cliente, paginação, janela de 7 dias para concluídos, busca V1, exportar com erro engolido, ausência de tempo real).
 - **2026-10-05 (3)** — Seção 4.1 passa a documentar a listagem multi-loja V3 (a mais próxima do que o Portal precisa), com o que faz e não faz (paginação, total e ordenação); a listagem de uma loja só fica como referência.
 

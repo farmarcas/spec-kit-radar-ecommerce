@@ -16,7 +16,7 @@ O header global é construído uma única vez e reaproveitado pelos dois módulo
 
 ## 2. Estrutura
 
-- **Identidade de Rede:** 1 Rede vinculada → logo e nome da Rede (somente leitura); múltiplas Redes → seletor "Todas as Redes ▾"; dentro de Gestão de Lojas → texto "Gestão de Lojas" (com a logo quando Rede única).
+- **Identidade de Rede:** 1 Rede vinculada → logo e nome da Rede (somente leitura); múltiplas Redes → seletor "Todas as Redes ▾"; dentro de Gestão de Lojas, com uma Rede aberta (única ou escolhida) → logo da Rede + texto "Gestão de Lojas" (conforme o Figma do handoff).
 - **Sino de notificações** com contador.
 - **Ajuda ("?"):** abre a central de ajuda em nova aba (tooltip "Ajuda").
 - **Menu do usuário:** nome e perfil (ex.: "João Silva · Gestor de loja"), com "Meu Perfil" e "Sair".
@@ -45,7 +45,8 @@ Reaproveitado do Portal atual (Angular `ecomm-front-webapp-portal-angular`, `sha
 | 1 Rede vinculada, várias lojas dentro dela | Logo da Rede read-only; o filtro de Loja continua editável |
 | Várias Redes vinculadas | Seletor "Todas as Redes ▾" |
 | Tela de Gestão de Lojas, Rede única | "Acfarma · Gestão de Lojas" (logo + texto) |
-| Tela de Gestão de Lojas, multi-rede | Só o texto "Gestão de Lojas" |
+| Tela de Gestão de Lojas, multi-Rede, depois de abrir uma Rede | Logo da Rede + texto "Gestão de Lojas" (decisão do PO, conforme Figma) |
+| Tela de Gestão de Lojas, multi-Rede, lista de Redes (nenhuma Rede aberta) | A definir pelo desenho (a logo vem de uma Rede aberta) |
 | Módulo de Configuração | Header sem seletor de contexto |
 
 ## 6. Pendências / perguntas em aberto
@@ -56,4 +57,5 @@ Reaproveitado do Portal atual (Angular `ecomm-front-webapp-portal-angular`, `sha
 
 ## Changelog
 
+- **2026-10-06** — Decisão do PO: na Gestão de Lojas o header mostra a logo da Rede + "Gestão de Lojas" sempre que há uma Rede aberta, inclusive no fluxo multi-Rede (antes o doc previa só o texto). Header na lista de Redes segue a definir.
 - **2026-10-05** — Criação do documento (v1), a partir do ECP-1494 (reescrito: o seletor de contexto passou para a História própria ECP-1568), do PRD (5.1, 5.2) e da leitura do header do Portal atual e do protótipo.
