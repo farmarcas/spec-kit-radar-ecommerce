@@ -1,18 +1,18 @@
 # Pedidos — Tabela: Colunas, Indicadores de Linha e Semáforo de SLA
 
 **Módulo:** Operação
-**Histórias:** [ECP-1515](https://farmarcas.atlassian.net/browse/ECP-1515) (Tabela com dados reais, paginação e ordenação padrão — unificada com a ECP-1563), [ECP-1550](https://farmarcas.atlassian.net/browse/ECP-1550) (Coluna Prazo: contagem regressiva e semáforo de SLA), [ECP-1551](https://farmarcas.atlassian.net/browse/ECP-1551) (Indicador de cliente recorrente), [ECP-1552](https://farmarcas.atlassian.net/browse/ECP-1552) (Ícone Rx), [ECP-1562](https://farmarcas.atlassian.net/browse/ECP-1562) (Tag Novo para pedidos ainda não abertos), [ECP-1563](https://farmarcas.atlassian.net/browse/ECP-1563) (Ordenação padrão da lista — o card que cria a listagem já entrega a lista ordenada), [ECP-1565](https://farmarcas.atlassian.net/browse/ECP-1565) (Ordenação por coluna: Prazo, Data/Hora e Total), [ECP-1516](https://farmarcas.atlassian.net/browse/ECP-1516) (interações da linha: clique, tooltips)
+**Histórias:** [ECP-1515](https://farmarcas.atlassian.net/browse/ECP-1515) (Tabela com dados reais, paginação e ordenação padrão — unificada com a ECP-1563), [ECP-1550](https://farmarcas.atlassian.net/browse/ECP-1550) (Coluna Prazo: contagem regressiva e semáforo de SLA — eixo do prazo), [ECP-1607](https://farmarcas.atlassian.net/browse/ECP-1607) (Tag "Parado": pedido sem movimentação — eixo da movimentação), [ECP-1551](https://farmarcas.atlassian.net/browse/ECP-1551) (Indicador de cliente recorrente), [ECP-1552](https://farmarcas.atlassian.net/browse/ECP-1552) (Ícone Rx), [ECP-1562](https://farmarcas.atlassian.net/browse/ECP-1562) (Tag Novo para pedidos ainda não abertos), [ECP-1563](https://farmarcas.atlassian.net/browse/ECP-1563) (Ordenação padrão da lista — o card que cria a listagem já entrega a lista ordenada), [ECP-1565](https://farmarcas.atlassian.net/browse/ECP-1565) (Ordenação por coluna: Prazo, Data/Hora e Total), [ECP-1516](https://farmarcas.atlassian.net/browse/ECP-1516) (interações da linha: clique, tooltips)
 **Referência UX:** [ECP-1312](https://farmarcas.atlassian.net/browse/ECP-1312) (Tabela: colunas e layout)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 6.3, 6.4
 **Relacionado:** [Listagem-Macro-Abas-Filtros-Periodo.md](Listagem-Macro-Abas-Filtros-Periodo.md)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-06
+**Última atualização:** 2026-10-07
 
 ---
 
 ## 1. O que é
 
-A tabela precisa ser **preditiva, não reativa**: o objetivo é sinalizar antes do atraso acontecer, não só reagir depois. O modelo usa minutos absolutos (não percentual de SLA) e tem 2 eixos independentes que podem coexistir na mesma linha. Cada elemento da linha (coluna Prazo, estrela de recorrente, ícone Rx) é entregue por uma História própria sobre o contrato de listagem da ECP-1515.
+A tabela precisa ser **preditiva, não reativa**: o objetivo é sinalizar antes do atraso acontecer, não só reagir depois. O modelo usa minutos absolutos (não percentual de SLA) e tem 2 eixos independentes que podem coexistir na mesma linha. Cada elemento da linha (coluna Prazo, tag "Parado", estrela de recorrente, ícone Rx) é entregue por uma História própria sobre o contrato de listagem da ECP-1515.
 
 ## 2. Colunas e comportamento
 
@@ -44,15 +44,15 @@ Etiqueta "Rx" (borda amarela, tooltip "Receita obrigatória") ao lado da quantid
 
 ## 3. Regras de negócio — Semáforo de SLA
 
-### 3.1 Eixo 1 — prazo de entrega/retirada (cor da linha)
+### 3.1 Eixo 1 — prazo de entrega/retirada (cor da linha) — ECP-1550
 
 - **Amarelo:** faltando 20 minutos pro prazo estimado de entrega/retirada — é a mesma referência de tempo do "Atrasado", não duas coisas diferentes.
 - **Vermelho/"Atrasado":** o pedido já excedeu o tempo de entrega/retirada. Cada loja pode configurar um tempo diferente (ex.: default 30 min) — todo pedido atrasado fica vermelho, independente de estar "Parado" ou não.
 - Coluna Prazo: pedidos ativos mostram "Finalizar em:" + contagem regressiva (ex.: "1h 03min") ou "Atrasado em:" + tempo de atraso; pedidos finalizados mostram "Concluído em:" + data (Concluído) ou "Finalizado em:" + data (Cancelado), sem semáforo. Formato do tempo (Figma): "N min" abaixo de 60 minutos, "Xh YYmin" a partir de 60 minutos e "N dias" quando o atraso passa de 24 horas. Fundo da célula: vermelho (atrasado), amarelo (20 minutos ou menos para o prazo), cinza claro (dentro do prazo) e branco (finalizado).
 
-### 3.2 Eixo 2 — movimentação (tag "Parado")
+### 3.2 Eixo 2 — movimentação (tag "Parado") — ECP-1607
 
-Sem nenhuma movimentação por **mais de 60 minutos fixos**, sem personalização por loja neste ciclo (fica para 2027). A tag "Parado" aparece ao lado do valor do prazo, sobre qualquer cor da célula, com o tooltip "Pedido com mais de 1 hora sem movimentação". O filtro "Parado" (painel de filtros) cruza todos os status ativos — Conferência, Na fila, Em separação, Liberados.
+Sem nenhuma movimentação por **mais de 60 minutos fixos**, sem personalização por loja neste ciclo (fica para 2027). A tag "Parado" aparece ao lado do valor do prazo, sobre qualquer cor da célula, com o tooltip "Pedido com mais de 1 hora sem movimentação"; vale só para pedidos ativos, inclusive Conferência, e some quando o pedido recebe uma movimentação ou é finalizado. Esta é a definição única de "Parado": o filtro "Parado" (painel de filtros, ECP-1556) e as notificações de pedido parado (ECP-1518) apenas a citam; o filtro cruza todos os status ativos — Conferência, Na fila, Em separação, Liberados.
 
 ### 3.3 Independência dos eixos
 
@@ -62,7 +62,7 @@ Um pedido pode estar atrasado sem estar parado (chegou movimentação recente, m
 
 Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras gerais de query sobre timestamps de status (ver [[feedback_status_change_query_rules]], aplicáveis também aqui):
 
-- Qualquer cálculo de "tempo desde a última movimentação" (tag "Parado") usa o timestamp do **evento** mais recente de mudança de status real — não `updatedAt` puro, que reprocessamentos de ERP tocam sem transição de fato. Guard `previusStatus != status`.
+- Qualquer cálculo de "tempo desde a última movimentação" (tag "Parado", ECP-1607) usa o timestamp do **evento** mais recente de mudança de status real — não `updatedAt` puro, que reprocessamentos de ERP tocam sem transição de fato. Guard `previusStatus != status`.
 - Timestamps no banco são UTC; o cálculo de tempo decorrido considera o fuso de Brasília.
 - **Contrato de listagem (ECP-1515):** ver [Listagem-Macro-Abas-Filtros-Periodo.md](Listagem-Macro-Abas-Filtros-Periodo.md), seção 4.1 — a listagem atual aceita 1 loja por chamada e não devolve valor total, prazo consolidado, tempo sem movimentação, indicador de receita nem de cliente recorrente; esses campos são acrescentados pelas Histórias da tabela.
 - **Cliente recorrente:** definição de pedido concluído reaproveitada dos Indicadores (`Delivered`/`Withdrawn`, `Finished.TriggeredAt`, guard `Status != Finished.PreviusStatus` — ver [Faturamento-Pedidos.md](../Indicadores/Faturamento-Pedidos.md)), sem janela de datas e agrupada por cliente e loja. Não existe hoje campo ou consulta de cliente recorrente.
@@ -72,7 +72,8 @@ Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras
 - **Tag "Novo":** `PATCH /order/{orderId}/visualized` grava `Visualized = { TriggeredAt, TriggeredBy, PreviusStatus }`; a listagem já devolve `visualized`. O filtro "novo" atual (`ApplyStatusFilter`, `OrderStatus.New`/`NewConference`) considera pedidos em `Pending`/Conferência com `Visualized == null`; pedido de pagamento online só conta com transação aprovada. O Portal Angular detecta a chegada comparando o contador `New` em consultas periódicas.
 - **Fluxo reaproveitado — aviso de pedido novo (Portal Angular, `features/orders/orders.component.ts` + `order-notification-banner.service.ts`):** a cada 1 minuto (`interval(1 * 60 * 1000)`) a tela consulta o contador `New`; se ele subiu em relação ao último, mostra o banner "N novos pedidos chegaram" / "novo pedido chegou" com a ação "Atualizar fila" (volta à primeira aba e esconde o banner), toca o som `SoundType.Order`, abre a notificação do navegador ("Novo Pedido Recebido | <loja>", com número, total e previsão do pedido mais recente, `requireInteraction`; ao clicar abre a fila) e inicia a title tag, que alterna a cada 2 s o título da aba entre "Radar - E-commerce" e "[NOVO PEDIDO] Radar - E-commerce" (sem contador) até o banner ser fechado ou haver navegação. É o que "persiste" na decisão do PO; o que muda é o snackbar "Pedidos novos adicionados à fila" e o badge na sidebar.
 - **Ordenação:** a listagem V3 ordena em memória, depois de buscar e paginar, por `CreatedAt`, `UpdatedAt` ou `EstimateTimeFinish` (só os pedidos já buscados); não ordena por total (calculado em `Payment.Cost`) nem por data de encerramento dos fechados. A listagem anterior de uma loja só (`GetOrdersCommand`) ordena no banco antes de paginar.
-- **Não confirmado:** onde roda o cálculo do semáforo (front, com tick, ou pré-computado no back).
+- **Tag "Parado" (ECP-1607) — fonte do dado:** não existe cálculo, campo nem filtro de pedido parado no código acessado (`ecomm-api-order-dotnet`, `ecomm-bff-backoffice-order-dotnet` e Portal Angular, este lido em origin/main). O dado vem dos eventos que o pedido já grava a cada transição, com `TriggeredAt` em UTC e `PreviusStatus`: `ReleasedToQueue` (Conferência → Na fila, `ReleaseToQueueCommand`), `Accepted` (Na fila → Em separação, `AcceptOrderCommand`), `Triaged` (Em separação → Liberados, `ReleaseOrderCommand`); conclusão e cancelamento gravam `Finished`/`Canceled`. O pedido nasce em `Conference` (loja com a feature flag de Conferência) ou `Pending` sem evento próprio de entrada; `Visualized` registra a abertura do pedido (não é mudança de status). A listagem V3 (`OrderSummary`) devolve só `Visualized` entre os eventos e `UpdatedAt` (que não serve de referência). A tag exige expor o instante da última movimentação (ou o estado calculado) na listagem.
+- **Não confirmado:** onde roda o cálculo do semáforo e da tag "Parado" (front, com tick, ou pré-computado no back).
 
 ## 5. Cenários de borda
 
@@ -93,6 +94,8 @@ Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras
 ## 6. Pendências / perguntas em aberto
 
 - [ ] Fonte exata da configuração de "tempo de entrega/retirada" por loja.
+- [ ] Tag "Parado" (ECP-1607): a partir de quando conta o pedido que ainda não teve nenhuma mudança de status (Conferência recém-criada, ou Na fila de loja sem Conferência) — o código não grava evento na criação; proposta da engenharia: `CreatedAt` (a confirmar com o PO).
+- [ ] Tag "Parado" (ECP-1607): ações que não mudam o status — abrir o pedido (`Visualized`) e ajustar itens na Conferência (`AuditEvents`) — contam como movimentação? A regra decidida considera só mudança de status real; confirmar que permanece assim.
 - [ ] Onde roda o cálculo do semáforo (front vs. backend) e com que frequência atualiza.
 - [ ] Volumetria/performance da tabela para grupos com muitas lojas/pedidos simultâneos (PRD seção 9) e custo da contagem de recorrência por linha.
 - [ ] Avaliar com a engenharia gravar o instante da previsão no pedido ou calculá-lo em lote, em vez de uma chamada por pedido na listagem.
@@ -106,6 +109,7 @@ Pedidos vivem em `edelivery_order.order_data` (`ecomm-api-order-dotnet`). Regras
 
 ## Changelog
 
+- **2026-10-07** — Divisão do card da coluna Prazo em dois: ECP-1550 mantém o eixo do prazo (contagem regressiva, semáforo amarelo/vermelho, finalizados, prazo-limite e `EstimateTimeFinish`) e o novo ECP-1607 entrega a tag "Parado" (regra de mais de 60 minutos sem movimentação, tooltip "Pedido com mais de 1 hora sem movimentação", atualização sem recarregar, e o back-end que expõe a última movimentação); registrados o levantamento em código (não há cálculo de "parado" hoje; eventos de transição gravados no pedido) e duas pendências.
 - **2026-10-06** — Handoff Figma e respostas do PO: colunas fixas = Total + coluna da seta ">" (antes Loja e Total); sem coluna "Orig."; Prazo não ordenável em Finalizados; tooltips do Figma ("Cliente Recorrente", "Troco", "Receita obrigatória", Parado = "Pedido com mais de 1 hora sem movimentação"); Resumo com "Cobrar" + ícone de carteira em vez de "Cobrar (com troco)"; chips de status no plural; formato do tempo e cores da célula do Prazo; pedidos novos sem âncora, com snackbar "Pedidos novos adicionados à fila", banner/title tag/sonora do legado (fluxo registrado na seção 4) e badge "Novos" na sidebar (substitui o container da Home); listagem e ordenação padrão entregues juntas (ECP-1515 + ECP-1563); pendências novas (Tipo 2ª linha em Finalizados, pill, contador do badge, título da aba, tooltips, "Orig.").
 - **2026-10-05 (3)** — Prazo-limite: o Portal já recebe `EstimateTimeFinish` por pedido na listagem V3 (sem dependência da squad do App); registrados o custo por linha e a limitação de ordenação em memória.
 
