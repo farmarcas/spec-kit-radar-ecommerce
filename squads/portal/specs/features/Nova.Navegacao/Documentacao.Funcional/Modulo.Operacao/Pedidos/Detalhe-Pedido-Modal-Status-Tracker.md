@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 6.6
 **Componente novo:** Status Tracker horizontal (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-06
+**Última atualização:** 2026-10-07
 
 ---
 
@@ -27,7 +27,7 @@ O detalhe do pedido é um modal (não uma tela própria), com navegação embuti
 
 Retirada oculta o campo de taxa de entrega.
 
-**Variantes de pedido** consideradas no detalhe: pago online, pago offline (Cobrar), entrega, retirada, frete grátis, troco e cliente recorrente. A composição do total mostra subtotal, taxa de entrega (valor ou "Grátis" quando o frete é grátis; oculta na Retirada) e "Total (cobrar do cliente)" na Entrega ou "Total" na Retirada; com troco, mostra o valor com que o cliente paga e o troco.
+**Variantes de pedido** consideradas no detalhe: pago online, pago offline (Cobrar), entrega, retirada, frete grátis, troco e cliente recorrente. A composição do total mostra subtotal, taxa de entrega (valor ou "Grátis" quando o frete é grátis; oculta na Retirada), a linha "Ajustes de itens" quando houve ajuste de itens e o total, rotulado "Total (cobrar do cliente)" quando o pagamento é a cobrar (Entrega ou Retirada) e "Total" quando o pedido está pago online; com troco, mostra o valor com que o cliente paga e o troco (detalhes em 3.11).
 
 ### 3.2 Nomenclatura de pagamento
 
@@ -53,7 +53,7 @@ Mesmo conceito, exibido em lugares diferentes conforme o tipo de entrega — nã
 
 ### 3.7 Receitas médicas
 
-Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" (este só aparece quando há **mais de 1** receita) — o Portal só baixa, sem preview; a lista rola dentro do card quando excede a altura. Estados do download: "Baixando arquivo..." com spinner no item; ao concluir, o ícone de check permanece por 3 segundos (Figma) e aparece o snackbar "Download concluído"; em falha, o item fica com borda vermelha com "Não foi possível baixar. Tente novamente." e ícone de recarregar, mais o snackbar "Erro ao baixar. Verifique a sua conexão."
+Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" (este só aparece quando há **mais de 1** receita) — o Portal só baixa, sem preview; a lista rola dentro do card quando excede a altura. Estados do download: "Baixando arquivo..." com spinner no item; ao concluir, o texto do item passa a "Download concluído" e o ícone de check permanece por 3 segundos (Figma), depois o item volta à data de envio e ao ícone de download, e aparece o snackbar "Download concluído" ("Downloads concluídos" no "Baixar todos"); em falha, o item fica com borda vermelha com "Não foi possível baixar. Tente novamente." e ícone de recarregar, mais o snackbar "Erro ao baixar. Verifique a sua conexão."
 
 A seção traz o aviso amarelo **"Valide as receitas antes de liberar o pedido."**, apenas **informativo**: sem regra, lógica nem bloqueio. É somente consulta: não bloqueia avançar, imprimir ou cancelar o pedido, e não há status, badge nem ação obrigatória associada à receita. Os campos legados por produto (`PrescriptionUrl`, `PrescriptionFileName`, `PrescriptionVisualized`) e o endpoint de "visualizada" não fazem parte do Portal novo. Regra de origem: ECP-1481 e PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10); formatos aceitos no envio: JPG, PNG ou PDF, até 2 MB.
 
@@ -70,6 +70,17 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 ### 3.10 Imprimir
 
 O botão de imprimir da barra superior gera um **PDF com os detalhes do pedido**. O "8º pedido" ao lado da estrela do card Cliente (Figma) não entra.
+
+### 3.11 Ajuste de itens, frete grátis mantido e troco na composição do total
+
+- **Ajustes de itens** = subtotal original dos itens − subtotal atual dos itens. Quando é maior que zero, o subtotal original aparece riscado, a linha "Ajustes de itens" aparece em vermelho com o valor descontado precedido de "-" (tooltip "Diferença por itens removidos ou com quantidade reduzida") e o total é calculado sobre o subtotal atual (sem os itens removidos e com as quantidades reduzidas).
+- **Frete grátis mantido:** quando o pedido de Entrega tem frete grátis e o ajuste de itens leva o subtotal para abaixo do valor mínimo do frete grátis, o frete continua grátis (a taxa de entrega segue "Grátis" e o cliente não paga o frete) e a trilha de auditoria registra o evento "Frete grátis mantido". A origem do valor mínimo está em aberto (seção 6).
+- **Troco:** "Cliente paga com R$ X" e "Troco: R$ Y" só aparecem quando o valor informado pelo cliente cobre o total; o troco é calculado sobre o total atual (subtotal após os ajustes mais o frete).
+- O ajuste de itens em si (remover, reduzir quantidade, restaurar) acontece na Conferência como rascunho e é efetivado na mudança de etapa (ver [Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md), 2.9); esta seção descreve só como o detalhe exibe o resultado.
+
+### 3.12 Trilha de auditoria
+
+Eventos do mais recente para o mais antigo; cada um mostra o título, uma descrição opcional, o responsável e a data e hora ("DD/MM, HH:MM"). Eventos de ajuste de itens: "Produto removido" (descrição com o nome do produto; ponto vermelho) e "Quantidade ajustada" (descrição com o nome do produto e "de X para Y un."). "Frete grátis mantido" (descrição com o valor mínimo; ponto amarelo; responsável "Sistema"). "Pedido cancelado" (ponto vermelho; com o motivo e o usuário que cancelou). Os demais eventos seguem o catálogo da seção 9 de `PRD-edicao-pedidos-etapa-revisao.md` e as transições de status.
 
 ## 4. Nível de integração / fonte de dados
 
@@ -94,12 +105,15 @@ O botão de imprimir da barra superior gera um **PDF com os detalhes do pedido**
 
 ## 6. Pendências / perguntas em aberto
 
-- [ ] Itens do detalhe desenhados no Figma ainda sem decisão do PO (não adotados): link "Whatsapp" no card Cliente; tag "Pedido parado há …" no cabeçalho; legenda por fase acima da lista de itens ("Confira e/ou ajuste os itens do pedido" etc.); tracker com 4 cores (vermelho, amarelo, azul, verde) e pílula de prazo.
+- [ ] Itens do detalhe desenhados no Figma ainda sem decisão do PO (não adotados): link "Whatsapp" no card Cliente; tag "Pedido parado há …" no cabeçalho; legenda por fase acima da lista de itens ("Confira e/ou ajuste os itens do pedido" etc.); tracker com 4 cores (vermelho, amarelo, azul, verde) e pílula de prazo. O protótipo de referência (Claude Design, 07/10) desenha todos esses itens; a decisão do PO continua pendente.
 - [ ] Quais fases deixam o botão de imprimir habilitado (o Figma o desenha com aparência desabilitada na Conferência).
-- [ ] Tooltips de nome truncado e de lista de itens (3.8) não existem no Figma; confirmar se permanecem.
+- [ ] Tooltips de nome truncado e de lista de itens (3.8) não existem no Figma; confirmar se permanecem (o protótipo de referência os desenha).
+- [ ] Tag "Editado" no detalhe: não existe no Figma nem no protótipo de referência (o ajuste aparece em "Ajustes de itens" e no subtotal riscado; a marca "(editado)" existe só na lista).
+- [ ] Origem do valor mínimo do frete grátis (configuração da loja, faixa de entrega ou outra regra); o protótipo usa R$ 200,00 como exemplo.
 
 ## Changelog
 
+- **2026-10-07** — Revisão contra o protótipo Claude Design de 07/10 (ECP-1516, ECP-1560): composição do total com subtotal original riscado, linha "Ajustes de itens" em vermelho e rótulo do total pelo tipo de pagamento ("Total (cobrar do cliente)" no a cobrar, "Total" no pago online); frete grátis mantido; troco só quando o valor informado cobre o total (3.11); trilha de auditoria com os eventos de ajuste de itens, "Frete grátis mantido" e "Pedido cancelado" (3.12); download de receita com o texto do item "Download concluído" e snackbar "Downloads concluídos" no "Baixar todos" (3.7). Divergências do protótipo com decisões do PO (fechamento automático do modal, "Baixar todos" sempre visível, "Nº pedido" no card Cliente) não foram adotadas.
 - **2026-10-06** — Handoff Figma e respostas do PO: navegação ▲ / ▼ (antes ◀ / ▶); barra superior com imprimir (gera PDF com os detalhes do pedido); variantes de pedido e composição do total (frete grátis, "Total (cobrar do cliente)", troco); receitas com aviso amarelo informativo "Valide as receitas antes de liberar o pedido.", "Baixar todos" só com mais de 1 receita, "Baixando arquivo...", check por 3 segundos (Figma; antes 5); "Cancelado por" = "sistema" quando veio do ERP; "8º pedido" não entra; itens extras do Figma (Whatsapp, "parado há", legenda por fase, tracker com 4 cores) registrados como pendência.
 - **2026-10-05 (2)** — O pedido concluído ou cancelado sai de "Em andamento" e vai para "Finalizados" no mesmo instante da ação (não mais ao fechar o modal); o modal segue aberto até o usuário fechar (3.5).
 - **2026-10-05** — O fechamento automático do modal em status final deixa de existir (3.5): o modal permanece aberto e só fecha por ação do usuário; o pedido sai de "Em andamento" quando o modal é fechado.

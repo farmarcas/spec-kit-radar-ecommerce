@@ -7,7 +7,7 @@
 **Componente novo:** Split Button (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
 **Relacionado:** `PRD-edicao-pedidos-etapa-revisao.md` (estorno parcial, Conferência)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-06
+**Última atualização:** 2026-10-07
 
 ---
 
@@ -58,6 +58,10 @@ Após cada transição aparece um snackbar escuro no pé do modal por **10 segun
 ### 2.8 Saída do pedido da lista ao concluir ou cancelar
 
 Ao concluir ou cancelar, o modal permanece aberto com a confirmação visual e o pedido no novo status; ele só fecha quando o usuário o fecha. O pedido sai da lista de "Em andamento" no mesmo instante em que é concluído ou cancelado: passa para "Finalizados" e os contadores das duas abas são atualizados, sem esperar o modal ser fechado. A navegação ▲ / ▼ do modal passa a seguir a fila em aberto (ver [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.9).
+
+### 2.9 Ajuste de itens na Conferência é rascunho (revisão 2026-10-07)
+
+Na Conferência, o ajuste de itens (remover item, reduzir quantidade, restaurar) é um rascunho: só é efetivado quando o pedido muda de etapa — Conferência → Na fila ou o pulo Conferência → Liberados. Nesse momento o ajuste e os eventos da trilha de auditoria ("Produto removido", "Quantidade ajustada" e, quando for o caso, "Frete grátis mantido") são gravados e a lista passa a mostrar "(editado)"; a partir daí os itens não são mais editáveis. Enquanto o pedido não muda de etapa, fechar o detalhe sem avançar o pedido não efetiva o ajuste: o pedido continua com os itens originais. O PRD `PRD-edicao-pedidos-etapa-revisao.md` (seção 6.6) descreve o mesmo modelo de rascunho, com o commit na liberação para a fila. Como exibir o resultado no detalhe (subtotal riscado, "Ajustes de itens", frete grátis mantido, troco) está em [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.11.
 
 ## 3. Nível de integração / fonte de dados
 
@@ -113,18 +117,24 @@ Ao concluir ou cancelar, o modal permanece aberto com a confirmação visual e o
 | Na fila → Liberados (pulo) | Diálogo "Avançar pedido direto para Liberados?" |
 | Pedido de Entrega em "Em separação" | Botão "Liberar para entrega" (Retirada: "Liberar para retirada") |
 | Status acabou de avançar | Snackbar `Status atualizado para "X"` por 10 segundos, sem opção de "Desfazer" |
+| Pedido em Conferência com ajuste de itens libera para a fila (ou pula para Liberados) | O ajuste é efetivado junto com a transição e a trilha registra os eventos do ajuste |
+| Pedido em Conferência com ajuste de itens e o detalhe é fechado sem avançar | O ajuste não é efetivado; o pedido continua com os itens originais |
 
 ## 5. Pendências / perguntas em aberto
 
 - [ ] Canal/mecanismo exato da notificação ao cliente no cancelamento.
 - [ ] Comportamento de navegação ▲/▼ com uma confirmação pendente na tela atual — ainda sem regra fechada (ECP-1449).
 - [ ] Texto, título e botões da modal própria do pulo **Conferência → Liberados**.
-- [ ] O Figma escreve "entrega/retirada" literal no diálogo de Na fila → Liberados: confirmar se o texto varia conforme o tipo do pedido (Entrega × Retirada).
+- [ ] O Figma escreve "entrega/retirada" literal no diálogo de Na fila → Liberados: confirmar se o texto varia conforme o tipo do pedido (Entrega × Retirada). O protótipo de referência varia o texto conforme o tipo do pedido.
+- [ ] Menu do chevron na Conferência: o protótipo de referência usa o mesmo menu das duas etapas (cabeçalho "Pular direto para", opção "Liberados", apoio "Ignorar a separação e marcar como pronto"); confirmar para a Conferência.
+- [ ] Pulo Conferência → Liberados: quais eventos de status são registrados para as etapas puladas (o protótipo registra um único evento, "Status: Liberados").
+- [ ] Pedido em Conferência com ajuste de itens pendente cancelado: o protótipo descarta o ajuste (cancelamento sobre os itens originais); confirmar com o PO.
 - [ ] Alinhar `PRD-edicao-pedidos-etapa-revisao.md`, que ainda cita a modal "Liberar pedido para a fila" ao liberar a Conferência: sem diálogo em Conferência → Na fila, o commit do rascunho acontece direto na transição.
 - [ ] **Localizar o serviço real que hoje serve a contagem de Cancelados** (pra confirmar se a query da seção 3.1 bate com o que o backend realmente faz, não só com o número final exibido).
 
 ## Changelog
 
+- **2026-10-07** — Revisão contra o protótipo Claude Design de 07/10 (ECP-1517, ECP-1559): ajuste de itens na Conferência como rascunho, efetivado só na mudança de etapa (2.9); o cancelamento entra na trilha como "Pedido cancelado" (ponto vermelho, com motivo e usuário) e a pendência do cancelamento com ajuste pendente foi registrada. Divergências do protótipo com decisões do PO, não adotadas: fechamento automático do modal em 3 s com o pedido mantido na lista até fechar; "Desfazer" e duração de 5 s no snackbar; diálogos "Liberar pedido para a fila" e "Concluir pedido"; mesmo diálogo no pulo da Conferência e de Na fila; aviso "O cliente será notificado e o estorno processado" no modal de cancelamento.
 - **2026-10-06** — Handoff Figma e respostas do PO: diálogo de confirmação só no pulo de etapa (Na fila → Liberados e Conferência → Liberados, cada um com a própria modal); Conferência → Na fila e Concluir pedido sem diálogo (substituem os 3 diálogos anteriores e a regra de que Conferência não pula etapa); botões por etapa conforme o Figma, com "Liberar para entrega"/"Liberar para retirada" em "Em separação"; snackbar `Status atualizado para "X"` por 10 segundos, sem "Desfazer"; modal de cancelamento sem o aviso "O cliente será notificado e o estorno processado" (regra de negócio mantida); "Cancelado por" = "sistema" quando o cancelamento veio do ERP; ícones de navegação ▲ / ▼.
 - **2026-10-05 (2)** — Decisão do PO: ao concluir ou cancelar, o pedido sai de "Em andamento" e vai para "Finalizados" imediatamente (a regra "só sai quando o modal fecha" deixa de valer); o modal segue aberto até o usuário fechar e ◀ / ▶ seguem a fila em aberto.
 - **2026-10-05** — Decisão do PO: o modal não fecha automaticamente após concluir ou cancelar (a duração de 5 segundos definida no mesmo dia deixa de valer); o modal só fecha por ação do usuário.

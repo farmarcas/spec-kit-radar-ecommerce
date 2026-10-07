@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 2.13
+**Versão:** 2.14
 
 ---
 
@@ -96,6 +96,11 @@
 - **Home de Indicadores (5.5):** lista aprovada de cards de Vendas e de Ofertas, ainda sem Figma (a UX atualiza esta semana); faixa etária, gênero e região ficam fora desta rodada; ECP-1512 quebrado em Filtro de GE e Macro-abas; o texto "Atualizado há 5 minutos" cai (pendente de confirmação).
 - **Pendências novas (9):** 2ª linha da coluna Tipo em Finalizados; pill "N novos pedidos chegaram"; regra do contador do badge "Novos"; título da aba com contador × alternância; lupa × debounce; texto da modal Conferência → Liberados; itens extras do Figma no detalhe; empty states fora do Figma.
 - **Limpeza:** removida a pendência do FAB em estudo (encerrada na v2.8) e corrigidos trechos antigos que contradiziam as decisões (ordenação restrita a Data/Hora e Total, critério "Prazo não ordena", empty state de loja de Ofertas, diálogo em 3 casos).
+
+**v2.14 (2026-10-07)** — **Protótipo "Novo Portal - Navegável" (Claude Design) e cards de Home/Indicadores.** Cards em Backlog reajustados ao protótipo; cards em Pronto para Refinamento e conflitos com decisões do PO ficam em análise (não aplicados).
+- **Indicadores (5.5):** Home de Vendas com cards por elemento (Total, Volume e Pedidos em aberto por status, Tempo médio do 1º atendimento, Tempo total de atendimento, Média de itens por cesta, Top produtos, Formas de pagamento, Métodos de entrega, Lojas com retirada em loja ativa), Cancelamentos (container, ECP-1605) separado do gráfico/total de cancelados (ECP-1547), Ruptura (Home e Detalhamento, incluindo o drawer do pedido editado, sem "Ir para o pedido" e com trilha só das alterações de produtos) e Ofertas (criadas, ativadas, conversão, vendas realizadas, PDV/App, top produtos ativados, lojas sem ofertas); faixa etária, gênero e região fora do recorte; GMV perdido = soma das linhas de produto do pedido cancelado, sem frete.
+- **Pedidos (6.x):** tag "Parado" separada da coluna Prazo (ECP-1607: início da contagem em `CreatedAt`; só mudança real de status reinicia, de qualquer origem, inclusive ERP; Concluído/Cancelado não exibem a tag); listagem e ordenação padrão unificadas (ECP-1515); botão "N novos pedidos" + snackbar "Pedidos novos adicionados à fila" ao clicar (a confirmar); receitas independentes do cadastro do produto, aviso informativo sempre visível; busca com faixa de resultados; toasts com texto por etapa e agrupador por composição.
+- **Em análise com o PO (não aplicado):** modal que fecha sozinho em 3 s com o pedido "segurado" na lista, "Desfazer" no snackbar, "Loja avisada via WhatsApp", atrasado em 8 s, "Delivery", "Administrador", rosca sem Conferência e filtro de GE para todos os perfis; edição de itens na Conferência como rascunho e frete grátis mantido ainda sem card.
 
 ---
 

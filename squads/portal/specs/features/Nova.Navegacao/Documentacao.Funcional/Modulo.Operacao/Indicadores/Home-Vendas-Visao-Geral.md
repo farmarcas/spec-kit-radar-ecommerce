@@ -6,7 +6,7 @@
 **Referência:** `Manual-Portal-Radar-Ecommerce.md`, seções 5.1, 5.3, 5.4 e 5.5; **Figma:** a ser atualizado pela UX ainda nesta semana (layout, rótulos e textos finais pendentes) — os rótulos citados nestes documentos são o texto atual do legado
 **Relacionado:** [Filtro-GE-e-Macro-abas.md](Filtro-GE-e-Macro-abas.md), [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md), [Faturamento-Pedidos.md](Faturamento-Pedidos.md), [Pedidos-em-Aberto.md](Pedidos-em-Aberto.md), [Distribuicoes-Pagamento-Entrega-Retirada.md](Distribuicoes-Pagamento-Entrega-Retirada.md), [Ruptura-Estoque-Home-e-Detalhamento.md](Ruptura-Estoque-Home-e-Detalhamento.md), [Home-Ofertas.md](Home-Ofertas.md)
 **Status:** Em refinamento (cards no Jira em Backlog / Pronto para refinamento)
-**Última atualização:** 2026-10-06
+**Última atualização:** 2026-10-07
 
 ---
 
@@ -133,12 +133,14 @@ A maior parte das consultas de Vendas é LINQ-to-Mongo com filtro no servidor e 
 - [ ] Decisão "a princípio" do PO de limitar as distribuições (pagamento, entrega, top produtos) a pedidos concluídos, e a âncora `Finished.TriggeredAt` para elas — confirmar.
 - [ ] Data de referência dos tempos de atendimento e da média de itens por cesta (`updatedAt` do legado × por evento).
 - [ ] Faixa etária, Gênero, Região, Ticket Médio, Ranking de lojas, Exportar e "Visualizar pedidos": o PO decide depois.
+- [ ] **Protótipo "Novo Portal - Navegável" de 07/10/2026 (referência de desenho; o Figma segue pendente):** (a) **Período:** o padrão do protótipo é "Hoje" e o seletor traz "Hoje", "Últimos 7 dias", "Últimos 30 dias" e "Este mês" (a lista da seção 3 é a do legado) — definir as opções finais e o padrão. (b) **Ordem dos elementos no protótipo:** gráfico com 3 abas em largura total; Ruptura de estoque + Cancelamentos; Ranking das lojas + Top 3 produtos mais vendidos; bloco azul de pedidos em aberto + rosca + tempos de atendimento e cartão duplo (Média de itens por cesta e Ticket Médio); Formas de pagamento + Métodos de entrega + Lojas com retirada em loja ativa. O **Ticket Médio** aparece como segunda metade do cartão duplo da Média de itens por cesta e não tem História própria (ver ECP-1583). (c) **Botões:** "Visualizar pedidos" (ícone de olho) é link para a tela de Pedidos; "Buscar produtos" (lupa) substitui "Baixar produtos" no Top produtos, sem ação definida (ECP-1584); "Ver lojas com retirada" é link para a Gestão de Lojas, módulo de Configuração em standby (ECP-1587). (d) O texto "Atualizado há 5 minutos" ainda aparece no cabeçalho do protótipo (texto que o PO decidiu não especificar). (e) Faixa etária, Gênero e Região têm componentes definidos no código do protótipo, mas a Home de Vendas não os renderiza. (f) **Rótulos do protótipo que divergem de decisões do PO e não foram aplicados nos cards:** abas do gráfico "Faturamento:", "Cancelados:" e "Pedidos:" (decidido: Faturamento, Pedidos cancelados, Pedidos concluídos); "Delivery" e "Retirada na loja" (decidido: Receber em casa e Retirada); rosca de pedidos em aberto sem a fatia Conferência (decidido: com Conferência); macro-aba "Lojas de Ofertas" (Figma: "Loja de Ofertas").
 - [ ] Contexto selecionado só com lojas de Ofertas: estado da macro-aba de Vendas (ver [Filtro-GE-e-Macro-abas.md](Filtro-GE-e-Macro-abas.md)).
 - [ ] Validação do vínculo das lojas enviadas pelo cliente (`ValidationOrderLayerService.cs:68-74`) — engenharia confirma.
 - [ ] Consumidor Kafka das exportações assíncronas: não encontrado nos repositórios acessados.
 
 ## Changelog
 
+- **2026-10-07** — Revisão dos cards de Indicadores contra o protótipo "Novo Portal - Navegável" (Claude Design, 07/10/2026): nova pendência com o desenho do protótipo (período "Hoje", ordem dos elementos, Ticket Médio no cartão duplo, botões "Visualizar pedidos", "Buscar produtos" e "Ver lojas com retirada", Faixa etária/Gênero/Região não renderizados) e os rótulos do protótipo que divergem de decisões do PO e não foram aplicados.
 - **2026-10-06** — Divisão de escopo dos cancelados definida pelo PO: ECP-1547 = gráfico e totais de cancelados; ECP-1605 = container Cancelamentos (índice de elementos ajustado).
 - **2026-10-06** — Inclusão do card "Cancelamentos" (ECP-1605) no índice de elementos; detalhes em [Faturamento-Pedidos.md](Faturamento-Pedidos.md), seção 3.4.
 - **2026-10-06** — Criação do documento (v1), a partir dos cards ECP-1546 a ECP-1548, ECP-1578 a ECP-1587, ECP-1590 e das Histórias do Detalhamento da Ruptura, e das decisões do PO de 2026-10-05 (reconstrução 1:1 com correção embutida, cache) e 2026-10-06 (mesma estrutura de Home nos perfis, Gestor de Loja vê só as próprias lojas, Figma a ser atualizado, itens fora do recorte).
