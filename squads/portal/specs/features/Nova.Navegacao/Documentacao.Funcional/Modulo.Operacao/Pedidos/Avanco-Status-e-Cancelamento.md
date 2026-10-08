@@ -7,13 +7,13 @@
 **Componente novo:** Split Button (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
 **Relacionado:** `PRD-edicao-pedidos-etapa-revisao.md` (estorno parcial, Conferência)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-07
+**Última atualização:** 2026-10-08
 
 ---
 
 ## 1. O que é
 
-Avanço de status usa um botão split (ação principal da etapa + chevron com a alternativa de pular direto para Liberados). Há diálogo de confirmação somente no pulo de etapa; as transições sequenciais, inclusive Conferência → Na fila e Concluir, acontecem sem diálogo. Cancelamento é permitido a partir de qualquer status, incluindo Concluído, por uma modal de motivo própria.
+Avanço de status usa um botão split (ação principal da etapa + chevron com a alternativa de pular direto para Liberados). Há diálogo de confirmação em Conferência → Na fila, no pulo de etapa para Liberados (o mesmo diálogo a partir da Conferência e de Na fila) e em Concluir pedido; Na fila → Em separação e Em separação → Liberados são diretas. Depois de cada transição intermediária há um snackbar com "Desfazer"; ao concluir ou cancelar, o modal mostra a barra de confirmação e fecha sozinho em 3 segundos. Cancelamento é permitido a partir de qualquer status, incluindo Concluído, por uma modal de motivo própria.
 
 ## 2. Regras de negócio
 
@@ -21,23 +21,26 @@ Avanço de status usa um botão split (ação principal da etapa + chevron com a
 
 | Etapa | Botão principal | Chevron (pular etapa) |
 |---|---|---|
-| Conferência | "Liberar para fila" | Sim — pular para Liberados (modal própria, ver 2.2) |
+| Conferência | "Liberar para fila" | Sim — pular para Liberados (diálogo, ver 2.2) |
 | Na fila | "Separar pedido" | Sim — menu "PULAR DIRETO PARA" → "Liberados" ("Ignorar a separação e marcar como pronto") |
 | Em separação | "Liberar para entrega" (pedido de Entrega) / "Liberar para retirada" (pedido de Retirada) | Não |
 | Liberados | "Concluir pedido" (botão verde) | Não |
 
 Cancelado não tem rodapé com botão; Concluído mantém só "Cancelar pedido".
 
-### 2.2 Diálogo de confirmação — só no pulo de etapa
+### 2.2 Diálogos de confirmação
 
-Transições sequenciais — inclusive **Conferência → Na fila** e **Concluir pedido** (Liberados → Concluído) — não pedem diálogo. O diálogo existe somente quando o usuário **pula etapa**, e cada pulo tem a própria modal:
+São três diálogos, cada um com ícone, título, texto e dois botões; fecham sem alterar o pedido ao clicar fora ou no botão de recuo:
 
-1. **Na fila → Liberados** — título "Avançar pedido direto para Liberados?"; texto *"Ao confirmar, o sistema entenderá que os itens já foram separados fisicamente e o pedido está pronto para entrega/retirada."*; botões "Voltar" e "Sim, avançar pedido".
-2. **Conferência → Liberados** — o usuário pode pular da Conferência direto para Liberados; aparece uma modal de confirmação **diferente** da anterior, própria da Conferência (texto e botões ainda não definidos, ver pendências).
+1. **Conferência → Na fila** — título "Liberar pedido para a fila"; texto "Ao liberar este pedido para a separação, você **não poderá mais fazer edições** nos itens."; botões "Cancelar" e "Confirmar".
+2. **Pular etapa para Liberados** (Conferência → Liberados e Na fila → Liberados, o mesmo diálogo) — título "Avançar pedido direto para Liberados?"; texto "Ao confirmar, o sistema entenderá que os itens já foram separados fisicamente e o pedido está **pronto para entrega**" em pedido de Entrega ou "**pronto para retirada**" em pedido de Retirada; botões "Voltar" e "Sim, avançar pedido".
+3. **Liberados → Concluído** — título "Concluir pedido #<número>?"; texto "O pedido será finalizado e marcado como concluído. Esta ação não pode ser desfeita."; botões "Cancelar" e "Concluir pedido".
+
+Na fila → Em separação e Em separação → Liberados acontecem direto, sem diálogo.
 
 ### 2.3 Cancelamento — qualquer status, incluindo Concluído
 
-Não fica restrito aos status ativos (Conferência até Liberados) — confirmado por Matheus em 2026-09-24, corrigindo a versão anterior do PRD. A modal de cancelamento (título "Cancelar pedido: #<número>", ícone de cancelamento, motivos em seleção única, botões "Cancelar" e "Confirmar cancelamento", este bloqueado até escolher um motivo) é a própria confirmação, sem diálogo adicional, e **não traz** o aviso "O cliente será notificado e o estorno processado"; a regra de negócio continua: o cancelamento notifica o cliente e processa o estorno (quando aplicável).
+Não fica restrito aos status ativos (Conferência até Liberados) — confirmado por Matheus em 2026-09-24, corrigindo a versão anterior do PRD. A modal de cancelamento (título "Cancelar pedido: #<número>", ícone de cancelamento, motivos em seleção única, botões "Cancelar" e "Confirmar cancelamento", este bloqueado até escolher um motivo) é a própria confirmação, sem diálogo adicional, e traz o texto "Selecione o motivo. O cliente será notificado e o estorno processado."; o cancelamento notifica o cliente e processa o estorno (quando aplicável).
 
 ### 2.4 Motivos de cancelamento (10 opções, confirmado 2026-10-01)
 
@@ -49,15 +52,15 @@ Se o pedido já sofreu estorno parcial na Conferência (item removido/reduzido, 
 
 ### 2.6 "Pular etapa": Na fila → Liberados e Conferência → Liberados
 
-O pulo é sempre direto para **Liberados**, a partir de Na fila ou de Conferência (respostas do PO de 2026-10-06); cada origem tem a própria modal (2.2). Conferência → Na fila é o caminho sequencial e não tem diálogo.
+O pulo é sempre direto para **Liberados**, a partir de Na fila ou de Conferência (respostas do PO de 2026-10-06); o diálogo é o mesmo nas duas origens (2.2). Conferência → Na fila é o caminho sequencial, com o diálogo "Liberar pedido para a fila".
 
-### 2.7 Snackbar de status e sem reversão ("Desfazer"/undo)
+### 2.7 Snackbar de status e "Desfazer"
 
-Após cada transição aparece um snackbar escuro no pé do modal por **10 segundos**: `Status atualizado para "<novo status>"` ("Na fila", "Em separação", "Liberados"), "Pedido concluído!" ao concluir e "Pedido cancelado!" ao cancelar. Não existe reversão de status nem "Desfazer" neste ciclo; o "Desfazer" da seção "Futuro" do Figma e do protótipo é sobra de uma versão anterior, não decisão de produto. Não implementar undo.
+Após cada transição intermediária (Conferência → Na fila, Na fila → Em separação, Em separação → Liberados e o pulo para Liberados) aparece um snackbar: `Status atualizado para "<novo status>"` ("Na fila", "Em separação", "Liberados") com a ação **"Desfazer"**, por **5 segundos**. Ao clicar em "Desfazer", o pedido volta ao status anterior (status, trilha de auditoria e itens como estavam antes da transição) e aparece `Status voltou para "<status anterior>"` por 3,2 segundos, sem ação. Concluir e cancelar não têm snackbar nem "Desfazer". Os efeitos do "Desfazer" no back-end (por exemplo, após a entrada em "Na fila", gatilho de captura pelo ERP, ou após ajuste de itens com estorno parcial) estão em aberto (ECP-1517).
 
 ### 2.8 Saída do pedido da lista ao concluir ou cancelar
 
-Ao concluir ou cancelar, o modal permanece aberto com a confirmação visual e o pedido no novo status; ele só fecha quando o usuário o fecha. O pedido sai da lista de "Em andamento" no mesmo instante em que é concluído ou cancelado: passa para "Finalizados" e os contadores das duas abas são atualizados, sem esperar o modal ser fechado. A navegação ▲ / ▼ do modal passa a seguir a fila em aberto (ver [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.9).
+Ao concluir ou cancelar, o modal permanece aberto e exibe, abaixo da barra superior, a barra verde "Pedido concluído" ou vermelha "Pedido cancelado" ("O pedido será movido para Finalizados ao fechar."), com o botão "Fechar agora" e uma linha de progresso de 3 segundos; ao fim dos 3 segundos o modal fecha sozinho (ou por "Fechar agora", "x", Esc ou clique fora). Enquanto está aberto, o pedido fica "segurado" na lista e nos contadores de "Em andamento" com o estado anterior; ao fechar, passa para "Finalizados" e os contadores das duas abas são atualizados. A navegação ▲ / ▼ pula o pedido finalizado, segue a fila em aberto e cancela o fechamento automático (ver [Detalhe-Pedido-Modal-Status-Tracker.md](Detalhe-Pedido-Modal-Status-Tracker.md), 3.9).
 
 ### 2.9 Ajuste de itens na Conferência é rascunho (revisão 2026-10-07)
 
@@ -107,16 +110,16 @@ Na Conferência, o ajuste de itens (remover item, reduzir quantidade, restaurar)
 
 | Cenário | Regra |
 |---|---|
-| Pedido já no último status ativo (Liberados) | Não há "pular etapa"; o botão é "Concluir pedido", sem diálogo |
+| Pedido já no último status ativo (Liberados) | Não há "pular etapa"; o botão é "Concluir pedido", com o diálogo "Concluir pedido #<número>?" |
 | Confirma cancelamento sem selecionar motivo | Ação bloqueada até selecionar um motivo ("Confirmar cancelamento" desabilitado) |
 | Cancela pedido já Concluído, com estorno parcial prévio | Estorna só o valor restante não estornado |
 | `canceledReason` vazio | Cancelamento via ERP, não erro; "Cancelado por: sistema" |
 | Navega pro próximo pedido (▲/▼) com confirmação pendente na tela atual | A definir — cenário identificado no ECP-1449 sem regra fechada ainda |
-| Pedido em Conferência | Botão split "Liberar para fila"; o chevron permite pular direto para Liberados, com modal própria da Conferência |
-| Conferência → Na fila (sequencial) | Sem diálogo |
+| Pedido em Conferência | Botão split "Liberar para fila"; o chevron permite pular direto para Liberados, com o mesmo diálogo do pulo de Na fila |
+| Conferência → Na fila (sequencial) | Diálogo "Liberar pedido para a fila" |
 | Na fila → Liberados (pulo) | Diálogo "Avançar pedido direto para Liberados?" |
 | Pedido de Entrega em "Em separação" | Botão "Liberar para entrega" (Retirada: "Liberar para retirada") |
-| Status acabou de avançar | Snackbar `Status atualizado para "X"` por 10 segundos, sem opção de "Desfazer" |
+| Status acabou de avançar | Snackbar `Status atualizado para "X"` com "Desfazer" por 5 segundos (não há snackbar na conclusão nem no cancelamento) |
 | Pedido em Conferência com ajuste de itens libera para a fila (ou pula para Liberados) | O ajuste é efetivado junto com a transição e a trilha registra os eventos do ajuste |
 | Pedido em Conferência com ajuste de itens e o detalhe é fechado sem avançar | O ajuste não é efetivado; o pedido continua com os itens originais |
 
@@ -124,8 +127,7 @@ Na Conferência, o ajuste de itens (remover item, reduzir quantidade, restaurar)
 
 - [ ] Canal/mecanismo exato da notificação ao cliente no cancelamento.
 - [ ] Comportamento de navegação ▲/▼ com uma confirmação pendente na tela atual — ainda sem regra fechada (ECP-1449).
-- [ ] Texto, título e botões da modal própria do pulo **Conferência → Liberados**.
-- [ ] O Figma escreve "entrega/retirada" literal no diálogo de Na fila → Liberados: confirmar se o texto varia conforme o tipo do pedido (Entrega × Retirada). O protótipo de referência varia o texto conforme o tipo do pedido.
+- [ ] Efeitos do "Desfazer" no back-end (captura pelo ERP ao entrar em "Na fila", estorno parcial já processado, eventos da trilha apagados ou compensados) — a definir com a engenharia (ECP-1517).
 - [ ] Menu do chevron na Conferência: o protótipo de referência usa o mesmo menu das duas etapas (cabeçalho "Pular direto para", opção "Liberados", apoio "Ignorar a separação e marcar como pronto"); confirmar para a Conferência.
 - [ ] Pulo Conferência → Liberados: quais eventos de status são registrados para as etapas puladas (o protótipo registra um único evento, "Status: Liberados").
 - [ ] Pedido em Conferência com ajuste de itens pendente cancelado: o protótipo descarta o ajuste (cancelamento sobre os itens originais); confirmar com o PO.
@@ -134,6 +136,7 @@ Na Conferência, o ajuste de itens (remover item, reduzir quantidade, restaurar)
 
 ## Changelog
 
+- **2026-10-08** — Protótipo "Novo Portal - Navegável" (Claude Design) é a verdade e sobrepõe decisões anteriores de Pedidos (PRD v2.15): três diálogos (Conferência → Na fila, pular etapa para Liberados com o mesmo texto nas duas origens, Concluir pedido); snackbar com "Desfazer" por 5 segundos e retorno `Status voltou para ...` (não existe na conclusão nem no cancelamento); barra "Pedido concluído/cancelado" com "Fechar agora" e fechamento em 3 segundos, pedido "segurado" na lista até fechar; o modal de cancelamento traz o texto "O cliente será notificado e o estorno processado.". Efeitos do "Desfazer" no back-end ficam como pendência.
 - **2026-10-07** — Revisão contra o protótipo Claude Design de 07/10 (ECP-1517, ECP-1559): ajuste de itens na Conferência como rascunho, efetivado só na mudança de etapa (2.9); o cancelamento entra na trilha como "Pedido cancelado" (ponto vermelho, com motivo e usuário) e a pendência do cancelamento com ajuste pendente foi registrada. Divergências do protótipo com decisões do PO, não adotadas: fechamento automático do modal em 3 s com o pedido mantido na lista até fechar; "Desfazer" e duração de 5 s no snackbar; diálogos "Liberar pedido para a fila" e "Concluir pedido"; mesmo diálogo no pulo da Conferência e de Na fila; aviso "O cliente será notificado e o estorno processado" no modal de cancelamento.
 - **2026-10-06** — Handoff Figma e respostas do PO: diálogo de confirmação só no pulo de etapa (Na fila → Liberados e Conferência → Liberados, cada um com a própria modal); Conferência → Na fila e Concluir pedido sem diálogo (substituem os 3 diálogos anteriores e a regra de que Conferência não pula etapa); botões por etapa conforme o Figma, com "Liberar para entrega"/"Liberar para retirada" em "Em separação"; snackbar `Status atualizado para "X"` por 10 segundos, sem "Desfazer"; modal de cancelamento sem o aviso "O cliente será notificado e o estorno processado" (regra de negócio mantida); "Cancelado por" = "sistema" quando o cancelamento veio do ERP; ícones de navegação ▲ / ▼.
 - **2026-10-05 (2)** — Decisão do PO: ao concluir ou cancelar, o pedido sai de "Em andamento" e vai para "Finalizados" imediatamente (a regra "só sai quando o modal fecha" deixa de valer); o modal segue aberto até o usuário fechar e ◀ / ▶ seguem a fila em aberto.

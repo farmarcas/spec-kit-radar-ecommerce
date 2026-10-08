@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seção 6.6
 **Componente novo:** Status Tracker horizontal (criado do zero em React aqui — ver [[feedback_design_system_components_on_demand]])
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-07
+**Última atualização:** 2026-10-08
 
 ---
 
@@ -43,7 +43,7 @@ Não mostram o status tracker — mostram a caixa "Pedido cancelado" com o motiv
 
 ### 3.5 Status final dentro do modal
 
-Ao chegar em status final (Concluído ou Cancelado), o modal permanece aberto com o pedido no novo status e a confirmação visual; ele só fecha quando o usuário o fecha. O pedido sai da lista de "Em andamento" no mesmo instante em que é concluído ou cancelado: passa para "Finalizados" e os contadores das abas são atualizados, sem esperar o modal ser fechado. O comportamento pós-ação é entregue nas Histórias de avanço de status e de cancelamento ([Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md)).
+Ao chegar em status final (Concluído ou Cancelado), o modal permanece aberto e exibe a barra verde "Pedido concluído" ou vermelha "Pedido cancelado" ("O pedido será movido para Finalizados ao fechar.") com o botão "Fechar agora" e uma linha de progresso de 3 segundos; ao fim dos 3 segundos o modal fecha sozinho (ou por "Fechar agora", "x", Esc ou clique fora). Enquanto está aberto, o pedido fica "segurado" na lista e nos contadores de "Em andamento" com o estado anterior; ao fechar, passa para "Finalizados" e os contadores das duas abas são atualizados. O comportamento pós-ação é entregue nas Histórias de avanço de status e de cancelamento ([Avanco-Status-e-Cancelamento.md](Avanco-Status-e-Cancelamento.md)).
 
 ### 3.6 "Loja responsável" = "Filial responsável" (resolvido 2026-10-01)
 
@@ -53,13 +53,13 @@ Mesmo conceito, exibido em lugares diferentes conforme o tipo de entrega — nã
 
 ### 3.7 Receitas médicas
 
-Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" (este só aparece quando há **mais de 1** receita) — o Portal só baixa, sem preview; a lista rola dentro do card quando excede a altura. Estados do download: "Baixando arquivo..." com spinner no item; ao concluir, o texto do item passa a "Download concluído" e o ícone de check permanece por 3 segundos (Figma), depois o item volta à data de envio e ao ícone de download, e aparece o snackbar "Download concluído" ("Downloads concluídos" no "Baixar todos"); em falha, o item fica com borda vermelha com "Não foi possível baixar. Tente novamente." e ícone de recarregar, mais o snackbar "Erro ao baixar. Verifique a sua conexão."
+Seção "Receita médica (Rx)" no detalhe, **em todas as etapas**, só quando o pedido tem receita enviada pelo app (`attachmentUrls` não vazio). Cada receita é nomeada "Receita 1", "Receita 2"... na ordem do array (nunca o nome do arquivo), com "Enviado em" = data/hora de criação do pedido (igual para todas). Ações: baixar cada receita ou "Baixar todos" (sempre visível quando há receita, inclusive com 1) — o Portal só baixa, sem preview; a lista rola dentro do card quando excede a altura. Estados do download: "Baixando arquivo..." com spinner no item; ao concluir, o texto do item passa a "Download concluído" e o ícone de check permanece por 3 segundos (Figma), depois o item volta à data de envio e ao ícone de download, e aparece o snackbar "Download concluído" ("Downloads concluídos" no "Baixar todos"); em falha, o item fica com borda vermelha com "Não foi possível baixar. Tente novamente." e ícone de recarregar, mais o snackbar "Erro ao baixar. Verifique a sua conexão."
 
 A seção traz o aviso amarelo **"Valide as receitas antes de liberar o pedido."**, apenas **informativo**: sem regra, lógica nem bloqueio. É somente consulta: não bloqueia avançar, imprimir ou cancelar o pedido, e não há status, badge nem ação obrigatória associada à receita. Os campos legados por produto (`PrescriptionUrl`, `PrescriptionFileName`, `PrescriptionVisualized`) e o endpoint de "visualizada" não fazem parte do Portal novo. Regra de origem: ECP-1481 e PRD do App (`specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`, 6.4 e 6.10); formatos aceitos no envio: JPG, PNG ou PDF, até 2 MB.
 
 ### 3.9 Navegação ▲ / ▼ depois que o pedido sai da lista
 
-Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação segue a fila em aberto, na ordenação dos abertos: ▼ mostra o próximo pedido da fila em aberto; ▲ mostra o pedido anterior da fila em aberto. O pedido recém-fechado nunca é alvo da navegação (voltar não redireciona para o último que foi fechado).
+Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação segue a fila em aberto, na ordenação dos abertos: ▼ mostra o próximo pedido da fila em aberto; ▲ mostra o pedido anterior da fila em aberto. Durante os 3 segundos da barra de confirmação, navegar com ▲ / ▼ cancela o fechamento automático. O pedido recém-fechado nunca é alvo da navegação (voltar não redireciona para o último que foi fechado).
 
 ### 3.8 Interações da linha e informações do modal
 
@@ -96,7 +96,7 @@ Eventos do mais recente para o mais antigo; cada um mostra o título, uma descri
 |---|---|
 | Pedido do tipo Retirada | Taxa de entrega oculta |
 | Navego pro próximo pedido (▼) com o pedido atual em último da lista | Botão ▼ desabilitado |
-| Pedido avança pra status final durante a visualização | Modal permanece aberto até o usuário fechar (ver 3.5) |
+| Pedido avança pra status final durante a visualização | Modal permanece aberto com a barra de confirmação e fecha em 3 segundos ou por ação do usuário (ver 3.5) |
 | Pedido sem receita enviada | Seção "Receita médica (Rx)" não aparece |
 | Pedido com receita não baixada | Avançar, imprimir e cancelar seguem normalmente, sem bloqueio |
 | `canceledReason` vazio | Trata como cancelamento via ERP, não como erro |
@@ -113,6 +113,7 @@ Eventos do mais recente para o mais antigo; cada um mostra o título, uma descri
 
 ## Changelog
 
+- **2026-10-08** — Protótipo "Novo Portal - Navegável" (Claude Design) é a verdade e sobrepõe decisões anteriores de Pedidos (PRD v2.15): o modal em status final mostra a barra "Pedido concluído/cancelado" com "Fechar agora" e fecha em 3 segundos, com o pedido "segurado" na lista até fechar (3.5); "Baixar todos" sempre visível quando há receita (3.7); navegação ▲ / ▼ cancela o fechamento automático (3.9).
 - **2026-10-07** — Revisão contra o protótipo Claude Design de 07/10 (ECP-1516, ECP-1560): composição do total com subtotal original riscado, linha "Ajustes de itens" em vermelho e rótulo do total pelo tipo de pagamento ("Total (cobrar do cliente)" no a cobrar, "Total" no pago online); frete grátis mantido; troco só quando o valor informado cobre o total (3.11); trilha de auditoria com os eventos de ajuste de itens, "Frete grátis mantido" e "Pedido cancelado" (3.12); download de receita com o texto do item "Download concluído" e snackbar "Downloads concluídos" no "Baixar todos" (3.7). Divergências do protótipo com decisões do PO (fechamento automático do modal, "Baixar todos" sempre visível, "Nº pedido" no card Cliente) não foram adotadas.
 - **2026-10-06** — Handoff Figma e respostas do PO: navegação ▲ / ▼ (antes ◀ / ▶); barra superior com imprimir (gera PDF com os detalhes do pedido); variantes de pedido e composição do total (frete grátis, "Total (cobrar do cliente)", troco); receitas com aviso amarelo informativo "Valide as receitas antes de liberar o pedido.", "Baixar todos" só com mais de 1 receita, "Baixando arquivo...", check por 3 segundos (Figma; antes 5); "Cancelado por" = "sistema" quando veio do ERP; "8º pedido" não entra; itens extras do Figma (Whatsapp, "parado há", legenda por fase, tracker com 4 cores) registrados como pendência.
 - **2026-10-05 (2)** — O pedido concluído ou cancelado sai de "Em andamento" e vai para "Finalizados" no mesmo instante da ação (não mais ao fechar o modal); o modal segue aberto até o usuário fechar (3.5).

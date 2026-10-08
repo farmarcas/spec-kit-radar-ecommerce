@@ -6,7 +6,7 @@
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 6.1, 6.1.1, 6.2, 6.9
 **Relacionado:** [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md), [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md)
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-07
+**Última atualização:** 2026-10-08
 
 ---
 
@@ -17,10 +17,10 @@ A tela de Pedidos hoje não tem filtro, busca nem filtro global de lojas — lac
 ## 2. Estrutura da tela
 
 - **Cabeçalho:** título "Pedidos" + subtítulo contextual — "Pedidos referentes às lojas da categoria Vendas" (filtro em "Todas as Lojas") ou "Pedidos de N lojas selecionadas no filtro global" (singular: "1 loja selecionada"). À direita: campo de busca e botão "Exportar".
-- **Macro-abas:** "Em andamento (N)" / "Finalizados (N)" — contam pedidos em cada bucket, dentro do contexto selecionado no header global. "Em andamento" exibe "+99" acima de 99; quando há pedidos novos, a tag "Novos" aparece entre o rótulo e o contador (ver [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md)).
+- **Macro-abas:** "Em andamento (N)" / "Finalizados (N)" — contam pedidos em cada bucket, dentro do contexto selecionado no header global. os dois contadores ("Em andamento" e "Finalizados") exibem "+99" acima de 99; quando há pedidos novos, a tag "Novos" aparece entre o rótulo e o contador (ver [Tabela-Colunas-Comportamento-SLA.md](Tabela-Colunas-Comportamento-SLA.md)).
 - **Filtro segmentado dentro de "Em andamento":** Todos / Conferência / Na fila / Em separação / Liberados — single-select, default "Todos". Os segmentos não têm contador; os contadores ficam só nas macro-abas.
 - **Filtro segmentado dentro de "Finalizados":** Todos / Concluídos / Cancelados, com a tag "Limite 30 dias" à direita dos chips.
-- **Painel "Todos os filtros"** (Figma; 5 grupos com rótulo em caixa alta, chips de seleção múltipla, aplicação em conjunto; chip selecionado com borda azul e ícone de check; rodapé fixo com "Limpar" (desmarca todas as opções do painel; só altera a tabela quando o usuário clica em "Aplicar") e "Aplicar"; sem contagem por grupo; painel de cerca de 380 px de largura e conteúdo de no máximo cerca de 440 px de altura, com rolagem interna):
+- **Painel "Todos os filtros"** (Figma; 5 grupos com rótulo em caixa alta, chips de seleção múltipla, aplicação em conjunto; chip selecionado com borda azul e ícone de check; rodapé fixo com "Limpar" (desmarca todas as opções do painel; só altera a tabela quando o usuário clica em "Aplicar") e "Aplicar"; sem contagem por grupo; painel de 360 px de largura e conteúdo de no máximo cerca de 440 px de altura, com rolagem interna):
   - ITENS: Só medicamentos (pedido em que todos os itens são medicamento, conforme `IsMedicamento` do catálogo), Com receita
   - TIPO DE PEDIDO: Entrega, Retirada
   - PRAZO: Atrasado, 20 min para atrasar, Em tempo, Parado
@@ -143,6 +143,7 @@ Confirmados em código em 2026-10-05; cada ponto está embutido como "Ponto de a
 
 ## Changelog
 
+- **2026-10-08** — Protótipo "Novo Portal - Navegável" (Claude Design) é a verdade e sobrepõe decisões anteriores de Pedidos (PRD v2.15): o teto "+99" vale também para o contador de Finalizados (resposta do PO); painel de filtros com 360 px de largura. Subtítulo da tela com "Pedidos de N lojas selecionadas no filtro global" mantido; o valor de N (só lojas de Vendas ou todas do contexto) fica em aberto.
 - **2026-10-07** — Revisão contra o protótipo Claude Design de 07/10 (ECP-1556, ECP-1557): "Limpar" do painel apenas desmarca as opções (efeito só ao "Aplicar") e o painel não mostra contagem por grupo (pendências resolvidas); "Ver pedidos" do toast agrupador seleciona Atrasado e Parado no grupo PRAZO; faixa de busca com "1 pedido encontrado" no singular. Divergências do protótipo com decisões do PO, não adotadas: rótulos antigos do painel ("Tipo", "Com receita (Rx)", "Tipo de entrega") e largura de 360 px (vale o print do PO: ITENS…, "Com receita", 380 px); busca disparada a cada tecla (vale o debounce de 2 segundos).
 - **2026-10-06 (2)** — Handoff Figma e respostas do PO: painel de filtros com os rótulos do Figma (ITENS, TIPO DE PEDIDO, PRAZO, STATUS DO PAGAMENTO, MÉTODO DE PAGAMENTO; "Com receita" sem "(Rx)"), chips com check, "Limpar"/"Aplicar", dimensões e rolagem interna, bolinha de contagem no botão; tag "Limite 30 dias" à direita dos chips; critério Pedidos × Ofertas (Vendas+Ofertas vê Pedidos com lojas de Ofertas desabilitadas; só-Ofertas não vê o item) substitui o empty state; spinner limitado à área de conteúdo e skeleton de 8 linhas; empty states, lupa × debounce e título da aba registrados como pendência.
 - **2026-10-06** — Busca digitada com debounce de 2 segundos (regra geral do PO para todo filtro de busca digitada).
