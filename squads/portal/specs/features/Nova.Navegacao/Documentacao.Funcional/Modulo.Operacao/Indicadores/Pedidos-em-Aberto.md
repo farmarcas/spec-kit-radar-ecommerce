@@ -5,7 +5,7 @@
 **Referência:** `Manual-Portal-Radar-Ecommerce.md`, seções 5.1 (linhas "Total de Pedidos em Aberto", "Volume dos pedidos em aberto", "Pedidos em aberto por status", "Tempo médio para iniciar primeiro atendimento", "Tempo médio total de atendimento", "Média de itens por cesta") e 8 (Conferência conta como status aberto); ECP-1056 (itens 2 e 3: indicador independe do período; definição dos tempos a confirmar); **Figma:** a ser atualizado pela UX ainda nesta semana (layout, rótulos e textos finais pendentes) — os rótulos citados são o texto atual do legado
 **Relacionado:** [Home-Vendas-Visao-Geral.md](Home-Vendas-Visao-Geral.md), [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md)
 **Status:** Em refinamento (cards em Backlog no Jira)
-**Última atualização:** 2026-10-07
+**Última atualização:** 2026-10-08
 
 ---
 
@@ -24,7 +24,7 @@ Todos são reconstrução 1:1 com os pontos de correção da seção 5. A entreg
 - **Volume dos pedidos em aberto (1579):** rótulo "Volume dos pedidos em aberto" + valor em destaque no formato "R$ 1.234,56" + skeleton + erro com "Atualizar".
 - **Pedidos em aberto por status (1580):** título, **rosca** com miolo vazio (corte de 80% no legado), legenda estática (quadrado colorido, nome da etapa e percentual) e tooltip "Etapa: quantidade (percentual%)" ao passar o mouse na fatia; sem clique e sem legenda interativa. Fatias na ordem do Manual: **Conferência, Fila, Em separação e Liberados**; cores do legado: Fila `#E5E8EB`, Em separação `#89C9FF`, Liberados `#0091FF` (a cor da Conferência está em Pendências). Estado vazio: anel cinza vazio e legenda com 0% em todas as etapas. O componente de rosca é criado neste card (se ainda não existir) e é reutilizável por Formas de pagamento e Métodos de entrega.
 - **Tempo médio para iniciar primeiro atendimento (1581)** e **Tempo médio total de atendimento (1582):** valor em destaque em formato de duração (no legado, os dois formam um cartão duplo).
-- **Média de itens por cesta (1583):** descrição "Média de itens por cesta" + valor em destaque (o legado mostra o ícone de cesta `shopping-basket`, em azul).
+- **Média de itens por cesta (1583):** descrição "Média de itens por cesta" + valor em destaque (o legado mostra o ícone de cesta `shopping-basket`, em azul); o elemento ocupa a metade esquerda de um cartão duplo, ao lado do Ticket médio (ECP-1608), na metade direita.
 - Todos: skeleton e estado de erro com "Atualizar" que recarrega só o elemento; os demais blocos seguem normais. Os elementos de tempo e cesta recarregam ao trocar o período ou o contexto; os de pedidos em aberto recarregam ao trocar o contexto.
 
 ## 3. Regras de negócio
@@ -160,10 +160,10 @@ No BFF a duração é formatada por `HelperText.FormatTimeSpanAsHourMinute` (`He
 - [ ] **Definição do "primeiro atendimento"** (1581): o legado mede criação → triagem (Em separação); o Manual e o ECP-1056 descrevem "Na fila → Concluído" para o tempo total (e sugerem "Na fila → Em separação" para o início); a decisão do PO de 2026-10-05 é contar da criação do pedido. Confirmar que a triagem é o marco final do "primeiro atendimento" e, no total (1582), a definição "criação → encerramento".
 - [ ] **Pedidos em Conferência, Em separação ou Liberados no momento da consulta** não entram nos tempos (só `Pending`, concluídos e cancelados); manter? (1581 e 1582)
 - [ ] **Universo da média de itens** (1583): manter o do legado (`Pending`, concluídos e cancelados) ou, como diz o Manual, todos os pedidos do período, concluídos ou não? Exibir com casas decimais (ex.: "2,4") em vez de inteiro arredondado (o protótipo de 07/10/2026 exibe "2,70")?
-- [ ] **Cartão duplo no protótipo de 07/10/2026 (1583):** a Média de itens por cesta forma um único cartão de duas metades com o **Ticket Médio** (ícone de ticket, rótulo "Ticket Médio" com tooltip "Valor médio gasto por pedido no período, calculado dividindo o faturamento total pela quantidade de pedidos." e valor em R$). O Ticket Médio não tem História própria; definir se o cartão duplo é entregue pelo ECP-1583 ou se o Ticket Médio ganha História (regra já decidida pelo PO em 2026-10-05: faturamento ÷ pedidos, com a âncora e os status do Faturamento). Os dois tempos de atendimento (1581 e 1582) aparecem no protótipo em um cartão duplo acima dele.
 - [ ] Onde o back-end vive e o ponto final de cache/agregação: engenharia, por teste de carga.
 
 ## Changelog
 
+- **2026-10-08** — Cartão duplo da Média de itens por cesta com o Ticket médio definido: o Ticket médio é entregue no ECP-1608 (card próprio) e a pendência do cartão duplo foi removida; a estrutura do cartão duplo é entregue pela primeira História desenvolvida (1583 ou 1608).
 - **2026-10-07** — Revisão contra o protótipo "Novo Portal - Navegável" (Claude Design, 07/10/2026): novas pendências para a rosca (3 fatias sem Conferência, cores, tooltip), o botão "Visualizar pedidos" (link para Pedidos) e o cartão duplo Média de itens por cesta + Ticket Médio.
 - **2026-10-06** — Criação do documento (v1), a partir dos cards ECP-1578 a ECP-1583 e das decisões do PO de 2026-10-05 (Conferência na rosca, tempo contado desde a criação do pedido e cancelados entram, correção do `Whithdrawn`, remoção do cache) e de 2026-10-06 (Home igual nos perfis, Figma a ser atualizado).
