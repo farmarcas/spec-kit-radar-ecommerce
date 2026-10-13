@@ -4,7 +4,7 @@
 **Squad:** Portal
 **Autor:** Matheus (PO/PM)
 **Status:** Validado — em desenvolvimento
-**Versão:** 2.16
+**Versão:** 2.17
 
 ---
 
@@ -111,6 +111,8 @@
 - **Mantidos por decisão do PO:** debounce de 2 s na busca digitada, sem "Ir para o pedido" no drawer da Ruptura, rosca de pedidos em aberto com Conferência (a confirmar), texto de última atualização sem especificação.
 
 **v2.16 (2026-10-13)** — **Respostas do PO sobre cards em Pronto para Refinamento.** Subtítulo da tela de Pedidos fixo ("Pedidos referentes às lojas da categoria Vendas"); tabela sem colunas fixas nem scroll horizontal; coluna Resumo com "Cobrar" (com troco: ícone de recibo e tooltip "Cobrar"); 2ª linha do Tipo em Finalizados = "Hoje às HH:MM" ou "DD/MM às HH:MM" da conclusão/cancelamento; tag Parado sem tooltip e abrir o pedido não conta como movimentação; ponto vermelho da sidebar e tag "Novos" referem-se a pedidos novos ainda não visualizados (card futuro); macro-aba "Loja de Ofertas" (Figma) com skeleton só no contêiner; seletor de período com "Hoje", "Últimos 7 dias", "Últimos 30 dias", "Últimos 3 meses", "Últimos 12 meses" e "Personalizado" (sem "Este mês"); estrela de cliente recorrente e posição do pedido ficam no card do cliente recorrente; imprimir em todas as etapas; sem bandeira do cartão; frete grátis é configuração da loja; o cliente não cancela pedido (sempre por ação no Portal).
+
+**v2.17 (2026-10-13)** — **Respostas do PO sobre a edição de itens na Conferência (ECP-1609).** Não se pode remover todos os itens (segue o legado: lixeira do último item desabilitada; pedido de 1 item e 1 unidade sem ajuste); "Novo troco" segue o Figma; sem banner de item sem estoque; digitação direta da quantidade mantida, com erros e balão no limite; split promocional mantém a regra atual; itens removidos e "Orig: N" só somem nas etapas posteriores e "Ajustes de itens" persiste; "Restaurar" devolve a quantidade original; diálogo "Liberar pedido para a fila" varia por tipo de movimentação (ECP-1517); snackbars de 3 segundos; cancelar descarta o rascunho; pedido que sai da Conferência perde o rascunho; estoque disponível considera o estoque centralizado pela lógica atual. Em aberto: fechar sem mover (a princípio descarta sem perguntar) e a mensagem do modal quando o rascunho é perdido.
 
 ---
 
