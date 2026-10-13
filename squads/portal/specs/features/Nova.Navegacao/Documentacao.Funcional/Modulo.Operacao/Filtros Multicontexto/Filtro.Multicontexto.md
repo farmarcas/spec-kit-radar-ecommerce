@@ -5,7 +5,7 @@
 **Componente reaproveitado de:** [ECP-1281](https://farmarcas.atlassian.net/browse/ECP-1281) (filtro dependente Rede→Loja, com os textos parciais de "Todas as Redes" e os estados de loading, vazio e falha); [ECP-1291](https://farmarcas.atlassian.net/browse/ECP-1291) (cascata de Grupo de lojas — não desenvolvida agora)
 **PRD de origem:** `PRD-nova-navegacao-multicontexto-pedidos.md`, seções 5, 5.1, 5.2, 5.3
 **Status:** Em desenvolvimento
-**Última atualização:** 2026-10-06
+**Última atualização:** 2026-10-13
 
 ---
 
@@ -27,8 +27,9 @@ O Filtro Multicontexto é o seletor de contexto de trabalho que aparece no heade
 
 ## 3. Estrutura do seletor
 
-1. **Redes** — botão e painel próprios (busca "Buscar rede…", "Selecionar todos", lista das Redes às quais o usuário tem vínculo, contador "marcadas/total", "Limpar" e "Aplicar").
-2. **Lojas** — botão e painel próprios (busca por nome ou CNPJ, "Selecionar todos", lista agrupada por UF com a etiqueta do módulo — Vendas ou Ofertas —, contador "marcadas/total", "Limpar" e "Aplicar"), filtrada pelas Redes aplicadas.
+1. **Redes** — botão "Todas as Redes ▾" e painel próprio: busca "Buscar rede...", opção "Selecionar todas" (que vira "Selecionar visíveis" quando há texto digitado), lista das Redes às quais o usuário tem vínculo (checkbox, nome e "N lojas" abaixo do nome, com rolagem interna), rodapé com "Limpar", contador "N/total" (ex.: "12/12") e "Aplicar".
+2. **Lojas** — botão "Todas as Lojas ▾" e painel próprio: busca "Buscar por nome ou CNPJ...", "Selecionar todos" (que vira "Selecionar visíveis" com texto digitado), lista agrupada por UF (checkbox, nome, etiqueta do módulo — Vendas ou Ofertas — e "CNPJ · cidade"), rodapé com "Limpar", contador "marcadas/total" (ex.: "1700/1723") e "Aplicar"; filtrada pelas Redes aplicadas.
+- **Resumo nos botões:** "Todas as Redes" e "Todas as Lojas" na seleção padrão; "N lojas" (ou "N redes") com 2 ou mais aplicadas; o nome da loja (ou da Rede) quando há uma só; com o contexto diferente do padrão o botão fica destacado com borda azul.
 3. **Seleção por grupo** — atalho de seleção **dentro do painel de Lojas** (Grupo = agrupamento de mais de uma loja do Estoque Centralizado; não é um nível hierárquico nem um CRUD). **Não é desenvolvida agora** — ver 4.5.
 
 ## 4. Regras de negócio
@@ -46,17 +47,21 @@ Fonte: [[project_portal_user_roles]].
 
 ### 4.2 Filtro de Loja some quando não há o que selecionar
 
-Se o usuário só tem 1 loja vinculada, o seletor de Lojas não é exibido — não há nada pra alterar; com 1 Rede e 1 loja o header mostra o texto "Rede · Loja (Cidade)" (ver 4.6). Para o comportamento do lado Rede (logo única read-only vs. seletor de múltiplas Redes), ver 4.6 — não duplicar a regra aqui.
+Se o usuário só tem 1 loja vinculada, o seletor de Lojas não é exibido — não há nada pra alterar; com 1 Rede e 1 loja o header mostra o chip "Rede › Loja (Cidade)" (ver 4.6). Para o comportamento do lado Rede (logo única read-only vs. seletor de múltiplas Redes), ver 4.6 — não duplicar a regra aqui.
 
 ### 4.3 Filtro dependente Rede → Loja (paginado)
 
 - Default: todas as opções vêm pré-selecionadas (todas as Redes/Lojas às quais o usuário tem vínculo) — e isso é persistido.
-- **"Limpar" nos painéis (Redes e Lojas) desmarca tudo** (não volta ao default). Voltar ao default é o "Restaurar padrão" (4.8).
+- **"Limpar" no rodapé dos painéis (Redes e Lojas) desmarca todas as opções do painel** (não volta ao default e não recarrega as telas até o "Aplicar"). "Aplicar" sem nenhuma opção marcada aplica a seleção padrão (todas as Redes ou todas as lojas do vínculo; ver Pendências). Voltar ao default é o "Limpar" do header (4.8). Sem nenhuma loja marcada, o contador do rodapé mostra total/total.
 - Lista de Lojas agrupada por Estado (UF), ordenação alfabética (Estado → Razão Social), busca por nome ou CNPJ (ignorando caracteres especiais no CNPJ), disparada ao digitar qualquer caractere, com debounce de 2 segundos e sem Enter.
 - Lista traz tanto lojas do módulo Vendas quanto do módulo Ofertas, cada uma com a etiqueta do módulo. O contador "marcadas/total" e o "Selecionar todos" **contam as lojas de Ofertas independente da tela** em que o usuário está.
-- **Pedidos × lojas de Ofertas:** Pedidos só existe para lojas de Vendas. O usuário que tem lojas de Vendas e de Ofertas vê Pedidos, e as lojas de Ofertas ficam desabilitadas no painel de Lojas, com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; o usuário que só tem lojas de Ofertas não vê o item Pedidos. Esse critério **não é deste filtro**: fica como critério da criação da tela de Pedidos, onde será validado (não existe empty state por "só Ofertas").
-- Efeito do "Aplicar" de Redes sobre as Lojas já aplicadas: replica o comportamento do design.
-- Erros, loading e estados vazios do filtro: texto parcial de "Todas as Redes" e estados de loading/vazio/falha estão nos critérios do ECP-1281; os cenários de erro do filtro ficam no ECP-1568 (o painel mostra "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente", e o seletor continua mostrando a última seleção válida). A paginação da lista é resolvida pelo backend.
+- **Pedidos × lojas de Ofertas:** Pedidos só existe para lojas de Vendas. O protótipo mostra, na tela de Pedidos, as lojas de Ofertas desabilitadas no painel de Lojas com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; esse critério **não é deste filtro**: fica como critério da criação da tela de Pedidos (ver Pendências). O item Pedidos aparece para todos os perfis, inclusive para quem só tem lojas de Ofertas (ECP-1495).
+- **Efeito do "Aplicar" de Redes sobre as Lojas já marcadas:** as lojas marcadas que não pertencem às Redes aplicadas são descartadas da seleção de Lojas e as demais são mantidas; a lista do painel de Lojas passa a mostrar só as lojas das Redes aplicadas.
+- **Busca de Redes:** disparada ao digitar qualquer caractere, com debounce de 2 segundos, filtrada no servidor.
+- **Falha ao carregar** a lista de lojas ou de Redes (mesma mensagem nos dois painéis): "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente", com o botão do rodapé apenas fechando o painel.
+- **Estado vazio da busca:** "Nenhuma rede encontrada para “q”" (Redes) e "Nenhuma loja encontrada para “q”" (Lojas), onde q é o texto digitado.
+- **Carregamento ao aplicar:** skeleton nas telas de Operação enquanto os dados do novo contexto carregam; se a carga passar de 8 segundos, snackbar persistente "Ainda carregando..." com a ação "Tentar novamente"; se a aplicação falhar, o contexto volta ao anterior e um snackbar persistente "Não foi possível aplicar o filtro" com a ação "Tentar novamente" é exibido.
+- A paginação da lista é resolvida pelo backend.
 - **Lista de Lojas é paginada (scroll infinito), não vem inteira de uma vez** — débito técnico identificado depois da entrega inicial (redes grandes, ex. 840+ lojas, não escalavam com lista completa). Marcar uma ou mais Redes já não recalcula um array client-side: reinicia a busca paginada na página 1, filtrada server-side pelas Redes marcadas — isso substitui o recálculo puramente client-side da versão original do filtro. Ver seção 5 para os endpoints envolvidos.
 
 (ECP-1281; paginação: ECP-1468)
@@ -83,20 +88,20 @@ A cascata, a coluna "Seleção por grupo" do painel de Lojas e a opção "sem gr
 
 O bloco à esquerda do header varia conforme quantas Redes o usuário tem vinculadas — isso é sobre a **exibição** do header, não sobre a lógica do filtro em si:
 
-- **Várias Redes vinculadas (Gestor de Rede e Admin):** os dois botões, "Todas as Redes ▾" e "Todas as Lojas ▾".
-- **1 única Rede vinculada** (inclusive Gestor de Rede com uma Rede só): mostra a logo + nome da Rede, **read-only** (reaproveitando o asset já usado hoje no Portal), no lugar do botão de Redes, seguida do botão "Todas as Lojas ▾" — sem seletor de Rede, já que não há o que escolher. Vale mesmo que o usuário tenha 2+ lojas dentro dessa única Rede (o seletor de Lojas continua editável nesse caso — ver 4.2/4.3; só o lado Rede fica travado na logo).
-- **1 Rede e 1 loja:** texto "Rede · Loja (Cidade)" (ex.: "Acfarma · Bocaiuva (Palotina)"), sem seletor.
+- **Mais de 1 Rede (Gestor de Rede e Admin):** os dois botões, ícone de rede com "Todas as Redes ▾" e ícone de loja com "Todas as Lojas ▾", sem a logo da Rede.
+- **1 única Rede e mais de 1 loja (Gestor de Loja):** chip com a logo e o nome da Rede, **read-only** (a logo vem do cadastro da Rede, `whiteLabelOptions.logoUrl`, com `logoUrl` como alternativa), seguido do botão com ícone de loja "Todas as Lojas ▾" — sem seletor de Rede, já que não há o que escolher (o seletor de Lojas continua editável — ver 4.2/4.3; só o lado Rede fica travado).
+- **1 Rede e 1 loja:** chip da Rede (logo e nome), seta e o nome da loja com a cidade entre parênteses (ex.: "Acfarma › Bocaiuva (Palotina)"), sem seletor.
 - O header da Gestão de Lojas é do módulo de Configuração (em standby) e não faz parte deste documento — ver [Gestao-de-Lojas.md](../../Modulo.Configuracao/Gestao-de-Lojas.md).
 
 (PRD, seção 5.1)
 
 ### 4.7 Propagação entre telas (mudança em relação a hoje)
 
-Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo novo, o contexto selecionado passa a valer para **todas** as telas do módulo de Operação simultaneamente — trocar de contexto em qualquer uma delas (Home, Pedidos, Promoções, Usuários) atualiza as outras também, dentro da mesma sessão de navegação. (PRD seção 5.1)
+Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo novo, o contexto selecionado passa a valer para **todas** as telas do módulo de Operação simultaneamente — trocar de contexto em qualquer uma delas (Home, Pedidos, Promoções, Usuários) atualiza as outras também, dentro da mesma sessão de navegação. O contexto aplicado fica salvo; a ida à Gestão de Lojas (header sem seletores) e a volta à Operação não o alteram (regra de negócio e critério de aceite do ECP-1568; o corpo do card ainda cita "restaurar para default" — ver Pendências). (PRD seção 5.1)
 
-### 4.8 Restaurar padrão
+### 4.8 Limpar (header)
 
-"Restaurar padrão" é da **multinavegação** (não é específico de Pedidos): aparece ao lado dos seletores quando o contexto aplicado (Redes/Lojas) é diferente do padrão e, ao clicar, volta à seleção padrão (4.3). Some quando o contexto volta ao padrão. (PRD, seção 5.1)
+"Limpar" do header é da **multinavegação** (não é específico de Pedidos): aparece ao lado dos botões, em qualquer tela de Operação, quando o contexto aplicado (Redes e/ou Lojas) é diferente do padrão e, ao clicar, volta Redes e Lojas à seleção padrão (tudo marcado), recarrega as telas e some em seguida. Com 1 Rede travada, limpa só a seleção de Lojas. (PRD, seção 5.1)
 
 ### 4.9 O que este filtro NÃO cobre
 
@@ -108,6 +113,7 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 - **Perfis de acesso** são mapeados no JWT/código como `admin`, `network_manager`, `pharmacy_owner`, `order_manager` (ver 4.1). O front não deve confiar só em strings de UI — o guard fino (`SessionPermissionGuard`, permissões `offer:*`/`product:*`/`order:*`/`pharmacy:*`) existe no código mas está **desabilitado**, status não confirmado pelo time — não assumir intencional nem bug sem reconfirmar. (ver [[project_portal_user_roles]])
 - **Grupo de lojas** não tem tabela própria pra este filtro — a fonte é a mesma configuração de Estoque Centralizado (nome do grupo, lojas vinculadas, tipo de atendimento e de estoque). (ver [[project_grupo_de_lojas_estoque_centralizado]])
 - **GE (Grupo Econômico)** — usado no filtro *de Indicadores*, não neste seletor — vem da tabela Postgres `pharmacy_economic_group` (`CNPJ`, `Group` int, `id`), 1 linha por loja, join por `CNPJ`. Nem toda loja tem registro nessa tabela — ausência de linha significa "sem GE", não erro. (ver [[project_grupo_economico_source_table]])
+- **Uso na entrega:** o retorno de Grupos não é usado; a lista do multiselect de Redes sai de `networks[]` (ou de `networks-filter`); a etiqueta "Vendas"/"Ofertas" sai de `module`; o chip "Rede › Loja (Cidade)" usa `name` e `city` da única loja do vínculo; `total` alimenta o contador do rodapé do painel de Lojas. Não usa cache.
 - **Endpoints do filtro (identificados via débito técnico ECP-1468, na versão atual de produção do filtro de Indicadores — a reconfirmar quando ECP-1494 reaproveitar o componente):**
   - `GET /backoffice/sales-and-marketing/v2/dashboard/indicators/filters` — retorna `networks` (Redes do usuário), `groups` (GEs), e as flags `viewEconomicGroup`/`viewNetwork`/`viewStore` (ex.: `viewStore: false` quando o vínculo é de 1 loja só). No `main` do BFF (2026-10-01) o campo `stores` **não vem vazio**: o comando pagina internamente (9999 por página) e devolve todas as lojas agrupadas por UF — o requisito de lista paginada (ECP-1468) deve usar o endpoint paginado abaixo; o código de ECP-1468 não foi localizado nos clones. As flags `viewEconomicGroup`/`viewNetwork`/`viewStore` são strings `hidden`/`locked`/`editable` (regra: 1 loja ou menos → Loja oculta; 1 Rede ou menos → Rede travada; Grupo: 0 oculto, 1 travado, 2+ editável).
   - `POST /backoffice/sales-and-marketing/v1/dashboard/indicators/advanced-filters/stores-filter` — body `{networks, groups, states, search, page, perPage}`, resposta `{stores[], total, page, count, last, regs}`. `page` sempre reinicia em 1 quando a busca ou a seleção de Rede muda; scroll incrementa `page` até `last: true`; `total` alimenta o texto "Todas as Lojas"/"X selecionados".
@@ -121,22 +127,34 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 
 | Cenário | Regra |
 |---|---|
-| Usuário com vínculo a 1 única loja | Seletor de Lojas não aparece; com 1 Rede e 1 loja o header mostra "Rede · Loja (Cidade)" (ver 4.6) |
-| Usuário com 2+ lojas, todas na mesma Rede | Header mostra a logo + nome da Rede (read-only, ver 4.6) e o botão "Todas as Lojas ▾", editável com as lojas dessa Rede |
-| Gestor de Rede com 1 Rede única | Header mostra a logo da Rede no lugar do botão de Redes (ver 4.6) |
-| Usuário clica em "Limpar" num painel (Redes ou Lojas) | Desmarca tudo (4.3); "Aplicar" só atualiza as telas quando clicado |
-| Contexto aplicado diferente do padrão | Aparece "Restaurar padrão"; ao clicar, volta à seleção padrão (4.8) |
-| Usuário com lojas de Vendas e de Ofertas na tela de Pedidos | Lojas de Ofertas desabilitadas no painel de Lojas, com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; o contador "marcadas/total" continua contando as de Ofertas (critério da tela de Pedidos, ver 4.3) |
-| Usuário só com lojas de Ofertas | Item Pedidos não aparece no menu; não há empty state por "só Ofertas" |
+| Usuário com vínculo a 1 única loja | Seletor de Lojas não aparece; com 1 Rede e 1 loja o header mostra o chip "Rede › Loja (Cidade)" (ver 4.6) |
+| Usuário com 2+ lojas, todas na mesma Rede | Header mostra o chip com logo + nome da Rede (read-only, ver 4.6) e o botão "Todas as Lojas ▾", editável com as lojas dessa Rede |
+| Usuário clica em "Limpar" no rodapé de um painel (Redes ou Lojas) | Desmarca todas as opções do painel (4.3); nenhuma tela é recarregada até o "Aplicar" |
+| "Aplicar" sem nenhuma opção marcada | Volta à seleção padrão (4.3; confirmar) |
+| Aplica uma única Rede tendo lojas marcadas de várias Redes | As lojas das outras Redes são descartadas; as da Rede aplicada continuam marcadas (4.3) |
+| Contexto aplicado diferente do padrão | Aparece "Limpar" no header; ao clicar, volta à seleção padrão (4.8) |
+| Busca sem resultado | "Nenhuma rede encontrada para “q”" / "Nenhuma loja encontrada para “q”" (4.3) |
+| Carga do novo contexto passa de 8 segundos | Snackbar persistente "Ainda carregando..." com "Tentar novamente" (4.3) |
+| Falha ao aplicar o contexto | Contexto volta ao anterior; snackbar persistente "Não foi possível aplicar o filtro" com "Tentar novamente" (4.3) |
+| Usuário com lojas de Vendas e de Ofertas na tela de Pedidos | O protótipo mostra lojas de Ofertas desabilitadas com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; critério da tela de Pedidos (ver 4.3 e Pendências) |
+| Usuário só com lojas de Ofertas | Vê o item Pedidos (ECP-1495); tratamento na tela de Pedidos |
 | Rede com 840+ lojas (caso real citado no débito técnico) | Lista de lojas não vem inteira — busca paginada via scroll infinito (ver seção 5) |
 | Usuário marca 2 lojas e clica fora do menu sem "Aplicar" | Seleção não é aplicada, nenhuma chamada de dados é feita |
 | Usuário marca/desmarca várias lojas em sequência | Nenhuma chamada de dados até clicar "Aplicar" (1 chamada no final, não 1 por clique) |
 | Navegação entre telas do módulo de Operação com contexto já selecionado | Contexto persiste e se propaga pras demais telas na mesma sessão |
 | Desmarca 1 loja de um grupo totalmente selecionado | Checkbox do grupo cai pro estado parcial, sem afetar outros grupos (regra da "Seleção por grupo", não desenvolvida agora — 4.5) |
-| Falha ao carregar a lista de lojas | O painel mostra "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente"; o seletor continua mostrando a última seleção válida (ECP-1568 e ECP-1281) |
+| Falha ao carregar a lista de lojas ou de Redes | O painel mostra "Não foi possível carregar suas lojas" / "Verifique sua conexão e tente novamente"; o botão do rodapé só fecha o painel (ECP-1568) |
 
 ## 7. Pendências / perguntas em aberto
 
+- [ ] Seleção por grupo: o protótipo mostra a coluna "Seleção por grupo" no painel de Lojas; o Grupo não é desenvolvido agora e fica fora do ECP-1568.
+- [ ] Lojas de Ofertas na tela de Pedidos: o protótipo mostra a faixa "Pedidos existem apenas para lojas de Categoria Vendas." e as lojas de Ofertas desabilitadas; é critério da criação da tela de Pedidos, não do ECP-1568.
+- [ ] "Aplicar" sem nenhuma opção marcada: o protótipo trata como seleção padrão (todas); confirmar.
+- [ ] Painel aberto na seleção padrão: o protótipo abre o painel sem caixas marcadas (contador N/N); o card especifica tudo marcado; confirmar.
+- [ ] Busca de lojas por cidade: o protótipo casa o texto também com a cidade; confirmar.
+- [ ] Busca digitada: o protótipo filtra a cada tecla; o card mantém o debounce de 2 segundos; confirmar.
+- [ ] Tempo do snackbar "Ainda carregando...": o protótipo simula em 3 segundos; o card especifica mais de 8 segundos.
+- [ ] Ida à Gestão de Lojas e volta: o corpo do ECP-1568 diz "restaurar o filtro para default", enquanto a regra de negócio e o critério de aceite dizem que o contexto aplicado continua o mesmo; o doc segue a regra e o critério; confirmar.
 - [ ] Localizar a fonte do atalho "Grupo de lojas" (Estoque Centralizado): `groups` nos endpoints do BFF é o GE. Só será necessário quando a "Seleção por grupo" entrar (não desenvolvida agora).
 - [ ] Confirmar o endpoint paginado `stores-filter` como fonte única da lista de lojas (o `GET filters` atual devolve todas).
 
@@ -146,6 +164,7 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 
 ## Changelog
 
+- **2026-10-13** — Alinhado ao ECP-1568 atual e ao protótipo: painel de Redes com "Selecionar todas", "N lojas" por Rede e contador "N/total"; "Selecionar visíveis" com texto digitado; resumo nos botões ("N lojas", nome da loja, borda azul fora do padrão); "Restaurar padrão" passa a "Limpar" do header (o "Limpar" do rodapé desmarca o painel); "Aplicar" de Redes descarta lojas fora das Redes aplicadas; estados de falha, vazio e carregamento (skeleton, "Ainda carregando..." após 8 s, "Não foi possível aplicar o filtro"); header em três variações com chip "Rede › Loja (Cidade)"; item Pedidos visível também para só-Ofertas; pontos em aberto do protótipo registrados.
 - **2026-10-06 (2)** — Handoff Figma e respostas do PO: contexto = sempre dois seletores, Redes e Lojas (sem menu único de 3 níveis); "Seleção por grupo" dentro de Lojas fica fora do desenvolvimento agora; "Reverter alterações" vira "Restaurar padrão" da multinavegação (4.8); "Limpar" desmarca tudo; o contador "marcadas/total" e o "Selecionar todos" contam as lojas de Ofertas independente da tela; Pedidos × lojas de Ofertas passa a ser critério da tela de Pedidos (lojas de Ofertas desabilitadas com aviso; só-Ofertas não vê Pedidos), e o empty state é removido; Gestor de Rede com 1 Rede única mostra a logo; 1 Rede e 1 loja mostram "Rede · Loja (Cidade)"; erros e estados do filtro ficam no ECP-1568 e ECP-1281; o header da Gestão de Lojas sai deste documento (módulo de Configuração).
 - **2026-10-06** — Regra geral do PO: toda busca digitada dispara ao digitar qualquer caractere, com debounce de 2 segundos (aplicada à busca de lojas do seletor).
 - **2026-10-05** — História própria do seletor (ECP-1568); o ECP-1494 passou a ser só o header global. Corrigido que o `GET filters` atual devolve todas as lojas; registrados escopo por perfil (literal), visibilidade por contagem e o bug de `||`.
