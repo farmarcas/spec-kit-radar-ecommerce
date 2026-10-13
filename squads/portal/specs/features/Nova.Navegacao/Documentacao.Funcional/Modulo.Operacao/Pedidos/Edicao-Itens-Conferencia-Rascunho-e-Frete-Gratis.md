@@ -45,7 +45,7 @@ A entrega de cada História cobre front-end e back-end. Perfis: todos os que ope
 - **Subtotal igual ou acima do mínimo:** sem faixa e sem evento; a taxa segue "Grátis". **Pedido com frete cobrado:** sem faixa e sem evento; a taxa de entrega continua com o valor do pedido, sem ser recalculada pelo ajuste.
 - **Gravação:** ao mudar de etapa (ECP-1517) com ajuste de itens gravado e subtotal abaixo do mínimo, a trilha registra o evento **"Frete grátis mantido"** (descrição "Valor ficou abaixo do mínimo (R$ X) após edição de itens.", ponto amarelo, responsável "Sistema") junto com "Produto removido" e "Quantidade ajustada"; sem ajuste de itens, nenhum evento. Fechar o modal sem mover o pedido não grava nada.
 - **Troco:** troco = valor informado pelo cliente − total atual (subtotal atual, sem frete); "Cliente paga com R$ X" e "Troco: R$ Y" só aparecem quando o valor informado cobre o total; o valor informado não muda com a edição (ex.: cliente paga com R$ 250,00; com subtotal de R$ 227,04 o troco é R$ 22,96 e, com o subtotal ajustado para R$ 151,36, passa a R$ 98,64).
-- **Valor mínimo:** o valor mínimo de compra para frete grátis configurado para a loja do pedido (o protótipo usa R$ 200,00 só como exemplo); a origem está em Pendências.
+- **Valor mínimo:** configuração da loja: as faixas de frete e o frete grátis a partir de um valor são configuradas pela loja (o R$ 200,00 do protótipo é só exemplo).
 
 ## 3. Nível de integração / fonte de dados
 
@@ -135,7 +135,7 @@ if (freeShippingFrom is > 0 && productsTotal >= freeShippingFrom)
 - [ ] **Cancelar o pedido com rascunho pendente:** o protótipo descarta o rascunho e cancela sobre os itens originais; confirmar.
 - [ ] **Pedido que sai da Conferência com o rascunho aberto** (liberação automática por SLA ou ação de outro usuário): mensagem e estado do modal não estão desenhados.
 - [ ] **Estoque disponível:** confirmar que "disponível N" usa o estoque da loja do pedido (`EstoqueQtd` do serviço de estoque) também para lojas de grupo com estoque centralizado.
-- [ ] **Frete grátis — origem do valor mínimo:** no código existe por loja (`OrderPrice`, `shipping_strategy.Order_Price`, linha de entrega em domicílio), lido por `GET pharmacyconfiguration/{PharmacyId}/delivery` e usado na cotação do carrinho; confirmar com a engenharia e o PO que essa é a fonte da faixa e do evento (o "R$ 200,00" do protótipo é só exemplo).
+- [ ] **Frete grátis — origem do valor mínimo:** o PO confirmou que é configuração da loja (faixas de frete e frete grátis a partir de um valor); a engenharia confirma o campo (no código existe por loja: `OrderPrice`, `shipping_strategy.Order_Price`, linha de entrega em domicílio).
 - [ ] **Frete grátis — valor mínimo da criação × valor atual:** o pedido não grava o mínimo vigente quando foi feito; a faixa e o evento usam o mínimo atual da loja ou o da criação (que passaria a ser gravado)?
 - [ ] **Frete grátis — como saber que o pedido tem frete grátis:** `Shipping.Cost = 0` também vale para frete grátis de colaborador e para frete não cotado; qual regra identifica o frete grátis por valor mínimo?
 - [ ] **Frete grátis — lojas de grupo:** sem `ignoreGroup`, a configuração de entrega devolvida é a da loja selecionada do grupo (`GetSelectPharmacyIdInGroup`); definir qual loja vale para o mínimo do pedido.

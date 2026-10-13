@@ -21,7 +21,7 @@ A sidebar é o menu de navegação principal do Portal, dividido em 2 módulos c
 | Seção "GESTÃO DE LOJAS" | "Configuração & Estoque" (item único, leva à Gestão de Lojas); "Usuários" |
 | Seção "ÁREA ADMIN" | "Produtos" (só Admin) |
 
-- **Padrão recolhido** (56 px, só ícones, com o ícone da marca no topo e divisores entre os blocos; o ícone de Pedidos mostra um ponto vermelho de alerta quando há pedido parado entre os pedidos em andamento, sem badge de contagem; o ponto some quando a sidebar abre) com **overlay de menu aberto** (240 px sobre o conteúdo, sem empurrá-lo, com a logo "radar e-commerce" e os rótulos) que abre ao passar o mouse e volta a recolher quando o mouse sai.
+- **Padrão recolhido** (56 px, só ícones, com o ícone da marca no topo e divisores entre os blocos; o ícone de Pedidos mostra um ponto vermelho quando há pedidos novos ainda não visualizados, sem badge de contagem e somente com a sidebar fechada; o ponto some quando a sidebar abre) com **overlay de menu aberto** (240 px sobre o conteúdo, sem empurrá-lo, com a logo "radar e-commerce" e os rótulos) que abre ao passar o mouse e volta a recolher quando o mouse sai.
 - O item da tela atual aparece destacado.
 - Estoque e Configurações do módulo de Configuração são acessados via "Configuração & Estoque" → Gestão de Lojas, nunca direto.
 
@@ -50,7 +50,7 @@ Alternar para o módulo de Configuração sempre passa pela Gestão de Lojas ant
 
 ### 3.4 Badge "Novos" no item Pedidos
 
-A sidebar exibe a tag azul "Novos" no item Pedidos (visível com a sidebar aberta, sem badge de contagem); o ponto vermelho do ícone recolhido indica pedido parado entre os pedidos em andamento. A regra do que gera cada indicativo é definida na construção da tela de Pedidos (ver [Tabela-Colunas-Comportamento-SLA.md](../Modulo.Operacao/Pedidos/Tabela-Colunas-Comportamento-SLA.md), "Chegada de pedidos novos"), não no ECP-1495.
+A sidebar exibe a tag azul "Novos" no item Pedidos (visível com a sidebar aberta, sem badge de contagem), somente quando há pedidos ainda não visualizados; o ponto vermelho do ícone recolhido (sidebar fechada) indica pedidos novos ainda não visualizados. A regra do que gera cada indicativo é definida na construção da tela de Pedidos (ver [Tabela-Colunas-Comportamento-SLA.md](../Modulo.Operacao/Pedidos/Tabela-Colunas-Comportamento-SLA.md), "Chegada de pedidos novos"), não no ECP-1495.
 
 ## 4. Nível de integração / fonte de dados
 
@@ -72,10 +72,11 @@ A sidebar exibe a tag azul "Novos" no item Pedidos (visível com a sidebar abert
 
 - [ ] Confirmar mecanismo técnico do guard de rota (framework de roteamento do novo front React) — ainda não definido.
 - [ ] "Usuários" aparece sob "GESTÃO DE LOJAS" no Figma, mas usa o seletor multicontexto de Operação (PRD 5.2): confirmar se o agrupamento visual muda o módulo/contexto da tela.
-- [ ] Regra do indicativo "Novos" e do ponto vermelho de pedido parado: a construir com a tela de Pedidos.
+- [ ] Regra do indicativo "Novos" e do ponto vermelho (pedidos novos ainda não visualizados, com a sidebar fechada): será definida no card que trata da distinção de novos pedidos (a criar), não no ECP-1495.
 
 ## Changelog
 
+- **2026-10-13 (2)** — Respostas do PO: o ponto vermelho do ícone de Pedidos acende quando há pedidos novos ainda não visualizados, com a sidebar fechada (antes: pedido parado); a tag "Novos" aparece somente para pedidos ainda não visualizados (a regra entra no card de distinção de novos pedidos); a tag "Em breve" não entra neste card (Promoções e Usuários ainda serão prototipados); Balconista só de loja de Ofertas vai direto para Promoções.
 - **2026-10-13** — Alinhado ao ECP-1495 atual e ao protótipo: sidebar recolhida de 56 px e overlay de 240 px (antes 64 px e 288 px) que recolhe quando o mouse sai; tag "Novos" sem badge de contagem; ponto vermelho no ícone de Pedidos quando há pedido parado; item Pedidos oculto para quem só tem lojas de Ofertas (visível para quem tem lojas de Vendas e de Ofertas); Balconista entra em Pedidos (Balconista de loja de Ofertas não vê Pedidos e entra em Promoções); item da tela atual destacado; back-end informa perfil e módulo de cada loja do vínculo.
 - **2026-10-06** — Handoff Figma e respostas do PO: itens e agrupamentos conforme o Figma ("GESTÃO DE LOJAS" com "Configuração & Estoque" e "Usuários"; "ÁREA ADMIN" com "Produtos"; badge "Novos" + contador em Pedidos); padrão colapsado com overlay só por hover; item Pedidos oculto para quem só tem lojas de Ofertas; acesso indevido por URL redireciona para a primeira tela acessível; a regra do badge fica para a tela de Pedidos.
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1495/ECP-1451 e da PRD seção 5.

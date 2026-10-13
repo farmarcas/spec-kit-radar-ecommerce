@@ -15,10 +15,10 @@ A estrutura comum que todos os indicadores da Home de Indicadores (Vendas e Ofer
 
 ## 2. Estrutura
 
-- **Cabeçalho da página:** título "Indicadores" e, à direita, na ordem, o slot do **filtro de GE** (ECP-1512; visível só para Admin), o **seletor de período** e o slot do botão "Exportar" (a exportação em si não faz parte deste card). Abaixo, as macro-abas "Lojas de Vendas" / "Lojas de Ofertas" (ECP-1598).
-- **Seletor de período** (componente novo): campo de seleção única; período padrão **"Hoje"**. Opções: "Hoje", "Últimos 7 dias", "Últimos 30 dias" e "Este mês" (as do protótipo); o que o protótipo não mostra está em Pendências.
+- **Cabeçalho da página:** título "Indicadores" e, à direita, na ordem, o slot do **filtro de GE** (ECP-1512; visível só para Admin), o **seletor de período** e o slot do botão "Exportar" (a exportação em si não faz parte deste card). Abaixo, as macro-abas "Lojas de Vendas" / "Loja de Ofertas" (ECP-1598).
+- **Seletor de período** (componente novo): campo de seleção única; período padrão **"Hoje"**. Opções: "Hoje", "Últimos 7 dias", "Últimos 30 dias", "Últimos 3 meses", "Últimos 12 meses" e "Personalizado".
 - **Faixa de escopo:** mostra o contexto aplicado; com o contexto no padrão, o texto é "Exibindo todas as redes e lojas · use o filtro global no topo para refinar" e o link "Limpar filtro" não aparece. Com contexto diferente do padrão, mostra "Exibindo N lojas de M redes · filtro global" ("loja" e "rede" no singular quando for 1) e o link "Limpar filtro", que devolve o contexto ao padrão (a faixa é entregue neste card, decisão do PO de 2026-10-08).
-- O período vale para a tela inteira: o seletor fica no cabeçalho, acima das macro-abas, e é o **mesmo nas duas** (mesmas opções e padrão "Hoje" também em Lojas de Ofertas; trocar de macro-aba mantém o período) e dispara **nova consulta** em cada indicador que depende dele (não é filtro local).
+- O período vale para a tela inteira: o seletor fica no cabeçalho, acima das macro-abas, e é o **mesmo nas duas** (mesmas opções e padrão "Hoje" também na macro-aba Loja de Ofertas; trocar de macro-aba mantém o período) e dispara **nova consulta** em cada indicador que depende dele (não é filtro local).
 - **Contrato com os indicadores:** o seletor entrega início e fim do intervalo e cada indicador o aplica exatamente; os indicadores que o próprio card define como independentes do período (ex.: pedidos em aberto, Lojas com retirada) não recarregam quando o período muda — recarregam só quando muda o contexto.
 - **Estados** de carregamento, erro e vazio ficam em cada indicador (cards próprios); este card só dispara a recarga ao trocar o período.
 
@@ -47,7 +47,7 @@ TypeIndicatorEnum.custom  => ((DateTime)initDate!, (DateTime)endDate!),
 
 **O que faz:** converte o tipo de período escolhido (dia, semana, mês, trimestre, ano ou personalizado) em início e fim no horário de Brasília; a conversão para UTC acontece depois, na consulta de cada serviço (ex.: ruptura em `PostStockoutOrderCommand.cs:69-85`).
 
-**O que NÃO faz:** não tem a opção "Este mês" (o tipo `month` é "de hoje menos 1 mês até hoje", ou seja, "Últimos 30 dias"); não padroniza a conversão para UTC entre os indicadores.
+**O que NÃO faz:** o tipo `month` do legado é "de hoje menos 1 mês até hoje" (equivale a "Últimos 30 dias"); não padroniza a conversão para UTC entre os indicadores.
 
 **Ponto de atenção / correção — janela de data.** (a) **Comportamento atual:** em alguns indicadores (Top produtos e Formas de pagamento) o filtro reaplica `.Date` sobre o valor já em UTC (`HelpersOrder.cs`), o que alarga a janela em cerca de 24 h (ex.: "Hoje" de 05/10 cobre de 04/10 21:00 a 06/10 20:59 em Brasília); a ruptura já converte sem alargar. (b) **A reconstrução deve:** usar os limites do dia de Brasília convertidos para UTC em todos os indicadores, sem reaplicar `.Date` (decisão do PO de 2026-10-05; detalhes em [Home-Vendas-Visao-Geral.md](Home-Vendas-Visao-Geral.md), seção 7).
 
@@ -67,14 +67,12 @@ TypeIndicatorEnum.custom  => ((DateTime)initDate!, (DateTime)endDate!),
 
 ## 6. Pendências / perguntas em aberto
 
-- [ ] **Janela de "Este mês":** o protótipo mostra a opção, sem definir a janela (mês de calendário até hoje ou janela móvel); o legado não tem essa opção.
-- [ ] **Opção "Personalizado":** o protótipo não a mostra (intervalo livre de datas, limites de datas, calendário de intervalo, estados do date picker); o back-end já aceita intervalo personalizado. O ECP-1593 do Detalhamento da Ruptura especifica "Personalizado" com calendário de intervalo.
-- [ ] **Opções "3 Meses" e "12 Meses" do legado:** o protótipo não as mostra; decisão do PO.
-- [ ] **Documento da Home de Ofertas:** [Home-Ofertas.md](Home-Ofertas.md) registra que o legado da aba Ofertas não tem "Hoje"; no protótipo o seletor é único, acima das macro-abas, com "Hoje" por padrão também em Lojas de Ofertas. Alinhar o documento da Home de Ofertas.
-- [ ] **Texto de última atualização** ("Atualizado há 5 minutos" no cabeçalho do protótipo): continua sem especificar; confirmar.
+- [ ] **Comportamento do "Personalizado":** limites de datas, calendário de intervalo e estados do date picker (o back-end já aceita intervalo personalizado; o ECP-1593 especifica calendário de intervalo).
+- [ ] **Texto de última atualização** ("Atualizado há 5 min" no Figma): este card não trata da lógica desse texto; segue o Figma.
 - [ ] **Indicadores independentes do período:** o card cita que existem (ex.: pedidos em aberto, Lojas com retirada) mas não os lista; a lista vive nos cards de cada indicador.
 
 ## Changelog
 
+- **2026-10-13 (3)** — Respostas do PO: "Este mês" não existe e saiu; as opções do seletor são "Hoje", "Últimos 7 dias", "Últimos 30 dias", "Últimos 3 meses", "Últimos 12 meses" e "Personalizado"; "Hoje" se mantém também na macro-aba Loja de Ofertas; o card trata só do slot do "Exportar"; a contagem da faixa de escopo saiu do card; o texto "Atualizado há 5 min" segue o Figma e a lógica não é deste card.
 - **2026-10-13 (2)** — Card ECP-1615 ajustado: lista única de opções do seletor ("Hoje", "Últimos 7 dias", "Últimos 30 dias", "Este mês", as do protótipo); "Personalizado", "3 Meses" e "12 Meses", janela de "Este mês" e date picker passam a pendências; faixa de escopo com contexto aplicado ("Exibindo N lojas de M redes · filtro global" e "Limpar filtro") entra no corpo e nos critérios; seletor único acima das macro-abas, com "Hoje" por padrão também em Ofertas.
 - **2026-10-13** — Criação do documento (v1), a partir do ECP-1615: cabeçalho da tela (título, slot do filtro de GE, seletor de período, slot do "Exportar"), período padrão "Hoje" comum às duas macro-abas, contrato do seletor com os indicadores (início e fim do intervalo; independentes não recarregam), conversão única dos dias de Brasília para UTC, faixa de escopo no estado padrão e pendências (opções do seletor, comportamento do "Personalizado", faixa de escopo com contexto aplicado, Ofertas sem "Hoje").

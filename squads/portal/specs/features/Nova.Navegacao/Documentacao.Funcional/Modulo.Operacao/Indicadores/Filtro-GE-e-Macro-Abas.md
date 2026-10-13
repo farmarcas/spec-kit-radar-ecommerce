@@ -1,4 +1,4 @@
-# Indicadores — Filtro de GE e Macro-abas "Lojas de Vendas" / "Lojas de Ofertas"
+# Indicadores — Filtro de GE e Macro-abas "Lojas de Vendas" / "Loja de Ofertas"
 
 **Módulo:** Operação
 **Histórias:** [ECP-1512](https://farmarcas.atlassian.net/browse/ECP-1512) (Indicadores — Filtro de GE, incluindo o guard de rota da tela), [ECP-1598](https://farmarcas.atlassian.net/browse/ECP-1598) (Indicadores — Macro-abas Lojas de Vendas / Lojas de Ofertas com contador) — o ECP-1512 original (Filtro de GE e Macro-abas) foi quebrado em dois cards por decisão do PO de 2026-10-06
@@ -15,7 +15,7 @@
 Indicadores (Home) mantém os mesmos recursos de hoje. Dois ajustes de estrutura da tela, cada um em sua História:
 
 - **Filtro de GE** (ECP-1512): o filtro "Todos os GEs" (multisseleção) no header da própria tela de Indicadores, visível e utilizável só pelo perfil Admin e só na Home principal, e o **guard de rota** da tela (bloqueio de acesso por URL).
-- **Macro-abas** (ECP-1598): as macro-abas "Lojas de Vendas" e "Lojas de Ofertas", cada uma com um badge com o contador de lojas do módulo no contexto aplicado, o estado vazio da macro-aba, o selo "Upgrade" e o comportamento da macro-aba quando o contexto muda (skeleton).
+- **Macro-abas** (ECP-1598): as macro-abas "Lojas de Vendas" e "Loja de Ofertas", cada uma com um badge com o contador de lojas do módulo no contexto aplicado, o estado vazio da macro-aba, o selo "Upgrade" e o comportamento da macro-aba quando o contexto muda (skeleton somente no contêiner da macro-aba e do contador, nunca no texto do rótulo).
 
 Os dois reagem ao contexto de Redes e Lojas aplicado no header global (ECP-1568). O conteúdo de cada macro-aba é entregue nas Histórias de Indicadores de Vendas ([Home-Vendas-Visao-Geral.md](Home-Vendas-Visao-Geral.md)) e de Ofertas ([Home-Ofertas.md](Home-Ofertas.md)); os cards de cada indicador da Home estão listados no PRD, seção 5.5. A entrega de cada História cobre front-end e back-end.
 
@@ -44,8 +44,8 @@ Os dois reagem ao contexto de Redes e Lojas aplicado no header global (ECP-1568)
 ### 3.3 Macro-abas refletem o contexto do header global (ECP-1598)
 
 - Veem as macro-abas os perfis que acessam Indicadores: **Admin, Gestor de Rede e Gestor de Loja**.
-- **"Lojas de Vendas"** conta as lojas do módulo Vendas e **"Lojas de Ofertas"** conta as lojas do módulo Ofertas, sempre **dentro do contexto de Redes e Lojas aplicado** no header global e do filtro de GE aplicado (Admin); os dois contadores são atualizados quando o contexto aplicado muda (ação "Aplicar" ou "Limpar", ECP-1568). Ao "Limpar", voltam a mostrar o total de lojas do contexto padrão.
-- **Macro-aba inicial e conta só-Ofertas:** a macro-aba inicial é "Lojas de Vendas"; se o usuário só tem lojas de Ofertas, a tela abre já em "Lojas de Ofertas" e "Lojas de Vendas" fica desabilitada, sem contador e com o selo "Upgrade" (o botão "Faça upgrade" do protótipo não faz parte da entrega).
+- **"Lojas de Vendas"** conta as lojas do módulo Vendas e **"Loja de Ofertas"** conta as lojas do módulo Ofertas, sempre **dentro do contexto de Redes e Lojas aplicado** no header global e do filtro de GE aplicado (Admin); os dois contadores são atualizados quando o contexto aplicado muda (ação "Aplicar" ou "Limpar", ECP-1568). Ao "Limpar", voltam a mostrar o total de lojas do contexto padrão.
+- **Macro-aba inicial e conta só-Ofertas:** a macro-aba inicial é "Lojas de Vendas"; se o usuário só tem lojas de Ofertas, a tela abre já em "Loja de Ofertas" e "Lojas de Vendas" fica desabilitada, sem contador e com o selo "Upgrade" (o botão "Faça upgrade" do protótipo não faz parte da entrega).
 - **Sem troca automática de macro-aba:** quando o filtro do header ou o GE muda, a macro-aba selecionada continua selecionada. Usuário com lojas de Vendas e de Ofertas que filtra só por lojas de Ofertas: "Lojas de Vendas" continua habilitada, com contador 0 e estado vazio.
 - **Macro-aba sem lojas no contexto:** continua habilitada, com contador 0, e ao ser aberta mostra o estado vazio "Nenhuma loja selecionada para esta aba" / "Verifique seus filtros para ver os indicadores".
 - **Escopo por perfil:** Admin vê todas as Redes e Lojas; Gestor de Rede, as das Redes vinculadas; Gestor de Loja, só as próprias lojas.
@@ -86,7 +86,7 @@ GE (Grupo Econômico) em si: tabela Postgres `pharmacy_economic_group` (`CNPJ`, 
 | Admin marca GEs e clica em "Cancelar" ou fora do painel | Seleção anterior mantida; nada recarrega |
 | GE sem lojas no contexto aplicado | Opção desabilitada com "0 lojas" |
 | Admin no Detalhamento da ruptura | Filtro de GE não aparece (só na Home principal) |
-| Conta só com lojas de Ofertas | Abre em "Lojas de Ofertas"; "Lojas de Vendas" desabilitada, sem contador, com selo "Upgrade" |
+| Conta só com lojas de Ofertas | Abre em "Loja de Ofertas"; "Lojas de Vendas" desabilitada, sem contador, com selo "Upgrade" |
 | Usuário com lojas dos dois módulos filtra só por lojas de Ofertas | Não troca de macro-aba sozinho; "Lojas de Vendas" habilitada, contador 0, estado vazio |
 | Balconista acessa a URL de Indicadores | Bloqueado e redirecionado para a primeira tela a que tem acesso |
 | Perfil sem acesso a Indicadores abre a URL | Redirecionado para a primeira tela a que tem acesso |
@@ -103,9 +103,7 @@ GE (Grupo Econômico) em si: tabela Postgres `pharmacy_economic_group` (`CNPJ`, 
 - [ ] **Estados do filtro de GE** (carregamento, lista vazia e falha da lista): não desenhados no Figma nem no protótipo; o protótipo de 07/10/2026 lista os GEs sem busca e sem paginação — confirmar se a lista completa cabe no painel (rolagem) ou se mantém paginação por volume; e o protótipo oculta o filtro para conta só-Ofertas (confirmar se vale para algum Admin).
 - [ ] **Rotas `pharmacy` e `network` de Indicadores** no Portal atual: confirmar com a engenharia como o guard de rota passa a tratar cada perfil na reconstrução (e confirmar em `AuthGuard`/`NavbarActiveService` o bloqueio atual do Balconista por URL).
 - [ ] Confirmar se os endpoints do ECP-1468 (hoje na tela de Indicadores em produção) serão os mesmos reaproveitados no novo header/React, ou se haverá uma reimplementação; **ordenação alfabética da lista de GEs** (ECP-1468) — o card ECP-1512 não a cita; confirmar se se mantém; corrigir o bug do "Restaurar padrão" (ECP-1468, item 3) antes ou depois da migração para o novo header — a definir.
-- [ ] **Skeleton ao aplicar um filtro do header (ECP-1598):** as macro-abas reais permanecem visíveis com o conteúdo (tabela/indicadores) em skeleton, ou a própria faixa de macro-abas também vira skeleton? O Figma de Pedidos traz os dois desenhos; confirmar com a UX qual vale para Indicadores.
-- [ ] **Se a macro-aba escolhida persiste entre navegações** (a macro-aba inicial já está definida: "Lojas de Vendas", ou "Lojas de Ofertas" para conta só-Ofertas).
-- [ ] **Nome da macro-aba de Ofertas:** o protótipo de 07/10/2026 usa "Lojas de Ofertas" (adotado); o PRD (5.1) e o Figma "[0001]" usam "Loja de Ofertas" — confirmar o rótulo final.
+- [ ] **Se a macro-aba escolhida persiste entre navegações** (a macro-aba inicial já está definida: "Lojas de Vendas", ou "Loja de Ofertas" para conta só-Ofertas).
 - [ ] **Indicação de carregamento ao trocar entre macro-abas** (spinner na área de conteúdo, como em Pedidos, ou skeleton).
 - [ ] **Contagem de lojas por módulo:** o endpoint não foi encontrado nos repositórios acessados — a engenharia confirma se o serviço de lojas já a expõe e a regra de classificação (`sales_module`, linha mais recente, `Status = 63`).
 - [ ] **Referência cruzada desatualizada nos cards:** os cards de Ofertas (ECP-1588, 1589, 1591, 1592, 1594, 1596, 1599) ainda citam "ECP-1512 (Filtro de GE e Macro-abas — mesma tela)"; as macro-abas agora são a ECP-1598 (o guard de rota e o filtro de GE permanecem na ECP-1512).
@@ -113,8 +111,9 @@ GE (Grupo Econômico) em si: tabela Postgres `pharmacy_economic_group` (`CNPJ`, 
 
 ## Changelog
 
+- **2026-10-13 (3)** — Respostas do PO: o nome da macro-aba segue o Figma, "Loja de Ofertas" (singular); o skeleton do contador e da macro-aba é somente no contêiner, não no texto (o Claude Design tem a versão); pendência de skeleton das macro-abas removida.
 - **2026-10-13** — Nomenclatura: o botão do header do contexto de Redes e Lojas na nova navegação se chama "Limpar" (era "Restaurar padrão", nome do legado, que continua citado onde descreve o comportamento atual em produção).
-- **2026-10-08** — Alinhamento ao protótipo "Novo Portal - Navegável" (Claude Design) por decisão do PO: filtro de GE com multisseleção ("Todos os GEs", contador "N lojas" por GE desabilitado se 0, rodapé Cancelar/Aplicar, rótulo "N GEs", sem busca), só Admin e só na Home principal; macro-abas "Lojas de Vendas" / "Lojas de Ofertas" (nome do protótipo), contadores também respeitam o GE, selo "Upgrade" para conta só-Ofertas (sem botão "Faça upgrade"), sem troca automática de macro-aba e estado vazio "Nenhuma loja selecionada para esta aba"; pendências resolvidas removidas (macro-aba inicial, contador 0).
+- **2026-10-08** — Alinhamento ao protótipo "Novo Portal - Navegável" (Claude Design) por decisão do PO: filtro de GE com multisseleção ("Todos os GEs", contador "N lojas" por GE desabilitado se 0, rodapé Cancelar/Aplicar, rótulo "N GEs", sem busca), só Admin e só na Home principal; macro-abas "Lojas de Vendas" / "Loja de Ofertas" (nome do protótipo), contadores também respeitam o GE, selo "Upgrade" para conta só-Ofertas (sem botão "Faça upgrade"), sem troca automática de macro-aba e estado vazio "Nenhuma loja selecionada para esta aba"; pendências resolvidas removidas (macro-aba inicial, contador 0).
 - **2026-10-06 (2)** — Documento ampliado a partir dos cards publicados ECP-1512 (Filtro de GE e guard de rota) e ECP-1598 (macro-abas com contador): guard de rota com redirecionamento para a primeira tela acessível, contadores por módulo no contexto aplicado, escopo por perfil, classificação de módulo por `sales_module`, ausência de endpoint de contagem por módulo, queries reaproveitadas com ponto de correção, pendências dos dois cards.
 - **2026-10-06** — Respostas do PO: ECP-1512 quebrado em dois cards (Filtro de GE; Macro-abas); "Restaurar padrão" passa a ser da multinavegação (3.5); comportamento das macro-abas fica no card das macro-abas (3.3).
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1512, PRD seção 5.1, e débito técnico ECP-1468.

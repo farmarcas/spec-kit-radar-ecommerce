@@ -69,7 +69,7 @@ Quando o pedido aberto é concluído ou cancelado e sai da lista, a navegação 
 
 ### 3.10 Imprimir
 
-O botão de imprimir da barra superior gera um **PDF com os detalhes do pedido**. O "8º pedido" ao lado da estrela do card Cliente (Figma) não entra.
+O botão de imprimir da barra superior fica habilitado em todas as etapas e gera um **PDF com o layout do próprio detalhe do pedido**. A estrela de cliente recorrente e a posição do pedido do cliente ("Nº pedido") não fazem parte do card Cliente do detalhe: ficam no card do cliente recorrente (ECP-1551); o "5º pedido"/"8º pedido" do protótipo é só exemplo e a regra dos 20 pedidos concluídos se mantém. O link "Whatsapp" ao lado do telefone abre a conversa pelo link nativo do WhatsApp (comportamento atual). O container de pagamento mostra a modalidade, sem a bandeira do cartão. A marca "(editado)" existe só na listagem, não no detalhe.
 
 ### 3.11 Ajuste de itens, frete grátis mantido e troco na composição do total
 
@@ -105,14 +105,14 @@ Eventos do mais recente para o mais antigo; cada um mostra o título, uma descri
 
 ## 6. Pendências / perguntas em aberto
 
-- [ ] Itens do detalhe desenhados no Figma ainda sem decisão do PO (não adotados): link "Whatsapp" no card Cliente; tag "Pedido parado há …" no cabeçalho; legenda por fase acima da lista de itens ("Confira e/ou ajuste os itens do pedido" etc.); tracker com 4 cores (vermelho, amarelo, azul, verde) e pílula de prazo. O protótipo de referência (Claude Design, 07/10) desenha todos esses itens; a decisão do PO continua pendente.
-- [ ] Quais fases deixam o botão de imprimir habilitado (o Figma o desenha com aparência desabilitada na Conferência).
+- [ ] Itens do detalhe desenhados no Figma ainda sem decisão do PO (não adotados): tag "Pedido parado há …" no cabeçalho; legenda por fase acima da lista de itens ("Confira e/ou ajuste os itens do pedido" etc.); tracker com 4 cores (vermelho, amarelo, azul, verde) e pílula de prazo. O protótipo de referência (Claude Design, 07/10) desenha todos esses itens; a decisão do PO continua pendente.
 - [ ] Tooltips de nome truncado e de lista de itens (3.8) não existem no Figma; confirmar se permanecem (o protótipo de referência os desenha).
 - [ ] Tag "Editado" no detalhe: não existe no Figma nem no protótipo de referência (o ajuste aparece em "Ajustes de itens" e no subtotal riscado; a marca "(editado)" existe só na lista).
 - [ ] Origem do valor mínimo do frete grátis (configuração da loja, faixa de entrega ou outra regra); o protótipo usa R$ 200,00 como exemplo.
 
 ## Changelog
 
+- **2026-10-13** — Respostas do PO: imprimir habilitado em todas as etapas, com o layout do próprio detalhe; estrela e posição do pedido ficam no card do cliente recorrente (ECP-1551); link "Whatsapp" nativo; sem bandeira do cartão (só a modalidade); "(editado)" só na listagem.
 - **2026-10-08** — Protótipo "Novo Portal - Navegável" (Claude Design) é a verdade e sobrepõe decisões anteriores de Pedidos (PRD v2.15): o modal em status final mostra a barra "Pedido concluído/cancelado" com "Fechar agora" e fecha em 3 segundos, com o pedido "segurado" na lista até fechar (3.5); "Baixar todos" sempre visível quando há receita (3.7); navegação ▲ / ▼ cancela o fechamento automático (3.9).
 - **2026-10-07** — Revisão contra o protótipo Claude Design de 07/10 (ECP-1516, ECP-1560): composição do total com subtotal original riscado, linha "Ajustes de itens" em vermelho e rótulo do total pelo tipo de pagamento ("Total (cobrar do cliente)" no a cobrar, "Total" no pago online); frete grátis mantido; troco só quando o valor informado cobre o total (3.11); trilha de auditoria com os eventos de ajuste de itens, "Frete grátis mantido" e "Pedido cancelado" (3.12); download de receita com o texto do item "Download concluído" e snackbar "Downloads concluídos" no "Baixar todos" (3.7). Divergências do protótipo com decisões do PO (fechamento automático do modal, "Baixar todos" sempre visível, "Nº pedido" no card Cliente) não foram adotadas.
 - **2026-10-06** — Handoff Figma e respostas do PO: navegação ▲ / ▼ (antes ◀ / ▶); barra superior com imprimir (gera PDF com os detalhes do pedido); variantes de pedido e composição do total (frete grátis, "Total (cobrar do cliente)", troco); receitas com aviso amarelo informativo "Valide as receitas antes de liberar o pedido.", "Baixar todos" só com mais de 1 receita, "Baixando arquivo...", check por 3 segundos (Figma; antes 5); "Cancelado por" = "sistema" quando veio do ERP; "8º pedido" não entra; itens extras do Figma (Whatsapp, "parado há", legenda por fase, tracker com 4 cores) registrados como pendência.
