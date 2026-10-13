@@ -44,7 +44,7 @@ Os dois reagem ao contexto de Redes e Lojas aplicado no header global (ECP-1568)
 ### 3.3 Macro-abas refletem o contexto do header global (ECP-1598)
 
 - Veem as macro-abas os perfis que acessam Indicadores: **Admin, Gestor de Rede e Gestor de Loja**.
-- **"Lojas de Vendas"** conta as lojas do módulo Vendas e **"Lojas de Ofertas"** conta as lojas do módulo Ofertas, sempre **dentro do contexto de Redes e Lojas aplicado** no header global e do filtro de GE aplicado (Admin); os dois contadores são atualizados quando o contexto aplicado muda (ação "Aplicar" ou "Restaurar padrão", ECP-1568). Ao "Restaurar padrão", voltam a mostrar o total de lojas do contexto padrão.
+- **"Lojas de Vendas"** conta as lojas do módulo Vendas e **"Lojas de Ofertas"** conta as lojas do módulo Ofertas, sempre **dentro do contexto de Redes e Lojas aplicado** no header global e do filtro de GE aplicado (Admin); os dois contadores são atualizados quando o contexto aplicado muda (ação "Aplicar" ou "Limpar", ECP-1568). Ao "Limpar", voltam a mostrar o total de lojas do contexto padrão.
 - **Macro-aba inicial e conta só-Ofertas:** a macro-aba inicial é "Lojas de Vendas"; se o usuário só tem lojas de Ofertas, a tela abre já em "Lojas de Ofertas" e "Lojas de Vendas" fica desabilitada, sem contador e com o selo "Upgrade" (o botão "Faça upgrade" do protótipo não faz parte da entrega).
 - **Sem troca automática de macro-aba:** quando o filtro do header ou o GE muda, a macro-aba selecionada continua selecionada. Usuário com lojas de Vendas e de Ofertas que filtra só por lojas de Ofertas: "Lojas de Vendas" continua habilitada, com contador 0 e estado vazio.
 - **Macro-aba sem lojas no contexto:** continua habilitada, com contador 0, e ao ser aberta mostra o estado vazio "Nenhuma loja selecionada para esta aba" / "Verifique seus filtros para ver os indicadores".
@@ -56,9 +56,9 @@ Os dois reagem ao contexto de Redes e Lojas aplicado no header global (ECP-1568)
 
 A lista de GEs retornada no filtro deve vir ordenada alfabeticamente (débito técnico ECP-1468, identificado depois da entrega inicial — ver seção 4). O texto do card ECP-1512 não cita a ordenação — ver Pendências.
 
-### 3.5 "Restaurar padrão"
+### 3.5 "Limpar"
 
-No modelo novo, "Restaurar padrão" é da **multinavegação** (não específico de Indicadores nem de Pedidos): aparece ao lado dos seletores de Redes e Lojas do header global quando o contexto aplicado difere do padrão e volta à seleção padrão (ver [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md) 4.8). Hoje, na tela de Indicadores em produção, o link fica ao lado dos filtros (GE / Rede / Loja) e só aparece quando pelo menos um deles está diferente do padrão ("Todos"/"Todas"); assim que todos voltam a "exibir tudo" o link deve sumir. **Bug conhecido (ECP-1468):** marcar "Selecionar todos" manualmente reverte o estado mas não esconde o link — só o clique direto em "Restaurar padrão" esconde corretamente hoje. Se o "Restaurar padrão" da multinavegação também considera o filtro de GE (Admin) está em aberto.
+No modelo novo, o botão "Limpar" (no legado, "Restaurar padrão") é da **multinavegação** (não específico de Indicadores nem de Pedidos): aparece ao lado dos seletores de Redes e Lojas do header global quando o contexto aplicado difere do padrão e volta à seleção padrão (ver [Filtro.Multicontexto.md](../Filtros%20Multicontexto/Filtro.Multicontexto.md) 4.8). Hoje, na tela de Indicadores em produção, o link fica ao lado dos filtros (GE / Rede / Loja) e só aparece quando pelo menos um deles está diferente do padrão ("Todos"/"Todas"); assim que todos voltam a "exibir tudo" o link deve sumir. **Bug conhecido (ECP-1468):** marcar "Selecionar todos" manualmente reverte o estado mas não esconde o link — só o clique direto em "Restaurar padrão" esconde corretamente hoje. Se o "Limpar" da multinavegação também considera o filtro de GE (Admin) está em aberto.
 
 ## 4. Nível de integração / fonte de dados
 
@@ -91,7 +91,7 @@ GE (Grupo Econômico) em si: tabela Postgres `pharmacy_economic_group` (`CNPJ`, 
 | Balconista acessa a URL de Indicadores | Bloqueado e redirecionado para a primeira tela a que tem acesso |
 | Perfil sem acesso a Indicadores abre a URL | Redirecionado para a primeira tela a que tem acesso |
 | Contexto do header global muda ("Aplicar") | Contadores das duas macro-abas recalculam e o conteúdo passa por skeleton |
-| "Restaurar padrão" no header global | Contadores voltam ao total de lojas do contexto padrão |
+| "Limpar" no header global | Contadores voltam ao total de lojas do contexto padrão |
 | Gestor de Loja | Contadores contam só as lojas às quais está vinculado |
 | Contexto com lojas dos dois módulos | Cada contador mostra só as lojas do módulo correspondente |
 | Usuário marca "Selecionar todos" manualmente após ter um filtro aplicado | Estado reverte ao padrão, mas o link "Restaurar padrão" continua visível (bug conhecido, ECP-1468) |
@@ -99,7 +99,7 @@ GE (Grupo Econômico) em si: tabela Postgres `pharmacy_economic_group` (`CNPJ`, 
 ## 6. Pendências / perguntas em aberto
 
 - [ ] **Figma:** a ser atualizado pela UX ainda nesta semana (layout, rótulos e textos finais). Os cards referenciam os nós `9:1357` e `29:11616` do handoff.
-- [ ] **Relação do filtro de GE com o contexto de Redes e Lojas (ECP-1568):** no Portal atual, escolher um GE recarrega a lista de Redes; falta decidir se, na nova navegação, o GE limita as Redes e Lojas do painel e como os dois filtros se combinam; e se o "Restaurar padrão" da multinavegação considera o filtro de GE.
+- [ ] **Relação do filtro de GE com o contexto de Redes e Lojas (ECP-1568):** no Portal atual, escolher um GE recarrega a lista de Redes; falta decidir se, na nova navegação, o GE limita as Redes e Lojas do painel e como os dois filtros se combinam; e se o "Limpar" da multinavegação considera o filtro de GE.
 - [ ] **Estados do filtro de GE** (carregamento, lista vazia e falha da lista): não desenhados no Figma nem no protótipo; o protótipo de 07/10/2026 lista os GEs sem busca e sem paginação — confirmar se a lista completa cabe no painel (rolagem) ou se mantém paginação por volume; e o protótipo oculta o filtro para conta só-Ofertas (confirmar se vale para algum Admin).
 - [ ] **Rotas `pharmacy` e `network` de Indicadores** no Portal atual: confirmar com a engenharia como o guard de rota passa a tratar cada perfil na reconstrução (e confirmar em `AuthGuard`/`NavbarActiveService` o bloqueio atual do Balconista por URL).
 - [ ] Confirmar se os endpoints do ECP-1468 (hoje na tela de Indicadores em produção) serão os mesmos reaproveitados no novo header/React, ou se haverá uma reimplementação; **ordenação alfabética da lista de GEs** (ECP-1468) — o card ECP-1512 não a cita; confirmar se se mantém; corrigir o bug do "Restaurar padrão" (ECP-1468, item 3) antes ou depois da migração para o novo header — a definir.
@@ -113,6 +113,7 @@ GE (Grupo Econômico) em si: tabela Postgres `pharmacy_economic_group` (`CNPJ`, 
 
 ## Changelog
 
+- **2026-10-13** — Nomenclatura: o botão do header do contexto de Redes e Lojas na nova navegação se chama "Limpar" (era "Restaurar padrão", nome do legado, que continua citado onde descreve o comportamento atual em produção).
 - **2026-10-08** — Alinhamento ao protótipo "Novo Portal - Navegável" (Claude Design) por decisão do PO: filtro de GE com multisseleção ("Todos os GEs", contador "N lojas" por GE desabilitado se 0, rodapé Cancelar/Aplicar, rótulo "N GEs", sem busca), só Admin e só na Home principal; macro-abas "Lojas de Vendas" / "Lojas de Ofertas" (nome do protótipo), contadores também respeitam o GE, selo "Upgrade" para conta só-Ofertas (sem botão "Faça upgrade"), sem troca automática de macro-aba e estado vazio "Nenhuma loja selecionada para esta aba"; pendências resolvidas removidas (macro-aba inicial, contador 0).
 - **2026-10-06 (2)** — Documento ampliado a partir dos cards publicados ECP-1512 (Filtro de GE e guard de rota) e ECP-1598 (macro-abas com contador): guard de rota com redirecionamento para a primeira tela acessível, contadores por módulo no contexto aplicado, escopo por perfil, classificação de módulo por `sales_module`, ausência de endpoint de contagem por módulo, queries reaproveitadas com ponto de correção, pendências dos dois cards.
 - **2026-10-06** — Respostas do PO: ECP-1512 quebrado em dois cards (Filtro de GE; Macro-abas); "Restaurar padrão" passa a ser da multinavegação (3.5); comportamento das macro-abas fica no card das macro-abas (3.3).

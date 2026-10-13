@@ -154,7 +154,6 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 - [ ] Busca de lojas por cidade: o protótipo casa o texto também com a cidade; confirmar.
 - [ ] Busca digitada: o protótipo filtra a cada tecla; o card mantém o debounce de 2 segundos; confirmar.
 - [ ] Tempo do snackbar "Ainda carregando...": o protótipo simula em 3 segundos; o card especifica mais de 8 segundos.
-- [ ] Ida à Gestão de Lojas e volta: o corpo do ECP-1568 diz "restaurar o filtro para default", enquanto a regra de negócio e o critério de aceite dizem que o contexto aplicado continua o mesmo; o doc segue a regra e o critério; confirmar.
 - [ ] Localizar a fonte do atalho "Grupo de lojas" (Estoque Centralizado): `groups` nos endpoints do BFF é o GE. Só será necessário quando a "Seleção por grupo" entrar (não desenvolvida agora).
 - [ ] Confirmar o endpoint paginado `stores-filter` como fonte única da lista de lojas (o `GET filters` atual devolve todas).
 
@@ -164,6 +163,7 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 
 ## Changelog
 
+- **2026-10-13 (2)** — Corpo do ECP-1568 alinhado à regra e ao critério: ao ir para a Gestão de Lojas e voltar, o contexto aplicado se mantém; pendência correspondente removida.
 - **2026-10-13** — Alinhado ao ECP-1568 atual e ao protótipo: painel de Redes com "Selecionar todas", "N lojas" por Rede e contador "N/total"; "Selecionar visíveis" com texto digitado; resumo nos botões ("N lojas", nome da loja, borda azul fora do padrão); "Restaurar padrão" passa a "Limpar" do header (o "Limpar" do rodapé desmarca o painel); "Aplicar" de Redes descarta lojas fora das Redes aplicadas; estados de falha, vazio e carregamento (skeleton, "Ainda carregando..." após 8 s, "Não foi possível aplicar o filtro"); header em três variações com chip "Rede › Loja (Cidade)"; item Pedidos visível também para só-Ofertas; pontos em aberto do protótipo registrados.
 - **2026-10-06 (2)** — Handoff Figma e respostas do PO: contexto = sempre dois seletores, Redes e Lojas (sem menu único de 3 níveis); "Seleção por grupo" dentro de Lojas fica fora do desenvolvimento agora; "Reverter alterações" vira "Restaurar padrão" da multinavegação (4.8); "Limpar" desmarca tudo; o contador "marcadas/total" e o "Selecionar todos" contam as lojas de Ofertas independente da tela; Pedidos × lojas de Ofertas passa a ser critério da tela de Pedidos (lojas de Ofertas desabilitadas com aviso; só-Ofertas não vê Pedidos), e o empty state é removido; Gestor de Rede com 1 Rede única mostra a logo; 1 Rede e 1 loja mostram "Rede · Loja (Cidade)"; erros e estados do filtro ficam no ECP-1568 e ECP-1281; o header da Gestão de Lojas sai deste documento (módulo de Configuração).
 - **2026-10-06** — Regra geral do PO: toda busca digitada dispara ao digitar qualquer caractere, com debounce de 2 segundos (aplicada à busca de lojas do seletor).

@@ -38,7 +38,7 @@ A sidebar é o menu de navegação principal do Portal, dividido em 2 módulos c
 | Produtos | Sim | **Não** | **Não** | Não |
 | Configuração & Estoque (via Gestão de Lojas) | Sim | Sim | Sim | **Não** (perdeu em relação a hoje) |
 
-O item Pedidos aparece para todos os perfis que acessam Pedidos, inclusive para o usuário cujas lojas do vínculo são todas de Ofertas; o tratamento das lojas de Ofertas na tela de Pedidos é critério da criação da tela de Pedidos. O Balconista não vê Indicadores: ao logar, a tela inicial é Pedidos (se a loja for de Ofertas, Promoções). A informação "vínculo só com lojas de Ofertas" é derivada do `module` de cada loja do vínculo (a engenharia decide onde calcular).
+O item Pedidos aparece para os perfis que acessam Pedidos, inclusive para o usuário com lojas de Vendas e de Ofertas (o tratamento das lojas de Ofertas na tela de Pedidos é critério da criação da tela de Pedidos); o usuário cujas lojas do vínculo são todas de Ofertas **não vê** o item Pedidos. O Balconista não vê Indicadores: ao logar, a tela inicial é Pedidos (se a loja for de Ofertas, não vê Pedidos e a tela inicial é Promoções). A informação "vínculo só com lojas de Ofertas" é derivada do `module` de cada loja do vínculo (a engenharia decide onde calcular).
 
 ### 3.2 Esconder item de menu não é suficiente sozinho
 
@@ -62,10 +62,10 @@ A sidebar exibe a tag azul "Novos" no item Pedidos (visível com a sidebar abert
 | Cenário | Regra |
 |---|---|
 | Balconista tenta acessar Indicadores por URL direta | Bloqueado e redirecionado para a primeira tela a que tem acesso (Pedidos) — não só escondido do menu |
-| Balconista de loja de Ofertas | Tela inicial é Promoções (ver Pendências) |
+| Balconista de loja de Ofertas | Não vê Pedidos; tela inicial é Promoções |
 | Gestor (Loja ou Rede) tenta acessar Produtos por URL direta | Bloqueado e redirecionado para a primeira tela a que tem acesso — regra já vigente hoje, mantida |
 | Usuário sem acesso a um item de menu | Item não aparece na sidebar |
-| Usuário só com lojas de Ofertas | Vê o item Pedidos (tratamento na tela de Pedidos) |
+| Usuário só com lojas de Ofertas | Não vê o item Pedidos |
 | Sidebar recolhida | Overlay de 240 px abre ao passar o mouse e recolhe quando o mouse sai |
 
 ## 6. Pendências / perguntas em aberto
@@ -73,10 +73,9 @@ A sidebar exibe a tag azul "Novos" no item Pedidos (visível com a sidebar abert
 - [ ] Confirmar mecanismo técnico do guard de rota (framework de roteamento do novo front React) — ainda não definido.
 - [ ] "Usuários" aparece sob "GESTÃO DE LOJAS" no Figma, mas usa o seletor multicontexto de Operação (PRD 5.2): confirmar se o agrupamento visual muda o módulo/contexto da tela.
 - [ ] Regra do indicativo "Novos" e do ponto vermelho de pedido parado: a construir com a tela de Pedidos.
-- [ ] Balconista de loja de Ofertas: o critério de aceite do card diz que não vê Pedidos e vai para Promoções, enquanto a regra do card diz que "Pedidos" aparece para todos os perfis, inclusive só-Ofertas; confirmar.
 
 ## Changelog
 
-- **2026-10-13** — Alinhado ao ECP-1495 atual e ao protótipo: sidebar recolhida de 56 px e overlay de 240 px (antes 64 px e 288 px) que recolhe quando o mouse sai; tag "Novos" sem badge de contagem; ponto vermelho no ícone de Pedidos quando há pedido parado; item Pedidos visível também para quem só tem lojas de Ofertas (antes oculto); Balconista entra em Pedidos (ou Promoções, se a loja for de Ofertas); item da tela atual destacado; back-end informa perfil e módulo de cada loja do vínculo.
+- **2026-10-13** — Alinhado ao ECP-1495 atual e ao protótipo: sidebar recolhida de 56 px e overlay de 240 px (antes 64 px e 288 px) que recolhe quando o mouse sai; tag "Novos" sem badge de contagem; ponto vermelho no ícone de Pedidos quando há pedido parado; item Pedidos oculto para quem só tem lojas de Ofertas (visível para quem tem lojas de Vendas e de Ofertas); Balconista entra em Pedidos (Balconista de loja de Ofertas não vê Pedidos e entra em Promoções); item da tela atual destacado; back-end informa perfil e módulo de cada loja do vínculo.
 - **2026-10-06** — Handoff Figma e respostas do PO: itens e agrupamentos conforme o Figma ("GESTÃO DE LOJAS" com "Configuração & Estoque" e "Usuários"; "ÁREA ADMIN" com "Produtos"; badge "Novos" + contador em Pedidos); padrão colapsado com overlay só por hover; item Pedidos oculto para quem só tem lojas de Ofertas; acesso indevido por URL redireciona para a primeira tela acessível; a regra do badge fica para a tela de Pedidos.
 - **2026-09-30** — Criação do documento (v1), a partir de ECP-1495/ECP-1451 e da PRD seção 5.
