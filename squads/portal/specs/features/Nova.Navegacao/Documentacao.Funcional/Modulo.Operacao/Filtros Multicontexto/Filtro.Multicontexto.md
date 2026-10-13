@@ -137,7 +137,7 @@ Hoje, o filtro de Rede/Loja só é aplicado na Home de Indicadores. No modelo no
 | Carga do novo contexto passa de 8 segundos | Snackbar persistente "Ainda carregando..." com "Tentar novamente" (4.3) |
 | Falha ao aplicar o contexto | Contexto volta ao anterior; snackbar persistente "Não foi possível aplicar o filtro" com "Tentar novamente" (4.3) |
 | Usuário com lojas de Vendas e de Ofertas na tela de Pedidos | O protótipo mostra lojas de Ofertas desabilitadas com a faixa "Pedidos existem apenas para lojas de Categoria Vendas."; critério da tela de Pedidos (ver 4.3 e Pendências) |
-| Usuário só com lojas de Ofertas | Vê o item Pedidos (ECP-1495); tratamento na tela de Pedidos |
+| Usuário só com lojas de Ofertas | Não vê o item Pedidos (ECP-1495) |
 | Rede com 840+ lojas (caso real citado no débito técnico) | Lista de lojas não vem inteira — busca paginada via scroll infinito (ver seção 5) |
 | Usuário marca 2 lojas e clica fora do menu sem "Aplicar" | Seleção não é aplicada, nenhuma chamada de dados é feita |
 | Usuário marca/desmarca várias lojas em sequência | Nenhuma chamada de dados até clicar "Aplicar" (1 chamada no final, não 1 por clique) |
