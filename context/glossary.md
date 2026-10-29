@@ -26,14 +26,20 @@
 |---|---|
 | **NSM** | North Star Metric. Métrica principal do Radar: Volume de Transações por Loja Ativa. |
 | **NMT** | Número de lojas ativas monitorado como indicador de escala. Hoje: 7, meta Q3: 8. |
-| **PBM** | Programa de Benefício em Medicamentos. Sistema de desconto via convênio ou plano de saúde. Parceiro atual: Interplayers. |
+| **PBM** | Programa de Benefício em Medicamentos. Sistema de desconto de laboratório via convênio ou plano de saúde. Provedores: **Interplayers** (em produção) e **Funcional Card** (em integração, 28/10/2026). O app não distingue o provedor: quem decide é a api-core. |
+| **Provedor (PBM)** | Player que unifica e transaciona as informações entre indústria, programa, drogaria e consumidor. Hoje: Interplayers e Funcional Card. Cada produto da base (`load_product`) pertence a **um único** provedor/programa. |
+| **Funcional Card** | Provedor de PBM integrado via gateway de credenciados (GraphQL, origem `PARTNERS_ECOMMERCE`). Entra reaproveitando a integração da Interplayers, com ajustes apenas na `ecomm-api-core-dotnet`. Ver `specs/features/001-app-ecommerce/PBM/Integração Funcional/`. |
+| **api-core (PBM)** | `ecomm-api-core-dotnet`. Abstração do PBM: lê `load_product.provider` e delega ao client do provedor; roda as cargas diárias. Único serviço alterado para a Funcional. |
+| **load_product** | Tabela local de produtos PBM (EAN, provider, CNPJ, programa, `discount_min`, `requires_crm`), carregada na madrugada por provedor. Fonte da vitrine e da busca (via Typesense, campo `PbmDiscountMin`). |
+| **OptIn (PBM)** | Aceite do termo de consentimento (LGPD) do programa. Pode bloquear o desconto até ser feito (obrigatório e não realizado). |
+| **Pré-autorização (reserva)** | Reserva da venda no provedor no fechamento do pedido (Funcional: `Sales_preAuthorizeSale`, válida até 30 dias). É confirmada uma vez com a nota fiscal. |
 | **Plug-and-play (PBM)** | Estratégia onde cada lojista habilita sua integração PBM de forma independente, sem customização pelo time Radar. |
 | **Checkout** | Fluxo completo de finalização de compra no App. |
 | **Deeplink** | Link que abre o app diretamente numa tela específica (produto, vitrine, campanha, departamento, ofertas, busca), usado principalmente por lojistas para anúncios digitais direcionados à sua loja. Suporta Universal/App Links (HTTPS) e custom scheme por flavor. Ver `specs/features/001-app-ecommerce/Deeplink/PRD-deeplink-app.md`. |
 | **OMS** | Order Management System. Gerencia o ciclo de vida dos pedidos após criação. |
 | **Recompra** | Funcionalidade que permite ao consumidor repetir um pedido anterior com um clique. |
 | **GE** | Grupo Econômico. Conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma **Rede** (bandeira). É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal. |
-| **Controlados** | Medicamentos que exigem receita médica. Compra disponível pelo app e pela Web, com envio obrigatório da receita no checkout, por **entrega ou retirada**, à escolha do consumidor. *(Até o lançamento do envio de receita, a compra é restrita à retirada na loja — ver `specs/features/001-app-ecommerce/spec.md`, 5.1.)* |
+| **Controlados** | Medicamentos que exigem receita médica. Compra disponível pelo app e pela Web, com envio obrigatório da receita no checkout, por **entrega ou retirada**, à escolha do consumidor. *(Em produção no App desde o lançamento do envio de receita, confirmado em 29/10/2026; antes, a compra era restrita à retirada na loja — ver `specs/features/001-app-ecommerce/spec.md`, 5.1.)* |
 | **Maxi Popular** | [TODO: descrever o que é o App Maxi Popular no contexto do Radar] |
 
 ## Time e Processo

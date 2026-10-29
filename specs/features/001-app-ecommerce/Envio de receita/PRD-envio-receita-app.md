@@ -3,15 +3,17 @@
 **Produto:** Radar (App — Consumidor Final)
 **Squad:** App
 **Autor:** Daniel (PO)
-**Status:** Em refinamento — base para geração de histórias via Claude Code
+**Status:** **Fluxo em produção** (confirmado pelo PO em 29/10/2026) — documento mantido como base de referência e para geração de histórias
 **Versão:** 1.4
 
 ---
 
 ## 0. Changelog
 
+**Atualização 29/10/2026 (PO)** — O fluxo de envio de receita do app **já está em produção**. Isso afeta o PBM: a restrição "não temos fluxo de receita, isso limita 20 produtos da Funcional Card" do discovery (`PBM/FE-Integração PBM`) deixa de valer. Na integração da Funcional, produto que exige receita fica marcado (`requires_crm`); a exigência *dentro da API da Funcional* (imagem de receita anexada à venda, dose diária, segundo fator) continua fora do escopo — nesses casos o item não entra e a pessoa vê a mensagem do programa (ver `PBM/Integração Funcional/`). **O PRD passa a ser tratado como lançado (PO, 29/10/2026):** os trechos abaixo que falam em "proposta ainda não lançada", "baseline vigente" ou "quando esta feature for lançada" descrevem o estado *anterior* ao lançamento. Controlados são comprados por **entrega ou retirada** em produção. As pendências 3(a)–(d) do changelog v1.4 **não foram informadas como resolvidas** e continuam abertas.
+
 **v1.4 (2026-10-05)** — Decisão do PO que muda a regra de fulfillment de controlados, **no App e na Web** (ver `specs/features/WebEcommerce/PRD-web-ecommerce.md`): a **retirada na loja deixa de ser obrigatória** para pedidos com medicamento controlado. A restrição existia porque o app não recebia a receita; com o envio digital obrigatório (esta feature), o consumidor passa a poder comprar controlados **por entrega ou por retirada**, à escolha. Consequências neste PRD:
-1. Baseline substituído: FR-004, FR-005, FR-009, FR-044 (e o texto de FR-003) do `spec.md` deixam de valer quando esta feature for lançada — ver nota de conflito em `spec.md` 5.1.
+1. Baseline substituído: FR-004, FR-005, FR-009, FR-044 (e o texto de FR-003) do `spec.md` deixaram de valer com o lançamento desta feature (em produção) — ver nota em `spec.md` 5.1.
 2. A etapa "Receita médica" (obrigatória, regra 6.5) passa a ocorrer **tanto na entrega quanto na retirada**; o fluxo da seção 5 e as observações de formas de pagamento foram ajustados (antes citavam só retirada).
 3. **Pendências abertas por esta mudança (não decididas — não presumir):** (a) copy do bottom sheet "Antes de continuar" (6.7), que hoje diz que a receita original "poderá ficar retida na farmácia" e que o usuário deverá entregá-la à farmácia — precisa de redação para o caso de **entrega** (como a retenção do original é feita no recebimento); (b) mensagem de texto corrido do PDP/retirada ("Retirada na loja mediante apresentação da receita") a ser redefinida; (c) se frete grátis (FR-010/FR-041) e progress bar de frete voltam a valer para cestas com controlado; (d) validação regulatória/jurídica da entrega de controlados com receita digital + retenção do original (RDC 144).
 
@@ -36,9 +38,9 @@
 
 ## 1. Contexto
 
-Hoje (baseline vigente, ver `specs/features/001-app-ecommerce/spec.md`, seção 5.1) a compra de um medicamento controlado (categoria "Medicamentos com Retenção de Receita", sujeita à RDC 144/ANVISA) já é suportada pelo app, mas de forma **totalmente física**: FR-003 exibe a mensagem "Retirada na loja mediante apresentação da receita" no detalhe do produto, FR-004/FR-005 forçam a retirada na loja (sem entrega em casa — regra **substituída a partir da v1.4**: com o envio digital de receita, entrega e retirada passam a ser permitidas), e a tag "Exige receita" aparece no carrinho (FR-039) e no resumo do checkout (FR-006). Em nenhum momento o app recebe uma imagem da receita — ela é conferida presencialmente, na retirada.
+Até o lançamento desta feature (baseline anterior, ver `specs/features/001-app-ecommerce/spec.md`, seção 5.1) a compra de um medicamento controlado (categoria "Medicamentos com Retenção de Receita", sujeita à RDC 144/ANVISA) já é suportada pelo app, mas de forma **totalmente física**: FR-003 exibe a mensagem "Retirada na loja mediante apresentação da receita" no detalhe do produto, FR-004/FR-005 forçam a retirada na loja (sem entrega em casa — regra **substituída a partir da v1.4**: com o envio digital de receita, entrega e retirada passam a ser permitidas), e a tag "Exige receita" aparece no carrinho (FR-039) e no resumo do checkout (FR-006). Em nenhum momento o app recebe uma imagem da receita — ela é conferida presencialmente, na retirada.
 
-Este PRD documenta uma **proposta ainda não lançada** (confirmado com o PO — ver memória de sessão sobre o Figma "App · E-commerce": o canvas "17. Receita no pedido" é protótipo, não produção) que insere uma etapa de **upload digital da receita** no checkout, entre a escolha de entrega/retirada e o pagamento. O objetivo é permitir que o farmacêutico já receba uma cópia digital da receita antes da retirada **ou da entrega**, sem eliminar a exigência legal de apresentação/retenção do documento físico original (ver pendência 3(a) do changelog v1.4).
+Este PRD documenta o fluxo — **hoje em produção** (confirmado pelo PO em 29/10/2026; em ago/2026 era só o protótipo do canvas "17. Receita no pedido" do Figma "App · E-commerce") — que insere uma etapa de **upload digital da receita** no checkout, entre a escolha de entrega/retirada e o pagamento. O objetivo é permitir que o farmacêutico já receba uma cópia digital da receita antes da retirada **ou da entrega**, sem eliminar a exigência legal de apresentação/retenção do documento físico original (ver pendência 3(a) do changelog v1.4).
 
 O PO trouxe duas restrições explícitas para este documento, que **divergem do que está desenhado no protótipo Figma**:
 1. Não considerar o status **"Em conferência"** na tela de detalhes do pedido — deve ser removido da barra de progresso do pedido para simplificar o fluxo.

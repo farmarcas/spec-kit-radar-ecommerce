@@ -47,7 +47,8 @@ Todas as decisões de produto devem ser avaliadas pelo impacto nesta métrica.
 | Indicador | Atual | Meta Q3 |
 |---|---|---|
 | Conversão de vendas (mensal) | 22% | 30% |
-| PBM (Interplayers) | Não integrado | Integrado |
+| PBM (Interplayers) | Em produção em diversas lojas (atualizado 29/10/2026) | Integrado |
+| PBM (Funcional Card) | Em integração, só api-core (documentos de 28/10/2026) | Integrado nas lojas do rollout atual |
 | NMT (lojas ativas) | 7 | 8 — Pronto para escala nacional |
 
 ## Entregas Q3 2026 (Squad App)
@@ -90,8 +91,8 @@ Todas as decisões de produto devem ser avaliadas pelo impacto nesta métrica.
 - Catálogo de produtos por farmácia
 - Busca e filtros (categoria, princípio ativo, marca)
 - Carrinho e checkout
-- Compra de medicamentos controlados (hoje só retirada na loja; com o envio digital de receita, entrega ou retirada)
-- Integração PBM (desconto por convênio farmacêutico)
+- Compra de medicamentos controlados (entrega ou retirada, com envio digital de receita obrigatório — em produção)
+- Integração PBM (desconto por convênio farmacêutico) — provedores Interplayers (em produção) e Funcional Card (em integração)
 - Acompanhamento de pedido
 - Histórico de compras e recompra
 - Notificações push (promoções, status de pedido)

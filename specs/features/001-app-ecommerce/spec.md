@@ -7,7 +7,7 @@
 | **Status** | Em produção (baseline) + épicos 1–5 (1 item em testes) |
 | **Tipo** | Especificação consolidada do produto (baseline + épicos recentes) |
 | **Versão** | 2.1 |
-| **Atualizado** | 2026-10-05 (regra de controlados — ver nota em 5.1) |
+| **Atualizado** | 2026-10-29 (regra de controlados em produção — ver nota em 5.1) |
 
 > Esta spec consolida o comportamento do produto: o **baseline** (regras pré-existentes, documentadas nos handoffs/PDFs) e os **épicos recentes** (jan/2026 →, registrados nos tickets `ECA-###`). Descreve **o quê** e **o porquê** (o **como** vive em `plan.md`).
 >
@@ -25,7 +25,7 @@ As configurações de loja (catálogo, ofertas, fretes, horários, formas de pag
 
 **Objetivos**
 - Reduzir a fricção do primeiro acesso até a homepage de uma loja.
-- Habilitar a venda de medicamentos com retenção de receita, em conformidade com a RDC 144 da ANVISA. *(Até o lançamento do envio digital de receita, restritos à retirada na farmácia; a partir dele, entrega ou retirada — ver nota de conflito em 5.1.)*
+- Habilitar a venda de medicamentos com retenção de receita, em conformidade com a RDC 144 da ANVISA. *(Entrega ou retirada, com envio digital de receita obrigatório — em produção, confirmado pelo PO em 29/10/2026; antes disso, restritos à retirada na farmácia. Ver nota em 5.1.)*
 - Oferecer um fluxo de checkout completo (carrinho → entrega/retirada → pagamento) sobre o design system.
 - Manter o consumidor informado do status do pedido via push.
 
@@ -51,7 +51,7 @@ As configurações de loja (catálogo, ofertas, fretes, horários, formas de pag
 
 - **Primeiro acesso (com cobertura):** Dado um usuário sem loja definida, quando informa localização ou endereço, então o app o direciona para a melhor loja disponível e exibe a homepage.
 - **Primeiro acesso (sem cobertura):** Dado um endereço sem loja com entrega, quando o roteamento não encontra cobertura, então o app exibe "Ainda não atendemos sua região" com as 5 lojas mais próximas para retirada.
-- **Compra de controlado:** Dado um controlado na cesta, quando o usuário avança no checkout, então a tag "Exige receita" é exibida e, até o lançamento do envio digital de receita, apenas a retirada na loja fica disponível; **a partir dele, entrega e retirada ficam disponíveis e o envio da receita é obrigatório** (ver nota em 5.1).
+- **Compra de controlado:** Dado um controlado na cesta, quando o usuário avança no checkout, então a tag "Exige receita" é exibida, **entrega e retirada ficam disponíveis e o envio da receita é obrigatório** (em produção desde o lançamento do envio digital de receita; antes disso só a retirada estava disponível — ver nota em 5.1).
 - **Checkout com pagamento no app:** Dado um carrinho válido, quando o usuário escolhe "Pagar no app" e cartão de crédito, então confirma com CVV e finaliza a compra.
 - **Pagamento PIX:** Dado um pagamento via PIX, quando o código é gerado, então o usuário tem 2h para pagar, com timer regressivo e estado de expiração.
 
@@ -63,18 +63,18 @@ As configurações de loja (catálogo, ofertas, fretes, horários, formas de pag
 
 ### 5.1 Medicamentos controlados (Épico 1)
 
-> **Nota de conflito (fulfillment de controlados) — 2026-10-05:** FR-004, FR-005, FR-009 e FR-044 (retirada obrigatória / entrega bloqueada) existiam porque o app **não recebia a receita**. Com o envio digital obrigatório (`Envio de receita/PRD-envio-receita-app.md`, v1.4), o PO decidiu que o consumidor poderá comprar controlados por **entrega ou retirada**, à escolha, **no App e na Web**. Essas regras permanecem como baseline **vigente até o lançamento do envio de receita**; a partir dele, prevalece a nova regra. Permanecem válidas: FR-001/002 (exibição e não rankeamento), FR-007/008 (sem preço De/Por nem comunicação promocional) e a tag de receita. Pendentes: nova copy de FR-003/FR-005, retenção do original na entrega, FR-010/FR-041 e validação regulatória (RDC 144).
+> **Nota de conflito (fulfillment de controlados) — 2026-10-05:** FR-004, FR-005, FR-009 e FR-044 (retirada obrigatória / entrega bloqueada) existiam porque o app **não recebia a receita**. Com o envio digital obrigatório (`Envio de receita/PRD-envio-receita-app.md`, v1.4), o PO decidiu que o consumidor poderá comprar controlados por **entrega ou retirada**, à escolha, **no App e na Web**. **Atualização 29/10/2026 (PO): o envio de receita está em produção e controlados são comprados por entrega ou retirada** — a nova regra é a vigente e os textos originais dessas FRs ficam só como histórico (tachados abaixo). Permanecem válidas: FR-001/002 (exibição e não rankeamento), FR-007/008 (sem preço De/Por nem comunicação promocional) e a tag de receita. Segue pendente de confirmação (não informado como decidido): nova copy de FR-003/FR-005, retenção do original na entrega, FR-010/FR-041 e validação regulatória (RDC 144).
 
 - **FR-001** O app DEVE exibir medicamentos controlados em busca, departamentos e detalhe do produto. *(ECA-96)*
 - **FR-002** O app NÃO DEVE rankear medicamentos controlados nas vitrines. *(ECA-96)*
-- **FR-003** No detalhe de um controlado, o app DEVE exibir a tag "Exige receita." e, **até o lançamento do envio digital de receita**, a mensagem "Retirada na loja mediante apresentação da receita.". *(ECA-96; mensagem **a ser redefinida** a partir do lançamento — copy pendente)*
-- **FR-004** ~~Quando houver um controlado na cesta, o app DEVE tornar a entrega em casa indisponível e permitir o pedido apenas por retirada na loja.~~ **Substituído a partir do lançamento do envio digital de receita** *(decisão do PO, 2026-10-05)*: com controlado na cesta, o app DEVE permitir entrega **ou** retirada, à escolha, exigindo o envio da receita em ambos os casos (ver `Envio de receita/PRD-envio-receita-app.md`). *(ECA-95; texto original vigente até o lançamento)*
-- **FR-005** ~~Quando houver um controlado na cesta, a opção de retirada DEVE ser apresentada com o texto "Retirada na loja mediante apresentação da receita".~~ **Substituído a partir do lançamento do envio digital de receita** *(PO, 2026-10-05)*: o texto condicionado à retirada deixa de existir; nova copy pendente. *(ECA-95; texto original vigente até o lançamento)*
+- **FR-003** No detalhe de um controlado, o app DEVE exibir a tag "Exige receita." e ~~a mensagem "Retirada na loja mediante apresentação da receita."~~ *(ECA-96; essa mensagem era vigente até o lançamento do envio digital de receita, hoje em produção; **a nova copy segue pendente**)*.
+- **FR-004** ~~Quando houver um controlado na cesta, o app DEVE tornar a entrega em casa indisponível e permitir o pedido apenas por retirada na loja.~~ **Substituído (em produção — decisão do PO de 2026-10-05, confirmada em 29/10/2026)**: com controlado na cesta, o app DEVE permitir entrega **ou** retirada, à escolha, exigindo o envio da receita em ambos os casos (ver `Envio de receita/PRD-envio-receita-app.md`). *(ECA-95; texto original vigente até o lançamento)*
+- **FR-005** ~~Quando houver um controlado na cesta, a opção de retirada DEVE ser apresentada com o texto "Retirada na loja mediante apresentação da receita".~~ **Substituído (em produção — PO, 2026-10-05, confirmado em 29/10/2026)**: o texto condicionado à retirada deixou de existir; nova copy pendente. *(ECA-95; texto original vigente até o lançamento)*
 - **FR-006** A tag "Exige receita" DEVE aparecer no resumo do pedido, na última tela do checkout. *(ECA-95)*
 - **FR-007** Medicamentos controlados NÃO DEVEM ser apresentados com preço "De/Por"; somente o preço final, em qualquer tela. *(ECA-200)*
 - **FR-008** Medicamentos controlados NÃO DEVEM exibir nenhuma comunicação promocional (percentuais, tags de preço do ERP, termos como "Desconto"/"Oferta"/"Barato"). *(ECA-200)*
-- **FR-009** ~~No detalhe de um controlado, o app NÃO DEVE exibir o componente de entrega no endereço.~~ **Substituído a partir do lançamento do envio digital de receita** *(PO, 2026-10-05)*: como a entrega passa a ser permitida, o componente de entrega no endereço volta a ser exibido no detalhe do controlado. *(ECA-238; texto original vigente até o lançamento)*
-- **FR-010** O app NÃO DEVE exibir a progress bar de frete quando houver um controlado na cesta. *(ECA-234; **a reavaliar** a partir do lançamento do envio digital de receita, já que a entrega passa a ser possível — decisão pendente)*
+- **FR-009** ~~No detalhe de um controlado, o app NÃO DEVE exibir o componente de entrega no endereço.~~ **Substituído (em produção — PO, 2026-10-05, confirmado em 29/10/2026)**: como a entrega é permitida, o componente de entrega no endereço volta a ser exibido no detalhe do controlado. *(ECA-238; texto original vigente até o lançamento)*
+- **FR-010** O app NÃO DEVE exibir a progress bar de frete quando houver um controlado na cesta. *(ECA-234; **a reavaliar**, já que a entrega de controlados está liberada em produção — decisão ainda não informada)*
 
 ### 5.2 Onboarding e homepage (Épico 2)
 
@@ -148,7 +148,7 @@ As configurações de loja (catálogo, ofertas, fretes, horários, formas de pag
 - **FR-038** O carrinho vazio DEVE exibir mensagem informativa e o botão "Explorar produtos" (→ home); o botão voltar retorna à tela anterior. *(ECA-301)*
 - **FR-039** A tag "Exige receita" DEVE aparecer no card de todo produto controlado, já na primeira tela do carrinho. *(ECA-520)*
 - **FR-040** A tag "Oferta" DEVE aparecer somente para produtos com oferta criada no Portal (não para produtos com preço inicial/final do ERP sem oferta). *(ECA-517)*
-- **FR-041** A tag de frete grátis DEVE mostrar quanto falta para o frete grátis (subtotal vs. valor do Portal) e atualizar ao atingir o valor; e-mails @febrafar/@farmarcas sempre veem frete grátis; cestas com controlados não exibem a tag *(regra **a reavaliar** a partir do lançamento do envio digital de receita, já que a entrega passa a ser possível — decisão pendente)*. *(ECA-566)*
+- **FR-041** A tag de frete grátis DEVE mostrar quanto falta para o frete grátis (subtotal vs. valor do Portal) e atualizar ao atingir o valor; e-mails @febrafar/@farmarcas sempre veem frete grátis; cestas com controlados não exibem a tag *(regra **a reavaliar**, já que a entrega de controlados está liberada em produção — decisão ainda não informada)*. *(ECA-566)*
 - **FR-042** A tag "Preço normal" DEVE ser exibida apenas quando o usuário atinge o limite da oferta. *(ECA-595)*
 
 #### Telas de referência
@@ -168,7 +168,7 @@ As configurações de loja (catálogo, ofertas, fretes, horários, formas de pag
 ### 5.6 Checkout — Entrega e retirada (Épico 5)
 
 - **FR-043** A seção "Meu Endereço" DEVE usar o endereço atual do usuário (ver FR-017). *(ECA-309)*
-- **FR-044** Com controlado na cesta, a tag "Exige receita" DEVE ser exibida. ~~A entrega em casa DEVE ser ocultada.~~ **A ocultação da entrega foi substituída a partir do lançamento do envio digital de receita** *(PO, 2026-10-05)*: entrega e retirada ficam disponíveis. *(ECA-309; ocultação vigente até o lançamento)*
+- **FR-044** Com controlado na cesta, a tag "Exige receita" DEVE ser exibida. ~~A entrega em casa DEVE ser ocultada.~~ **A ocultação da entrega foi substituída (em produção — PO, 2026-10-05, confirmado em 29/10/2026)**: entrega e retirada ficam disponíveis. *(ECA-309; ocultação vigente até o lançamento)*
 - **FR-045** Usuário não logado, ao clicar em "Ir para pagamento", DEVE ser redirecionado ao login. *(ECA-309)*
 - **FR-046** A retirada DEVE sempre exibir a tag "Grátis" e a farmácia atual; o botão "Trocar" é ocultado quando não há troca disponível. *(ECA-309)*
 - **FR-047** A mensagem de retirada ("Disponível hoje a partir das…") DEVE considerar horário atual + tempo de retirada da loja; ao ultrapassar o funcionamento, vira "amanhã a partir das…"; lojas 24h após 00:00 usam "amanhã" e atualizam para "hoje" ao virar o dia. *(ECA-309)*

@@ -212,7 +212,7 @@ A Web segue exatamente o fluxo do App: **CPF → código de confirmação enviad
 - **FRW-070** Disponibilidade de retirada/entrega NÃO DEVE usar o fuso do servidor; usa horário local do consumidor. *(App FR-049)*
 - **FRW-071** **Na primeira entrega** a PDP exibe apenas a seção **"Detalhes do produto"** (descrição simples do produto), como acordeão. As demais seções do Figma (Benefícios, Modo de uso, Advertências, Armazenamento, Composição, Especificações) **não entram na primeira entrega**, pois o Catálogo ainda não tem esses campos; entrarão quando existirem. *(PO 07/10)*
 - **FRW-072** Produto indisponível/sem estoque na loja ativa DEVE ter estado próprio (não desenhado). *(App FR-069)* ⚠️ P-08
-- **FRW-073** **Medicamentos controlados:** o **envio de receita é obrigatório** e o cliente poderá comprar por **entrega ou retirada**, à escolha — regra **igual no App e na Web**. Na PDP, os blocos "Retirar na farmácia" e "Receber no endereço" são exibidos normalmente (a restrição de FR-004/005/009/044 do App deixa de valer a partir do lançamento do envio de receita). O envio na Web é por seleção de arquivo (equivalente à câmera/galeria do App), com as regras do PRD de Envio de Receita (JPG, PNG ou PDF, até 2 MB). *(PO 05/10; `spec.md` 5.1; `PRD-envio-receita-app.md` v1.4)* ⚠️ P-19
+- **FRW-073** **Medicamentos controlados:** o **envio de receita é obrigatório** e o cliente poderá comprar por **entrega ou retirada**, à escolha — regra **igual no App e na Web**. Na PDP, os blocos "Retirar na farmácia" e "Receber no endereço" são exibidos normalmente (a restrição de FR-004/005/009/044 do App deixou de valer: o envio de receita e a entrega de controlados estão em produção no App desde 29/10/2026). O envio na Web é por seleção de arquivo (equivalente à câmera/galeria do App), com as regras do PRD de Envio de Receita (JPG, PNG ou PDF, até 2 MB). *(PO 05/10; `spec.md` 5.1; `PRD-envio-receita-app.md` v1.4)* ⚠️ P-19
 - **FRW-074** Controlados NÃO exibem De/Por nem comunicação promocional em nenhuma tela. *(App FR-007, FR-008)* (mantido até confirmação contrária)
 - **FRW-075** O ícone de favoritar (coração) na PDP, com bottom sheet de login para deslogado, é paridade com o PRD de Favoritos do App, **não desenhado** na PDP Web. *(App PRD Favoritos §6)* ⚠️ P-15
 
@@ -237,7 +237,7 @@ A Web segue exatamente o fluxo do App: **CPF → código de confirmação enviad
 | Ativar oferta | Login + "Ativar" (FR-022, 104, 108) | Igual (FRW-044/045) | Paridade |
 | Carrinho deslogado | Monta; login ao pagar (FR-045) | Igual (6.3.5) | Paridade |
 | Cartões e endereços | FR-026–030, 057–060, 091–094 | Igual (FRW-055–059) | Paridade |
-| Controlados | Hoje só retirada; **a partir do envio digital de receita: entrega ou retirada** (spec 5.1, PRD Receita v1.4) | Receita obrigatória + entrega ou retirada (FRW-073) | Paridade — pendências em P-19 |
+| Controlados | **Entrega ou retirada**, com envio digital de receita obrigatório — em produção (spec 5.1, PRD Receita v1.4; confirmado 29/10/2026) | Receita obrigatória + entrega ou retirada (FRW-073) | Paridade — pendências em P-19 |
 | Rótulo de receita | "Exige receita" → "Receita obrigatória" (PRD Receita v1.3) | A definir | Pendência |
 | Busca | Autocomplete/filtros planejados SQP5Q326 | Entram na Web (FRW-064) | Paridade futura |
 | Gateway | Braspag; Pix via Cielo/Braspag | Igual (seção 11 P-16) | Paridade |

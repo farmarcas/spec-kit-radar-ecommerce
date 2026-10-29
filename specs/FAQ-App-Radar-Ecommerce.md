@@ -82,7 +82,7 @@ Cuidados pessoais, Higiene e beleza, Medicamentos, Farmacinha, Infantil, Nutriç
 ## Catálogo e medicamentos controlados
 
 **O app vende medicamentos que exigem receita?**
-Sim. Medicamentos controlados (categoria "Medicamentos com Retenção de Receita" no Portal) aparecem em busca, departamentos e detalhe do produto, em conformidade com a RDC 144 da ANVISA. Hoje a compra é restrita à retirada na loja, mediante apresentação da receita. Com o lançamento do envio digital de receita (no App e na Web), o consumidor envia a receita no checkout e poderá comprar tanto por **entrega** quanto por **retirada**, à sua escolha.
+Sim. Medicamentos controlados (categoria "Medicamentos com Retenção de Receita" no Portal) aparecem em busca, departamentos e detalhe do produto, em conformidade com a RDC 144 da ANVISA. O consumidor envia a receita no checkout (envio digital obrigatório) e pode comprar tanto por **entrega** quanto por **retirada**, à sua escolha. *(Antes do envio digital de receita, a compra era restrita à retirada na loja, mediante apresentação da receita.)*
 
 **Como o app sinaliza um controlado?**
 Com a tag "Exige receita" no detalhe do produto, no card do carrinho e no resumo final do checkout, além (hoje) da mensagem "Retirada na loja mediante apresentação da receita." — mensagem que será redefinida com o envio digital de receita, quando a tag passa a se chamar "Receita obrigatória".
@@ -91,7 +91,7 @@ Com a tag "Exige receita" no detalhe do produto, no card do carrinho e no resumo
 Não. Por exigência regulatória, controlados nunca exibem preço "De/Por", percentuais de desconto, tags de preço do ERP ou termos como "Desconto"/"Oferta"/"Barato" — apenas o preço final. Também não são rankeados nas vitrines.
 
 **O que muda no carrinho quando há um controlado?**
-Hoje, a entrega em casa fica indisponível (só resta retirada na loja), a progress bar de frete some, e o componente de entrega no endereço não aparece no detalhe do produto. Com o envio digital de receita, a entrega volta a ser permitida e o checkout passa a exigir o envio da receita antes do pagamento (entrega ou retirada); o tratamento do frete grátis nesses carrinhos ainda será redefinido.
+A entrega em casa é permitida e o checkout exige o envio da receita antes do pagamento (entrega ou retirada). *(Antes do envio digital de receita, só a retirada na loja ficava disponível.)* O tratamento da progress bar e do frete grátis nesses carrinhos ainda está por ser definido.
 
 ---
 
@@ -129,14 +129,14 @@ Sim, uma mensagem informativa com o botão "Explorar produtos", que leva de volt
 Sim, refletem automaticamente nos carrinhos já montados.
 
 **Como sei que estou perto do frete grátis?**
-Uma tag mostra quanto falta de subtotal para atingir o frete grátis da loja, atualizando ao ser atingido. Contas @febrafar/@farmarcas sempre veem frete grátis. Hoje, cestas com controlados não exibem essa tag (porque só têm retirada, que é sempre grátis); essa regra será reavaliada quando a entrega de controlados for liberada com o envio digital de receita.
+Uma tag mostra quanto falta de subtotal para atingir o frete grátis da loja, atualizando ao ser atingido. Contas @febrafar/@farmarcas sempre veem frete grátis. Cestas com controlados não exibem essa tag (regra herdada do tempo em que controlados só tinham retirada, que é sempre grátis); como a entrega de controlados já está liberada, essa regra ainda será reavaliada.
 
 ---
 
 ## Checkout — entrega e retirada
 
 **Quais as opções de recebimento do pedido?**
-Entrega em casa ou retirada na loja. Hoje, quando há controlado na cesta só a retirada fica disponível; com o envio digital de receita, entrega e retirada passam a valer também para controlados.
+Entrega em casa ou retirada na loja — inclusive quando há controlado na cesta, desde que a receita seja enviada no checkout.
 
 **Como o app calcula o horário de disponibilidade?**
 Somando o horário atual ao tempo de retirada/entrega configurado pela loja no Portal, sempre no fuso horário local do consumidor (nunca no fuso do servidor). Se passar do horário de funcionamento, a mensagem muda para "amanhã a partir das…". Lojas 24h após meia-noite mostram "amanhã" e atualizam para "hoje" na virada do dia.
@@ -222,10 +222,22 @@ Sim — a Recompra permite repetir um pedido anterior com um clique (funcionalid
 ## PBM (Programa de Benefício em Medicamentos)
 
 **O que é PBM no contexto do app?**
-É o desconto que o consumidor tem por convênio ou plano de saúde farmacêutico. O parceiro atual é a **Interplayers**.
+É o desconto de laboratório que o consumidor tem por convênio ou plano de saúde farmacêutico. Os provedores são a **Interplayers** (já em produção) e a **Funcional Card** (em integração). Para o consumidor o fluxo é o mesmo: ver o desconto, informar o CPF, cadastrar-se no programa se ele pedir e fechar a compra.
 
 **O PBM já está disponível no app?**
-Ainda não — é uma entrega planejada para o Q3 2026 (agosto–setembro). A integração segue o modelo "plug-and-play": cada loja habilita o PBM de forma independente, sem customização do time do Radar.
+Sim, com a **Interplayers**, em diversas lojas. A integração segue o modelo "plug-and-play": cada loja habilita o PBM de forma independente, sem customização do time do Radar. A **Funcional Card** entra nas lojas que já estão no rollout atual, sem mudança de tela no app; loja nova no rollout recebe a Funcional na carga seguinte.
+
+**O desconto de laboratório aparece na busca e na vitrine?**
+Sim. A busca e a vitrine mostram o desconto de laboratório, atualizado na carga diária (madrugada), para os produtos dos dois provedores.
+
+**E se o programa pedir cadastro?**
+O app mostra o formulário de cadastro que já usa (ou abre a página do programa, se ele tiver uma). Se o programa exigir aceite de termo, a pessoa vê o texto ou o link antes do desconto.
+
+**O PBM funciona com medicamentos que exigem receita?**
+O produto fica marcado como exigindo receita e segue o fluxo de envio de receita do app. Quando o programa da Funcional exige algo além disso na própria API deles (imagem da receita, dose diária ou um código extra do aplicativo do programa), o item não é adicionado com desconto e a pessoa vê a mensagem do programa.
+
+**O que acontece se eu cancelar um pedido com PBM?**
+Antes da nota fiscal, o cancelamento não gera chamada ao provedor na Funcional. Depois da nota, a venda é desfeita no provedor.
 
 **O que é Deeplink no app?**
 É a capacidade de abrir o app diretamente numa tela específica — produto, vitrine, campanha, departamento, ofertas, busca — a partir de um link, funcionando com o app fechado ou em background. Usado principalmente por lojistas para anúncios digitais que levam o cliente direto ao produto anunciado, sem passar pela navegação manual. Resultado do Spike ECA-833; detalhes em `specs/features/001-app-ecommerce/Deeplink/PRD-deeplink-app.md`.
@@ -254,15 +266,15 @@ O lojista (farmácia associada), pelo Portal Radar E-commerce / E-Delivery. O ap
 | Loja Ativa | Lojista com ao menos uma transação no período |
 | NSM | Volume de Transações por Loja Ativa |
 | NMT | Número de lojas ativas (indicador de escala) |
-| PBM | Desconto via convênio farmacêutico (parceiro: Interplayers) |
+| PBM | Desconto de laboratório via convênio farmacêutico (provedores: Interplayers e Funcional Card) |
 | OMS | Sistema que gerencia o ciclo de vida do pedido após a criação |
 | Recompra | Repetir um pedido anterior com um clique |
-| Controlados | Medicamentos com retenção de receita; envio de receita no checkout, entrega ou retirada (hoje, só retirada na loja) |
+| Controlados | Medicamentos com retenção de receita; envio de receita no checkout, entrega ou retirada |
 | Deeplink | Link que abre o app direto numa tela específica (produto, vitrine, campanha, etc.), usado em anúncios de lojistas |
 
 ---
 
-*Documento gerado a partir do Spec Kit da squad App (Radar E-commerce), com base em `product.md`, `glossary.md`, `spec.md` e `plan.md` (feature `001-app-ecommerce`, atualizada em 2026-06). Itens em desenvolvimento (ex.: PBM, confirmação por CVV) estão sinalizados como tal e podem mudar até o lançamento.*
+*Documento gerado a partir do Spec Kit da squad App (Radar E-commerce), com base em `product.md`, `glossary.md`, `spec.md` e `plan.md` (feature `001-app-ecommerce`, atualizada em 2026-06). Itens em desenvolvimento (ex.: PBM com a Funcional Card, confirmação por CVV) estão sinalizados como tal e podem mudar até o lançamento.*
 
 ---
 

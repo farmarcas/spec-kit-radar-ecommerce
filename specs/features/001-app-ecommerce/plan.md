@@ -56,7 +56,7 @@ As regras abaixo são **dirigidas por dados** do Portal e devem refletir em carr
 
 ## 5. Fases de implementação (mapeadas aos épicos)
 
-1. **Fase 1 — Catálogo e controlados (Épico 1):** exibição, supressão de promoção, restrição a retirada *(superada a partir do lançamento do envio digital de receita — entrega ou retirada; ver `spec.md` 5.1)*, flags de retenção. → FR-001..FR-010.
+1. **Fase 1 — Catálogo e controlados (Épico 1):** exibição, supressão de promoção, restrição a retirada *(superada: o envio digital de receita está em produção e controlados podem ser comprados por entrega ou retirada; ver `spec.md` 5.1)*, flags de retenção. → FR-001..FR-010.
 2. **Fase 2 — Onboarding e homepage (Épico 2):** entrada por GPS/endereço, roteamento, persistência do endereço, vitrines e cards. → FR-011..FR-023.
 3. **Fase 3 — Notificações (Épico 3):** push por transição de status. → FR-024/025.
 4. **Fase 4 — Endereços (Épico 4):** gestão, adicionar/editar/excluir. → FR-026..FR-030.
