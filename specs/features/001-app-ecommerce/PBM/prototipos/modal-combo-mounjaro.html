@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modal de combo PBM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#E4E9F0}
+body{font-family:'Roboto',system-ui,sans-serif;display:flex;justify-content:center;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+[hidden]{display:none!important}
+#app{position:relative;width:390px;height:844px;max-width:100%;overflow:hidden;background:#F3F6FA;color:#1A1A1A;align-self:flex-start}
+.opt{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;text-align:left;border-radius:12px;padding:14px 12px;box-sizing:border-box;background:#fff;border:1px solid #C9D2DD}
+.opt.on{border:2px solid #0074BB;box-shadow:0 0 0 2px rgba(0,116,187,.15)}
+.opt .lbl{font-size:11px;font-weight:700;letter-spacing:.4px;color:#5F6B7A}
+.opt.on .lbl{color:#005A91}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TELA DE PRODUTO (fundo) -->
+  <div style="position:absolute;top:0;left:0;right:0;bottom:0;padding:0 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px">
+    <div style="height:56px;display:flex;align-items:center;justify-content:space-between;margin-top:24px">
+      <button aria-label="Voltar" style="width:44px;height:44px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0074BB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div style="font-size:16px;font-weight:500">Produto</div>
+      <button aria-label="Carrinho" style="width:44px;height:44px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0074BB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11l2-8H6"/></svg>
+      </button>
+    </div>
+    <h1 style="margin:0;font-size:24px;line-height:1.2;font-weight:700">Mounjaro</h1>
+    <div style="background:#fff;border-radius:8px;height:150px;display:flex;align-items:center;justify-content:center">
+      <svg width="90" height="130" viewBox="0 0 90 130" role="img" aria-label="Caixa do produto (ilustração)">
+        <path d="M20 10h40l12 8v104H20z" fill="#F4F4F4" stroke="#D5D5D5"/>
+        <path d="M60 10l12 8v104H60z" fill="#DCDCDC"/>
+        <rect x="20" y="70" width="52" height="22" fill="#D0021B"/>
+      </svg>
+    </div>
+    <div style="display:flex;gap:8px">
+      <span style="display:flex;align-items:center;gap:6px;background:#FDEBEC;border:1px solid #F3B8BC;color:#A4161F;font-size:12px;font-weight:500;padding:6px 10px;border-radius:8px"><span style="width:14px;height:14px;border-radius:3px;background:#D0021B;display:inline-block"></span>Tarja Vermelha</span>
+      <span style="display:flex;align-items:center;gap:6px;background:#E8F1FE;border:1px solid #B5CEF5;color:#0B4FBF;font-size:12px;font-weight:500;padding:6px 10px;border-radius:8px"><span style="width:14px;height:14px;border-radius:3px;background:#1A5FE0;display:inline-block"></span>Retenção de receita</span>
+    </div>
+    <div style="background:#FFF6DD;border:1px solid #F0D98A;border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start">
+      <span style="width:28px;height:28px;border-radius:6px;background:#E07B00;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none" aria-hidden="true">!</span>
+      <div><div style="font-size:13px;font-weight:700;color:#6B3A00">Receita obrigatória</div><div style="font-size:12px;color:#8A4B00;line-height:1.3">A retirada só será feita mediante apresentação da receita.</div></div>
+    </div>
+    <div style="font-size:12px;color:#5F6B7A">Escolha seu desconto</div>
+
+    <div style="border:1.5px solid #0074BB;border-radius:12px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500">
+        <span style="width:20px;height:20px;border-radius:50%;border:2px solid #0074BB;display:flex;align-items:center;justify-content:center;flex:none"><span style="width:10px;height:10px;border-radius:50%;background:#0074BB"></span></span>
+        Desconto de laboratório
+      </div>
+      <div>
+        <div style="font-size:12px;color:#5F6B7A"><s>R$ 1.905,60</s> <span style="font-size:11px;font-weight:700;color:#0B8F4D">Até 43% OFF</span></div>
+        <div style="font-size:26px;font-weight:700;color:#0B8F4D">R$ 1.422,52 <span style="font-size:13px;font-weight:400;color:#5F6B7A">/ un.</span></div>
+      </div>
+      <div style="font-size:14px">Informe o CPF</div>
+      <div style="height:44px;border-radius:8px;background:#F3F6FA;display:flex;align-items:center;padding:0 14px;font-size:13px;color:#7A8594">000.000.000-00</div>
+      <button id="btnOpen" style="height:56px;border:0;border-radius:8px;background:#0074BB;color:#fff;font-size:16px;font-weight:500">Comprar com desconto</button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal">
+    <div style="position:absolute;inset:0;background:rgba(10,20,35,0.55)"></div>
+    <div role="dialog" aria-label="Confirme sua escolha" style="position:absolute;left:0;right:0;bottom:0;max-height:800px;overflow-y:auto;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:center;padding-top:8px"><span style="width:40px;height:4px;border-radius:2px;background:#D5DCE5"></span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px 4px 20px">
+        <div style="font-size:16px;font-weight:500">Programa desconto de laboratório</div>
+        <button id="btnClose" aria-label="Fechar" style="width:44px;height:44px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div style="height:1px;background:#E6EBF1"></div>
+
+      <div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:24px;line-height:1.2;font-weight:700">Confirme sua escolha</div>
+
+        <div style="background:#E8F3FB;border:1px solid #9CCBEA;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px;color:#005A91;font-size:16px;font-weight:700">
+            Combo do laboratório
+          </div>
+          <div style="font-size:14px;line-height:1.35">Combo Mounjaro Inicio de Tratamento: 2,5+5 mg por R$ 2.250,00. Economia de R$ 1.154,35!</div>
+
+          <div style="display:flex;gap:8px;align-items:stretch;padding-top:8px">
+            <button id="optSingle" class="opt" aria-pressed="false">
+              <span class="lbl">SÓ ESTE ITEM</span>
+              <span style="font-size:20px;color:#1A1A1A"><b>R$ 1.422,52 <br></b><span style="font-weight:400;font-size:12px;color:#5F6B7A">por unidade<br></span><span style="color:#5F6B7A;font-size:12px"><b>25% OFF</b></span></span>
+            </button>
+            <button id="optCombo" class="opt on" aria-pressed="true">
+              <span class="lbl">LEVANDO O COMBO</span>
+              <span style="font-size:20px;color:#1A1A1A"><b>R$ 1.125,00&nbsp;</b><br><span style="color:#5F6B7A;font-size:12px">por unidade</span></span>
+              <span style="font-size:12px;color:#5F6B7A"><b>41% OFF</b></span>
+            </button>
+          </div>
+
+          <div id="summary" style="display:flex;flex-direction:column;gap:4px;font-size:13px">
+            <div style="display:flex;justify-content:space-between"><span>1 un. deste item</span><b>R$ 1.125,00</b></div>
+            <div style="display:flex;justify-content:space-between;gap:8px"><span style="white-space:nowrap">+ 1 un. Mounjaro 5mg 4 …</span><span style="white-space:nowrap"><s style="color:#5F6B7A">R$ 2.382,23</s> <b>R$ 1.125,00</b></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:17px;font-weight:700;padding-top:6px"><span>Total do combo</span><span style="color:#005A91">R$ 2.250,00</span></div>
+            <div style="font-size:12px;color:#0B8F4D;font-weight:500">Você economiza R$ 297,52 a mais neste item.</div>
+            <div style="font-size:12px;color:#5F6B7A;line-height:1.35;padding-top:4px"><b>Escolha o combo somente se as duas dosagens estiverem indicadas na sua receita médica.</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;line-height:1.35;color:#5F6B7A;text-align:center">Este desconto pode sofrer alterações de acordo com os itens <br>da cesta,a quantidade do produto e o CPF.</div>
+        <button id="btnConfirm" style="height:56px;border:0;border-radius:8px;background:#0074BB;color:#fff;font-size:16px;font-weight:500">Comprar o combo · R$ 2.250,00</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRMAÇÃO (protótipo) -->
+  <div id="toast" hidden style="position:absolute;left:16px;right:16px;top:72px;background:#0B8F4D;color:#fff;border-radius:8px;padding:14px 16px;font-size:14px;font-weight:500"></div>
+</div>
+
+<script>
+(function () {
+  var pick = 'combo';
+  var $ = function (id) { return document.getElementById(id); };
+  function render() {
+    var combo = pick === 'combo';
+    $('optCombo').className = 'opt' + (combo ? ' on' : '');
+    $('optSingle').className = 'opt' + (combo ? '' : ' on');
+    $('optCombo').setAttribute('aria-pressed', combo);
+    $('optSingle').setAttribute('aria-pressed', !combo);
+    $("summary").hidden = !combo;
+    $('btnConfirm').textContent = combo ? 'Comprar o combo · R$ 2.250,00' : 'Comprar o item · R$ 1.422,52';
+  }
+  $('btnOpen').onclick = function () { $('modal').hidden = false; $('toast').hidden = true; };
+  $('btnClose').onclick = function () { $('modal').hidden = true; };
+  $('optSingle').onclick = function () { pick = 'single'; render(); };
+  $('optCombo').onclick = function () { pick = 'combo'; render(); };
+  $('btnConfirm').onclick = function () {
+    $('modal').hidden = true;
+    $('toast').textContent = pick === 'combo' ? 'Combo adicionado à cesta (2 itens)' : 'Produto adicionado à cesta (1 item)';
+    $('toast').hidden = false;
+  };
+  render();
+})();
+</script>
+</body>
+</html>
