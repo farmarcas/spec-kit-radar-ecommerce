@@ -90,7 +90,7 @@ Todas as decisões de produto devem ser avaliadas pelo impacto nesta métrica.
 - Catálogo de produtos por farmácia
 - Busca e filtros (categoria, princípio ativo, marca)
 - Carrinho e checkout
-- Compra de medicamentos controlados (retirada na loja)
+- Compra de medicamentos controlados (hoje só retirada na loja; com o envio digital de receita, entrega ou retirada)
 - Integração PBM (desconto por convênio farmacêutico)
 - Acompanhamento de pedido
 - Histórico de compras e recompra

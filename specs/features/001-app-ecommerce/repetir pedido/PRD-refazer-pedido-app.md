@@ -149,7 +149,7 @@ Itens adicionados            Bottom sheet "Alguns          "Nenhum item desse
 - O Checkout **não** reaproveita forma de pagamento nem endereço/loja de retirada do pedido original — o Consumidor sempre confirma esses dados do zero, como em qualquer outra compra.
 
 ### 6.8 Medicamentos Controlados
-- Se o pedido original contém ao menos um item Controlado (retirada obrigatória na loja, receita já validada naquele pedido), repetir o pedido **exige novo envio e validação de receita médica** no Checkout — a receita já aprovada do pedido original não é reaproveitada automaticamente.
+- Se o pedido original contém ao menos um item Controlado (receita já enviada naquele pedido; a retirada obrigatória na loja deixa de valer com o envio digital de receita — entrega ou retirada, ver PRD de Envio de Receita v1.4), repetir o pedido **exige novo envio e validação de receita médica** no Checkout — a receita já aprovada do pedido original não é reaproveitada automaticamente.
 - Esse novo envio ocorre **dentro do fluxo de Checkout já existente**, sem necessidade de tela adicional dedicada — segue o fluxo já definido em `specs/features/001-app-ecommerce/Envio de receita/PRD-envio-receita-app.md`.
 
 ### 6.9 Disponibilidade por status do pedido

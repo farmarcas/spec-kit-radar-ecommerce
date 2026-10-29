@@ -82,16 +82,16 @@ Cuidados pessoais, Higiene e beleza, Medicamentos, Farmacinha, Infantil, Nutriç
 ## Catálogo e medicamentos controlados
 
 **O app vende medicamentos que exigem receita?**
-Sim. Medicamentos controlados (categoria "Medicamentos com Retenção de Receita" no Portal) aparecem em busca, departamentos e detalhe do produto, mas a compra é restrita à retirada na loja, mediante apresentação da receita — em conformidade com a RDC 144 da ANVISA.
+Sim. Medicamentos controlados (categoria "Medicamentos com Retenção de Receita" no Portal) aparecem em busca, departamentos e detalhe do produto, em conformidade com a RDC 144 da ANVISA. Hoje a compra é restrita à retirada na loja, mediante apresentação da receita. Com o lançamento do envio digital de receita (no App e na Web), o consumidor envia a receita no checkout e poderá comprar tanto por **entrega** quanto por **retirada**, à sua escolha.
 
 **Como o app sinaliza um controlado?**
-Com a tag "Exige receita" no detalhe do produto, no card do carrinho e no resumo final do checkout, além da mensagem "Retirada na loja mediante apresentação da receita."
+Com a tag "Exige receita" no detalhe do produto, no card do carrinho e no resumo final do checkout, além (hoje) da mensagem "Retirada na loja mediante apresentação da receita." — mensagem que será redefinida com o envio digital de receita, quando a tag passa a se chamar "Receita obrigatória".
 
 **Controlados aparecem com desconto ou promoção?**
 Não. Por exigência regulatória, controlados nunca exibem preço "De/Por", percentuais de desconto, tags de preço do ERP ou termos como "Desconto"/"Oferta"/"Barato" — apenas o preço final. Também não são rankeados nas vitrines.
 
 **O que muda no carrinho quando há um controlado?**
-A entrega em casa fica indisponível (só resta retirada na loja), a progress bar de frete some, e o componente de entrega no endereço não aparece no detalhe do produto.
+Hoje, a entrega em casa fica indisponível (só resta retirada na loja), a progress bar de frete some, e o componente de entrega no endereço não aparece no detalhe do produto. Com o envio digital de receita, a entrega volta a ser permitida e o checkout passa a exigir o envio da receita antes do pagamento (entrega ou retirada); o tratamento do frete grátis nesses carrinhos ainda será redefinido.
 
 ---
 
@@ -129,14 +129,14 @@ Sim, uma mensagem informativa com o botão "Explorar produtos", que leva de volt
 Sim, refletem automaticamente nos carrinhos já montados.
 
 **Como sei que estou perto do frete grátis?**
-Uma tag mostra quanto falta de subtotal para atingir o frete grátis da loja, atualizando ao ser atingido. Contas @febrafar/@farmarcas sempre veem frete grátis. Cestas com controlados não exibem essa tag (porque só têm retirada, que é sempre grátis).
+Uma tag mostra quanto falta de subtotal para atingir o frete grátis da loja, atualizando ao ser atingido. Contas @febrafar/@farmarcas sempre veem frete grátis. Hoje, cestas com controlados não exibem essa tag (porque só têm retirada, que é sempre grátis); essa regra será reavaliada quando a entrega de controlados for liberada com o envio digital de receita.
 
 ---
 
 ## Checkout — entrega e retirada
 
 **Quais as opções de recebimento do pedido?**
-Entrega em casa ou retirada na loja — exceto quando há controlado na cesta, caso em que só a retirada fica disponível.
+Entrega em casa ou retirada na loja. Hoje, quando há controlado na cesta só a retirada fica disponível; com o envio digital de receita, entrega e retirada passam a valer também para controlados.
 
 **Como o app calcula o horário de disponibilidade?**
 Somando o horário atual ao tempo de retirada/entrega configurado pela loja no Portal, sempre no fuso horário local do consumidor (nunca no fuso do servidor). Se passar do horário de funcionamento, a mensagem muda para "amanhã a partir das…". Lojas 24h após meia-noite mostram "amanhã" e atualizam para "hoje" na virada do dia.
@@ -170,7 +170,7 @@ O app pergunta "Precisa de troco?" (obrigatório); se "Sim", pede "Troco para qu
 O código gerado tem validade de 2 horas, com timer regressivo que persiste em segundo plano. O usuário pode copiar o código (com feedback "Código Pix copiado") ou ler o QR Code. Enquanto não pago, o pedido fica "Aguardando pagamento"; expirado o prazo, o pedido é cancelado automaticamente e mostra "Pagamento expirado" — se já havia sido pago e depois cancelado, o valor é estornado automaticamente.
 
 **Como funciona pagar no crédito, pelo app?**
-Sem cartão salvo, o app pede para "Adicionar novo cartão" (com validação de bandeira pelo BIN — Visa, Mastercard, Elo, Amex —, mês/ano de validade, nome em caixa alta e CPF do titular). Com cartão salvo, mostra bandeira + 4 últimos dígitos. Ao finalizar a compra, o app sempre pede o CVV em uma modal antes de confirmar (Amex aceita 4 dígitos).
+Sem cartão salvo, o app pede para "Adicionar novo cartão" (com validação de bandeira pelo BIN — Visa, Mastercard, Elo, Amex —, mês/ano de validade, nome em caixa alta, CPF do titular e CVV). Com cartão salvo, mostra bandeira + 4 últimos dígitos. Ao finalizar a compra, o app sempre pede o CVV em uma modal antes de confirmar (Amex aceita 4 dígitos).
 
 **Onde ficam os cartões salvos?**
 Numa carteira, acessível pela tela de perfil e pela tela de pagamento do carrinho. O apelido do cartão é opcional (até 22 caracteres). Excluir um cartão remove o token também do gateway.
@@ -257,7 +257,7 @@ O lojista (farmácia associada), pelo Portal Radar E-commerce / E-Delivery. O ap
 | PBM | Desconto via convênio farmacêutico (parceiro: Interplayers) |
 | OMS | Sistema que gerencia o ciclo de vida do pedido após a criação |
 | Recompra | Repetir um pedido anterior com um clique |
-| Controlados | Medicamentos com retenção de receita, retirada obrigatória na loja |
+| Controlados | Medicamentos com retenção de receita; envio de receita no checkout, entrega ou retirada (hoje, só retirada na loja) |
 | Deeplink | Link que abre o app direto numa tela específica (produto, vitrine, campanha, etc.), usado em anúncios de lojistas |
 
 ---

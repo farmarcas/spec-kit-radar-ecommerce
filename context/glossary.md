@@ -33,7 +33,7 @@
 | **OMS** | Order Management System. Gerencia o ciclo de vida dos pedidos após criação. |
 | **Recompra** | Funcionalidade que permite ao consumidor repetir um pedido anterior com um clique. |
 | **GE** | Grupo Econômico. Conjunto de uma ou mais lojas do mesmo empresário/associado, dentro de uma **Rede** (bandeira). É o conceito de negócio por trás da funcionalidade **Grupo de lojas** no Portal. |
-| **Controlados** | Medicamentos que exigem receita médica. Compra disponível pelo app com retirada obrigatória na loja. |
+| **Controlados** | Medicamentos que exigem receita médica. Compra disponível pelo app e pela Web, com envio obrigatório da receita no checkout, por **entrega ou retirada**, à escolha do consumidor. *(Até o lançamento do envio de receita, a compra é restrita à retirada na loja — ver `specs/features/001-app-ecommerce/spec.md`, 5.1.)* |
 | **Maxi Popular** | [TODO: descrever o que é o App Maxi Popular no contexto do Radar] |
 
 ## Time e Processo

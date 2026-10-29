@@ -4,11 +4,16 @@
 **Squad:** App
 **Autor:** Daniel (PO)
 **Status:** Em refinamento — base para geração de histórias via Claude Code
-**Versão:** 1.3
+**Versão:** 1.4
 
 ---
 
 ## 0. Changelog
+
+**v1.4 (2026-10-05)** — Decisão do PO que muda a regra de fulfillment de controlados, **no App e na Web** (ver `specs/features/WebEcommerce/PRD-web-ecommerce.md`): a **retirada na loja deixa de ser obrigatória** para pedidos com medicamento controlado. A restrição existia porque o app não recebia a receita; com o envio digital obrigatório (esta feature), o consumidor passa a poder comprar controlados **por entrega ou por retirada**, à escolha. Consequências neste PRD:
+1. Baseline substituído: FR-004, FR-005, FR-009, FR-044 (e o texto de FR-003) do `spec.md` deixam de valer quando esta feature for lançada — ver nota de conflito em `spec.md` 5.1.
+2. A etapa "Receita médica" (obrigatória, regra 6.5) passa a ocorrer **tanto na entrega quanto na retirada**; o fluxo da seção 5 e as observações de formas de pagamento foram ajustados (antes citavam só retirada).
+3. **Pendências abertas por esta mudança (não decididas — não presumir):** (a) copy do bottom sheet "Antes de continuar" (6.7), que hoje diz que a receita original "poderá ficar retida na farmácia" e que o usuário deverá entregá-la à farmácia — precisa de redação para o caso de **entrega** (como a retenção do original é feita no recebimento); (b) mensagem de texto corrido do PDP/retirada ("Retirada na loja mediante apresentação da receita") a ser redefinida; (c) se frete grátis (FR-010/FR-041) e progress bar de frete voltam a valer para cestas com controlado; (d) validação regulatória/jurídica da entrega de controlados com receita digital + retenção do original (RDC 144).
 
 **v1.3 (2026-08-25)** — PO respondeu a maior parte dos itens que estavam na seção 12 (dependências), fechando praticamente todas as questões de UX/Produto levantadas até aqui:
 1. Formatos e tamanho aceitos definidos: **JPG, PNG ou PDF, até 2MB** (6.4).
@@ -31,9 +36,9 @@
 
 ## 1. Contexto
 
-Hoje (baseline vigente, ver `specs/features/001-app-ecommerce/spec.md`, seção 5.1) a compra de um medicamento controlado (categoria "Medicamentos com Retenção de Receita", sujeita à RDC 144/ANVISA) já é suportada pelo app, mas de forma **totalmente física**: FR-003 exibe a mensagem "Retirada na loja mediante apresentação da receita" no detalhe do produto, FR-004/FR-005 forçam a retirada na loja (sem entrega em casa), e a tag "Exige receita" aparece no carrinho (FR-039) e no resumo do checkout (FR-006). Em nenhum momento o app recebe uma imagem da receita — ela é conferida presencialmente, na retirada.
+Hoje (baseline vigente, ver `specs/features/001-app-ecommerce/spec.md`, seção 5.1) a compra de um medicamento controlado (categoria "Medicamentos com Retenção de Receita", sujeita à RDC 144/ANVISA) já é suportada pelo app, mas de forma **totalmente física**: FR-003 exibe a mensagem "Retirada na loja mediante apresentação da receita" no detalhe do produto, FR-004/FR-005 forçam a retirada na loja (sem entrega em casa — regra **substituída a partir da v1.4**: com o envio digital de receita, entrega e retirada passam a ser permitidas), e a tag "Exige receita" aparece no carrinho (FR-039) e no resumo do checkout (FR-006). Em nenhum momento o app recebe uma imagem da receita — ela é conferida presencialmente, na retirada.
 
-Este PRD documenta uma **proposta ainda não lançada** (confirmado com o PO — ver memória de sessão sobre o Figma "App · E-commerce": o canvas "17. Receita no pedido" é protótipo, não produção) que insere uma etapa de **upload digital da receita** no checkout, entre a escolha de entrega/retirada e o pagamento. O objetivo é permitir que o farmacêutico já receba uma cópia digital da receita antes da retirada, sem eliminar a exigência legal de apresentação do documento físico original no balcão.
+Este PRD documenta uma **proposta ainda não lançada** (confirmado com o PO — ver memória de sessão sobre o Figma "App · E-commerce": o canvas "17. Receita no pedido" é protótipo, não produção) que insere uma etapa de **upload digital da receita** no checkout, entre a escolha de entrega/retirada e o pagamento. O objetivo é permitir que o farmacêutico já receba uma cópia digital da receita antes da retirada **ou da entrega**, sem eliminar a exigência legal de apresentação/retenção do documento físico original (ver pendência 3(a) do changelog v1.4).
 
 O PO trouxe duas restrições explícitas para este documento, que **divergem do que está desenhado no protótipo Figma**:
 1. Não considerar o status **"Em conferência"** na tela de detalhes do pedido — deve ser removido da barra de progresso do pedido para simplificar o fluxo.
@@ -87,7 +92,7 @@ PDP (item controlado)
      Carrinho ── tag "Receita obrigatória" no item (rename do baseline, ver 6.11)
         │
         ▼
-  Entrega/retirada ── controlado força retirada na loja (baseline, FR-004/005)
+  Entrega/retirada ── entrega OU retirada à escolha (v1.4; substitui o baseline FR-004/005 que forçava retirada)
         │
         ▼ [carrinho tem 1+ item controlado]
   "Receita médica" (NOVO) ── upload de 1+ foto(s) de receita
@@ -98,7 +103,7 @@ PDP (item controlado)
   Bottom sheet "Antes de continuar" ── checkbox obrigatório
         │
         ▼
-  "Concordar e continuar" → Pagamento (baseline, fora de escopo — vale para qualquer forma de pagamento disponível na retirada)
+  "Concordar e continuar" → Pagamento (baseline, fora de escopo — vale para qualquer forma de pagamento disponível na entrega ou na retirada)
         │
         ▼
   Pedido confirmado
@@ -110,7 +115,7 @@ PDP (item controlado)
 
 Observações:
 - Se o carrinho não tiver item controlado, a etapa "Receita médica" não aparece — checkout segue direto de entrega/retirada para pagamento (baseline inalterado).
-- Confirmado pelo PO: esta etapa e suas regras se aplicam **igualmente a todas as formas de pagamento** disponíveis para retirada (Pix, cartão, dinheiro, etc. — baseline FR-046/047) — não há variação por forma de pagamento.
+- Confirmado pelo PO: esta etapa e suas regras se aplicam **igualmente a todas as formas de pagamento** disponíveis para retirada **e, a partir da v1.4, para entrega** (Pix, cartão, dinheiro, etc. — baseline FR-046/047/054) — não há variação por forma de pagamento nem por modalidade (entrega ou retirada).
 - O checkout como um todo **persiste** normalmente entre sessões do app (comportamento já existente) — inclui as receitas já anexadas: se o consumidor sair do checkout antes de concluir a etapa "Receita médica" e retornar depois, as receitas já enviadas continuam lá. Não é um comportamento novo a desenhar, apenas a extensão natural da persistência do checkout ao novo passo.
 
 ## 6. Regras de negócio
@@ -224,7 +229,7 @@ Informação trazida pelo PO (v1.2) para fechar a lacuna: este PRD documenta a v
 | Checkout — entrega/retirada | FR-044 | "Exige receita" | "Receita obrigatória" |
 | Detalhes do pedido | Este PRD (6.8) | "Receita obrigatória" | "Receita obrigatória" (inalterado) |
 
-A mensagem de texto corrido "Retirada na loja mediante apresentação da receita" (FR-003/FR-005) **não muda** — é uma frase diferente da tag, fora do escopo deste rename. Recomenda-se atualizar a copy referenciada em `spec.md` (FR-003/FR-006/FR-039/FR-044) quando as histórias desta feature forem geradas.
+A mensagem de texto corrido "Retirada na loja mediante apresentação da receita" (FR-003/FR-005) **não é afetada por este rename** (frase diferente da tag), mas **deixa de ser válida a partir da v1.4**, já que a retirada não é mais a única modalidade — a nova copy está pendente (changelog v1.4, 3(b)). Recomenda-se atualizar a copy referenciada em `spec.md` (FR-003/FR-006/FR-039/FR-044) quando as histórias desta feature forem geradas.
 
 ## 7. Toasts e banners
 
