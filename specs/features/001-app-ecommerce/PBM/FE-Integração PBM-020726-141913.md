@@ -2,6 +2,8 @@
 
 **Fonte:** FE-Integração PBM-020726-141913.pdf (documento original neste mesmo diretório)
 
+> **Atualização 29/10/2026 — leia antes.** Este documento é o discovery de jul/2026, escrito com a Funcional como alvo de descoberta. Desde então: a **Interplayers está em produção** em diversas lojas e a **Funcional entra reaproveitando tudo isso, com ajustes só na `ecomm-api-core-dotnet`** (App, BFFs de carrinho/vitrine/busca e pedido seguem no contrato de hoje). O desenho atual está em [`Integração Funcional/funcional-analise-tecnica.md`](Integração%20Funcional/funcional-analise-tecnica.md) (técnico), [`Integração Funcional/funcional-material-de-negocio.md`](Integração%20Funcional/funcional-material-de-negocio.md) (negócio) e [`arquitetura-pbm.md`](arquitetura-pbm.md). Onde este texto divergir, valem esses documentos; as divergências estão sinalizadas com **[Atualização 29/10/2026]**.
+
 ---
 
 # 🩹 Integração PBM
@@ -95,6 +97,8 @@ Ao não permitir que o consumidor realize compras no aplicativo aproveitando o p
 
 [Diagrama de fluxo (BPMN): inicia em "Acessar o aplicativo" → "Selecionar farmácia" → "Realizar login" → "Buscar produto" → "Adicionar produto no carrinho" → decisão losango (referente à identificação de programa/PBM) com ramificações indicando: "O logo do programa/desconto aparece no produto elegível na loja", "Consumidor tem cadastro no programa de PBM" e "O consumidor pode inserir o CPF/dados para verificar o desconto"; após a validação segue para "Valida CPF no provedor" → decisão "Possui cadastro no programa?" → ramos "Sim"/"Não" → "Apresenta produto com desconto de laboratório" → "Finalizar a compra" → "Processar pagamento" → "Confirmar pedido" → "Fim do fluxo".]
 
+**[Atualização 29/10/2026]** As jornadas abaixo descrevem o discovery. A etapa "Valida CPF no provedor" / "Consulta CNPJ no provedor" passa a ser resolvida pela api-core, que escolhe o provedor (Interplayers ou Funcional) pelo `provider` do produto em `load_product`; o app não distingue o provedor.
+
 **Jornada Consumidor - Venda de medicamento com retenção de receita**
 
 [Diagrama de fluxo (BPMN) semelhante ao anterior ("Acessar o aplicativo" → "Selecionar farmácia" → "Realizar login" → "Buscar produto" → "Adicionar produto no carrinho" → decisões losango sobre elegibilidade e cadastro no programa PBM → "Valida CPF no provedor" → decisão "Possui cadastro no programa?"), mas com uma etapa adicional de decisão "Tem retenção de receita?" e ramos "Sim"/"Não", seguindo depois para "Anexar receita" → "Finalizar a compra" → "Processar pagamento" → "Confirmar pedido" → "Fim do fluxo".]
@@ -125,16 +129,17 @@ Ao não permitir que o consumidor realize compras no aplicativo aproveitando o p
 
 | Problema | Solução/Contexto atual |
 |---|---|
-| Apresentação dos preços do PBM dos produtos que fazem parte de algum programa aderido pela loja | ✅ Realizar uma chamada diária na api da Funcional Card para identificar todos os programas, clientes e preços de cada programa de PBM |
-| Permitir a consulta na base para identificar se o consumidor está cadastrado no programa | ✅ Com as informações recebidas na chamada diária da API da Funcional, sempre que o usuário inserir o CPF no momento de incluir o produto no carrinho, o sistema vai consultar se esse consumidor já está cadastrado. |
-| Permitir o cadastro de novos consumidores nos programas de PBM da Funcional | ✅ No caso dos clientes não cadastrados, vamos permitir que o consumidor se cadastre no programa no momento da compra. A Funcional disponibiliza via integração o formulário de cadastro de todos os programas disponíveis no provedor |
-| Receber e enviar a NF das vendas de produtos PBM para reposição dos produtos | ✅ Alpha7 e Trier <br> ❌ Linx |
-| Possibilitar o envio da receita física, ou digital, do produto para a compra de medicamentos com retenção de receita | ❌ Atualmente não temos esse fluxo disponível no aplicativo, isso restringe a venda de 20 produtos dentro do cenário da Funcional Card <br> ✅ Conseguimos permitir a compra desses medicamentos para retirada na loja |
+| Apresentação dos preços do PBM dos produtos que fazem parte de algum programa aderido pela loja | ✅ Realizar uma chamada diária na api da Funcional Card para identificar todos os programas, clientes e preços de cada programa de PBM <br><br> **[Atualização 29/10/2026]** A carga diária é feita **por loja (CNPJ)** com `Pharma_discountPrograms` (origem `PARTNERS_ECOMMERCE`) e grava em `load_product` com `provider = Funcional`, sem apagar a Interplayers. O desconto chega à busca pelo mesmo evento Typesense de hoje (`PbmDiscountMin`). A carga **não** traz clientes: o cadastro do consumidor é consultado ao vivo. Ver [carga diária](sequencia-pbm-carga-diaria.md). |
+| Permitir a consulta na base para identificar se o consumidor está cadastrado no programa | ✅ Com as informações recebidas na chamada diária da API da Funcional, sempre que o usuário inserir o CPF no momento de incluir o produto no carrinho, o sistema vai consultar se esse consumidor já está cadastrado. <br><br> **[Atualização 29/10/2026]** A consulta é feita ao vivo, no `consumerPbmConsultBatch`, via `Pharma_checkPricesAndRules` + `Pharma_verifyOptIn` (e `Pharma_assessEligibility` se a pessoa ainda não está no programa). Ver [ativar desconto por CPF](sequencia-pbm-ativar-desconto-cpf.md). |
+| Permitir o cadastro de novos consumidores nos programas de PBM da Funcional | ✅ No caso dos clientes não cadastrados, vamos permitir que o consumidor se cadastre no programa no momento da compra. A Funcional disponibiliza via integração o formulário de cadastro de todos os programas disponíveis no provedor <br><br> **[Atualização 29/10/2026]** O app continua mostrando o formulário que já desenha (`consumerPbmAdhesionForm`); a core monta o `SchemaFormDocument` a partir de `Pharma_assessEligibility`, com termo de aceite (OptIn) e três tipos de inscrição. Programas com página de cadastro abrem a página; pergunta que depende de outra não vira campo aninhado. Ver [adesão Funcional](sequencia-pbm-adesao-funcional.md). |
+| Receber e enviar a NF das vendas de produtos PBM para reposição dos produtos | ✅ Alpha7 e Trier <br> ❌ Linx <br><br> **[Atualização 29/10/2026]** Na Funcional, a venda é reservada (`Sales_preAuthorizeSale`, válida até 30 dias), confirmada uma vez com a nota (`Sales_confirmPreAuthorizedSale`) e a chave da NF segue na confirmação ou, se tardia, em `Sales_updateInvoiceCode` (sem retry). Ver [efetivação](sequencia-pbm-efetivacao-funcional.md) e [cancelamento](sequencia-pbm-cancelamento-funcional.md). |
+| Possibilitar o envio da receita física, ou digital, do produto para a compra de medicamentos com retenção de receita | ❌ Atualmente não temos esse fluxo disponível no aplicativo, isso restringe a venda de 20 produtos dentro do cenário da Funcional Card <br> ✅ Conseguimos permitir a compra desses medicamentos para retirada na loja <br><br> **[Atualização 29/10/2026]** O **fluxo de envio de receita do app já está em produção** (ver [PRD de envio de receita](../Envio%20de%20receita/PRD-envio-receita-app.md)); a restrição acima era do discovery e não vale mais. Na Funcional, o produto que exige receita fica marcado (`requires_crm`). Fica **fora deste escopo** a exigência *dentro da API da Funcional* (imagem da receita anexada à venda, dose diária, segundo fator diferente de `NONE`): nesses casos o item não entra e a pessoa vê a mensagem do programa. |
 
 ## 🚩 Documentações técnicas:
 
 | Interplayers | Funcional Card |
 |---|---|
+| [`Documentação Interplayers/`](Documentação%20Interplayers/) — manuais e fichas técnicas do HUB | [`Documentação Funcional Card/`](Documentação%20Funcional%20Card/README.md) — documentação do gateway de credenciados (fornecedor) <br> [`Integração Funcional/`](Integração%20Funcional/funcional-analise-tecnica.md) — análise técnica e [material de negócio](Integração%20Funcional/funcional-material-de-negocio.md) da Farmarcas |
 
 > 🔗 **Introdução \| Developers**
 >
