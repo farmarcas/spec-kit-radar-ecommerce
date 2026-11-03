@@ -1,2 +1,5 @@
 .DS_Store
 relatorios/
+
+# Config local do Claude (pode conter segredos)
+.claude/settings.local.json
