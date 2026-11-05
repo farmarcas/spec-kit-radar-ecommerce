@@ -19,7 +19,7 @@ A sidebar é o menu de navegação principal do Portal, dividido em 2 módulos c
 |---|---|
 | Topo | Indicadores; Pedidos (tag azul "Novos", sem badge de contagem); Promoções |
 | Seção "GESTÃO DE LOJAS" | "Configuração & Estoque" (item único, leva à Gestão de Lojas); "Usuários" |
-| Seção "ÁREA ADMIN" | "Produtos" (só Admin) |
+| Seção "ÁREA ADMIN" | "Produtos" (só Admin); "Listas CRM" (só Admin, ver [Listas-CRM.md](../Area.Admin/Listas-CRM.md)) |
 
 - **Padrão recolhido** (56 px, só ícones, com o ícone da marca no topo e divisores entre os blocos; o ícone de Pedidos mostra um ponto vermelho quando há pedidos novos ainda não visualizados, sem badge de contagem e somente com a sidebar fechada; o ponto some quando a sidebar abre) com **overlay de menu aberto** (240 px sobre o conteúdo, sem empurrá-lo, com a logo "radar e-commerce" e os rótulos) que abre ao passar o mouse e volta a recolher quando o mouse sai.
 - O item da tela atual aparece destacado.
@@ -36,6 +36,7 @@ A sidebar é o menu de navegação principal do Portal, dividido em 2 módulos c
 | Promoções | Sim | Sim | Sim | Sim (escopo reduzido, ver doc de Promoções) |
 | Usuários | Sim | Sim | Sim | Não |
 | Produtos | Sim | **Não** | **Não** | Não |
+| Listas CRM | Sim | **Não** | **Não** | Não |
 | Configuração & Estoque (via Gestão de Lojas) | Sim | Sim | Sim | **Não** (perdeu em relação a hoje) |
 
 O item Pedidos aparece para os perfis que acessam Pedidos, inclusive para o usuário com lojas de Vendas e de Ofertas (o tratamento das lojas de Ofertas na tela de Pedidos é critério da criação da tela de Pedidos); o usuário cujas lojas do vínculo são todas de Ofertas **não vê** o item Pedidos. O Balconista não vê Indicadores: ao logar, a tela inicial é Pedidos (se a loja for de Ofertas, não vê Pedidos e a tela inicial é Promoções). A informação "vínculo só com lojas de Ofertas" é derivada do `module` de cada loja do vínculo (a engenharia decide onde calcular).
@@ -76,6 +77,7 @@ A sidebar exibe a tag azul "Novos" no item Pedidos (visível com a sidebar abert
 
 ## Changelog
 
+- **2026-11-05** — Incluído o item "Listas CRM" na seção "ÁREA ADMIN" (só Admin), com a visibilidade por perfil e o bloqueio por rota.
 - **2026-10-13 (2)** — Respostas do PO: o ponto vermelho do ícone de Pedidos acende quando há pedidos novos ainda não visualizados, com a sidebar fechada (antes: pedido parado); a tag "Novos" aparece somente para pedidos ainda não visualizados (a regra entra no card de distinção de novos pedidos); a tag "Em breve" não entra neste card (Promoções e Usuários ainda serão prototipados); Balconista só de loja de Ofertas vai direto para Promoções.
 - **2026-10-13** — Alinhado ao ECP-1495 atual e ao protótipo: sidebar recolhida de 56 px e overlay de 240 px (antes 64 px e 288 px) que recolhe quando o mouse sai; tag "Novos" sem badge de contagem; ponto vermelho no ícone de Pedidos quando há pedido parado; item Pedidos oculto para quem só tem lojas de Ofertas (visível para quem tem lojas de Vendas e de Ofertas); Balconista entra em Pedidos (Balconista de loja de Ofertas não vê Pedidos e entra em Promoções); item da tela atual destacado; back-end informa perfil e módulo de cada loja do vínculo.
 - **2026-10-06** — Handoff Figma e respostas do PO: itens e agrupamentos conforme o Figma ("GESTÃO DE LOJAS" com "Configuração & Estoque" e "Usuários"; "ÁREA ADMIN" com "Produtos"; badge "Novos" + contador em Pedidos); padrão colapsado com overlay só por hover; item Pedidos oculto para quem só tem lojas de Ofertas; acesso indevido por URL redireciona para a primeira tela acessível; a regra do badge fica para a tela de Pedidos.
